@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Live Cam</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script src="https://meet.jit.si/libs/lib-jitsi-meet.min.js"></script>
+    
+    <style>
+        body {
+            background: black;
+            margin: 0;
+            padding: 0;
+            font-family: Arial;
+            color: white;
+            overflow: hidden;
+        }
+        #video-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .status {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        .close-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #spinner {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #spinner img {
+            width: 50px;
+            height: 50px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="spinner">
+        <p>Click me</p>
+        <img src="data:image/png;base64, тут длинный base64 код
+" alt="Spinner" />
+    </div>
+    <button class="close-btn" onclick="closeVideo()">×</button>
+    <div id="video-container">
+        <video autoplay playsinline disablepictureinpicture></video>
+    </div>
+
+    <script>
+        const ROOM_ID = 'a1360da3-09ea-4dde-b0e7-1f23bcc592e1';
+
+        function createJitsiConnection() {
+            const serviceUrl = 'wss://live.teleslot.net/xmpp-websocket';
+            const connection = new JitsiMeetJS.JitsiConnection(null, null, {
+                hosts: {
+                    domain: 'meet.jitsi',
+                    muc: 'muc.meet.jitsi',
+                },
+                serviceUrl: serviceUrl,
+            });
+            
+            return connection;
+        }
+
+        function initJitsiConference(connection, roomId) {
+            const room = connection.initJitsiConference(roomId, {
+                p2p: {
+                    enabled: false,
+                    iceTransportPolicy: 'relay',
+                },
+                videoQuality: {
+                    codecPreferenceOrder: ['VP8'],
+                },
+            });
+            
+            room.setDisplayName('player');
+            room.setReceiverConstraints({
+                assumedBandwidthBps: -1,
+                constraints: {},
+                defaultConstraints: { maxHeight: 2160 },
+                lastN: -1,
+            });
+            return room;
+        }
+
+        function startJitsi() {
+            JitsiMeetJS.init({
+                disableAudioLevels: true,
+                disableThirdPartyRequests: true,
+                enableAnalyticsLogging: false
+            });
+
+            const conn = createJitsiConnection();
+            conn.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, () => {
+                console.log('JITSI: CONNECTION_ESTABLISHED');
+                
+                const room = initJitsiConference(conn, ROOM_ID);
+                console.log('Room created:', room);
+                
+                room.on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
+                    console.log('TRACK_ADDED', track);
+                    if (track.getType() === 'video') {
+                        track.attach($('video')[0]);
+                        $('#spinner').hide();
+                    }
+                });
+                
+                room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, () => {
+                    console.log('JITSI: CONFERENCE_JOINED');
+                });
+                
+                room.join();
+            });
+
+            conn.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, (error) => {
+                console.error('JITSI: CONNECTION_FAILED', error);
+            });
+
+            conn.connect();
+        }
+
+        $('body').click(() => {
+            $('body').off('click');
+            $('#spinner img').show();
+            $('#spinner p').hide();
+            const username = 'cvetan';
+            const password = '123qweXX';
+            const payload = {username, password};
+            const options = { headers: {'Content-Type': 'application/x-www-form-urlencoded' }};
+            $.post('https://live.teleslot.net/login', payload, options).done((data) => {
+                console.log('Login successful:', data);
+                Cookies.set('jwt_token', data, { path: '/' });
+                startJitsi();
+            }).fail((err) => {
+                console.error('Login failed:', err);
+                $('#spinner img').hide();
+            });
+        });
+
+        function closeVideo() {
+            if (window.VideoChannel) {
+                VideoChannel.postMessage('videoClosed');
+            }
+        }
+    </script>
+</body>
+</html>
