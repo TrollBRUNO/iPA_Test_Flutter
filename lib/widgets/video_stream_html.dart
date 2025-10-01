@@ -1,6 +1,6 @@
 // video_stream_html.dart
 String getVideoStreamHtml(String jwtToken, String roomId) {
-  return r'''
+  return '''
 <!DOCTYPE html>
 <html>
 <head>
@@ -82,9 +82,10 @@ String getVideoStreamHtml(String jwtToken, String roomId) {
 
     <script>
         // Room ID из параметра Flutter
-        // const ROOM_ID = '${roomId}';
+        const ROOM_ID = '$roomId';
+        const JWT_TOKEN = '$jwtToken';
 
-        const ROOM_ID = 'a1360da3-09ea-4dde-b0e7-1f23bcc592e1';
+        //const ROOM_ID = 'a1360da3-09ea-4dde-b0e7-1f23bcc592e1';
 
         function createJitsiConnection() {
             const serviceUrl = 'wss://live.teleslot.net/xmpp-websocket';
@@ -144,8 +145,8 @@ String getVideoStreamHtml(String jwtToken, String roomId) {
                 room.on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
                     console.log('JITSI: TRACK_ADDED', track.getType());
                     if (track.getType() === 'video') {
-                        track.attach($('video')[0]);
-                        $('#spinner').hide();
+                        track.attach(\$('video')[0]);
+                        \$('#spinner').hide();
                         
                         // Уведомляем Flutter
                         if (window.VideoChannel) {
@@ -179,22 +180,37 @@ String getVideoStreamHtml(String jwtToken, String roomId) {
             connection.connect();
         }
 
-        $('body').click(() => {
-            $('body').off('click');
-            $('#spinner img').show();
-            $('#spinner p').hide();
-            const username = 'cvetan';
+        \$('body').click(() => {
+            \$('body').off('click');
+            \$('#spinner img').show();
+            \$('#spinner p').hide();
+
+            /*const username = 'cvetan';
             const password = '123qweXX';
             const payload = {username, password};
             const options = { headers: {'Content-Type': 'application/x-www-form-urlencoded' }};
-            $.post('https://live.teleslot.net/login', payload, options).done((data) => {
-                console.log('Login successful:', data);
-                Cookies.set('jwt_token', data, { path: '/' });
+            \$.post('https://live.teleslot.net/login', payload, options).done((data) => {
+                document.cookie = "jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+                //console.log('Login successful:', data);
+                console.log('Login successful:', JWT_TOKEN);
+                console.log('JITSI: ROOOOOOOOOOOOOOOOOOOOM_ID', ROOM_ID);
+                
+                Cookies.set('jwt_token', JWT_TOKEN, { path: '/' });
+                //Cookies.set('jwt_token', data, { path: '/' });
+
                 startJitsi();
             }).fail((err) => {
                 console.error('Login failed:', err);
-                $('#spinner img').hide();
-            });
+                \$('#spinner img').hide();
+            });*/
+
+            console.log('Login successful:', JWT_TOKEN);
+            console.log('JITSI: ROOOOOOOOOOOOOOOOOOOOM_ID', ROOM_ID);
+            
+            // Сохраняем токен, переданный из Flutter
+            Cookies.set('jwt_token', JWT_TOKEN, { path: '/' });
+            startJitsi();
         });
 
         function closeVideo() {
@@ -204,11 +220,11 @@ String getVideoStreamHtml(String jwtToken, String roomId) {
         }
 
         // Автоматически запускаем если токен уже есть
-        /* $(document).ready(function() {
+        /* \$(document).ready(function() {
             const jwtToken = Cookies.get('jwt_token');
             if (jwtToken) {
                 console.log('JWT token present, auto-starting...');
-                $('#spinner p').text('Подключаемся...');
+                \$('#spinner p').text('Подключаемся...');
                 setTimeout(startJitsi, 1000);
             }
         }); */

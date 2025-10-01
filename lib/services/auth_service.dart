@@ -40,7 +40,7 @@ class AuthService {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_jwtKey, jwt);
-      return jwt;
+      return jwt.toString();
     } catch (e) {
       logger.w('Error getting JWT: $e');
       return null;
@@ -50,6 +50,7 @@ class AuthService {
   static Future<String?> getJwt() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_jwtKey);
       return prefs.getString(_jwtKey);
     } catch (e) {
       logger.w('Error getting JWT from storage: $e');

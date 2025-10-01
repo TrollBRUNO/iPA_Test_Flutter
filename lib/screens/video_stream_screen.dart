@@ -45,7 +45,10 @@ class _VideoStreamScreenState extends State<VideoStreamScreen> {
 
     // Генерируем HTML
     setState(() {
-      _htmlContent = getVideoStreamHtml(jwtToken!, widget.cameraId);
+      _htmlContent = getVideoStreamHtml(
+        jwtToken!,
+        '82dee2d3-0893-4a4d-b9bc-129179b692c2',
+      );
     });
 
     /*final htmlContent = getVideoStreamHtml(
