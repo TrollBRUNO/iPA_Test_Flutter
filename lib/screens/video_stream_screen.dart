@@ -1,8 +1,12 @@
 // video_stream_screen.dart
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/widgets/inappwebview_widget.dart';
+import 'package:first_app_flutter/widgets/video_stream_html.dart';
 import 'package:first_app_flutter/widgets/video_stream_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:logger/logger.dart';
 
 class VideoStreamScreen extends StatefulWidget {
   final String cameraId;
@@ -19,23 +23,123 @@ class VideoStreamScreen extends StatefulWidget {
 }
 
 class _VideoStreamScreenState extends State<VideoStreamScreen> {
-  /*@override
+  InAppWebViewController? _webViewController;
+  String? _htmlContent;
+  Logger logger = Logger();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocalHtml();
+  }
+
+  Future<void> _loadLocalHtml() async {
+    // Получаем JWT токен
+    String? jwtToken = await AuthService.getJwt();
+    if (jwtToken == null) {
+      jwtToken = await AuthService.loginAndSaveJwt();
+      if (jwtToken == null) {
+        throw Exception('Не удалось получить JWT токен');
+      }
+    }
+
+    // Генерируем HTML
+    setState(() {
+      _htmlContent = getVideoStreamHtml(jwtToken!, widget.cameraId);
+    });
+
+    /*final htmlContent = getVideoStreamHtml(
+      jwtToken,
+      '82dee2d3-0893-4a4d-b9bc-129179b692c2',
+    );*/
+
+    if (_webViewController != null && _htmlContent != null) {
+      _webViewController!.loadData(
+        data: _htmlContent!,
+        baseUrl: WebUri('https://live.teleslot.net'),
+        mimeType: 'text/html',
+        encoding: 'utf-8',
+        androidHistoryUrl: WebUri('https://live.teleslot.net'),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('InAppWebView Example')),
+      appBar: AppBar(title: Text('Трансляция: ${widget.cameraName}')),
       body: Column(
         children: <Widget>[
           Expanded(
             child: InAppWebView(
-              initialUrlRequest: URLRequest(url: WebUri('https://flutter.dev')),
+              /*initialUrlRequest: URLRequest(
+                url: WebUri(
+                  'https://live.teleslot.net/cd2ee7e59a33/static_folder/jitsi.html',
+                ),
+              ),*/
+              initialOptions: InAppWebViewGroupOptions(
+                crossPlatform: InAppWebViewOptions(
+                  javaScriptEnabled: true,
+                  useOnDownloadStart: true,
+                  mediaPlaybackRequiresUserGesture: false,
+                ),
+                android: AndroidInAppWebViewOptions(
+                  useHybridComposition: true,
+                  builtInZoomControls: true,
+                  displayZoomControls: false,
+                  domStorageEnabled: true,
+                  supportMultipleWindows: true,
+                ),
+              ),
+              onWebViewCreated: (controller) {
+                _webViewController = controller;
+                // Если HTML уже готов, загружаем его
+                if (_htmlContent != null) {
+                  controller.loadData(
+                    data: _htmlContent!,
+                    baseUrl: WebUri('https://live.teleslot.net'),
+                    mimeType: 'text/html',
+                    encoding: 'utf-8',
+                    androidHistoryUrl: WebUri('https://live.teleslot.net'),
+                  );
+                }
+              },
+              androidOnPermissionRequest:
+                  (controller, origin, resources) async {
+                    return PermissionRequestResponse(
+                      resources: resources,
+                      action: PermissionRequestResponseAction.GRANT,
+                    );
+                  },
+              onCreateWindow: (controller, createWindowRequest) async {
+                // Открытие popup-окон в новом WebView внутри приложения
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    content: SizedBox(
+                      width: 400,
+                      height: 600,
+                      child: InAppWebView(
+                        windowId: createWindowRequest.windowId,
+                        initialOptions: InAppWebViewGroupOptions(
+                          crossPlatform: InAppWebViewOptions(
+                            javaScriptEnabled: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+                return true;
+              },
             ),
           ),
         ],
       ),
     );
-  }*/
+  }
 
-  @override
+  /*@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -124,5 +228,5 @@ class _VideoStreamScreenState extends State<VideoStreamScreen> {
         ],
       ),
     );
-  }
+  }*/
 }
