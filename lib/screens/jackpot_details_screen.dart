@@ -114,7 +114,7 @@ class JackpotDetailsScreen extends StatelessWidget {
                         ),
                         onPressed: () async {
                           try {
-                            final jwt =
+                            /*final jwt =
                                 await AuthService.getJwt() ??
                                 await AuthService.loginAndSaveJwt();
 
@@ -125,7 +125,7 @@ class JackpotDetailsScreen extends StatelessWidget {
                                 ),
                               );
                               return;
-                            }
+                            }*/
 
                             // Добавляем небольшую задержку для плавного перехода
                             await Future.delayed(Duration(milliseconds: 100));
