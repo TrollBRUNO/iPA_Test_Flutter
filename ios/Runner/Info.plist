@@ -50,5 +50,12 @@
 	<string>Камера нужна для видеотрансляции</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Микрофон нужен для видеотрансляции</string>
+
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Looking for local tcp Bonjour service</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>mqtt.tcp</string>
+	</array>
 </dict>
 </plist>

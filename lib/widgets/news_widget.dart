@@ -23,13 +23,14 @@ class NewsWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: const Color.fromARGB(255, 100, 100, 100),
+                    color: Colors.orangeAccent.withOpacity(0.4),
                     spreadRadius: 2, // Насколько тень расширяется
                     blurRadius: 8, // Насколько тень размыта
                     offset: Offset(0, 4), // Смещение тени (x, y)
                   ),
                 ],
-                color: const Color.fromARGB(255, 24, 75, 141),
+                //color: const Color.fromARGB(255, 24, 75, 141),
+                color: Colors.orangeAccent[700],
                 borderRadius: BorderRadius.only(
                   //topLeft: Radius.circular(64),
                   //topRight: Radius.circular(64),
@@ -89,7 +90,8 @@ class NewsWidget extends StatelessWidget {
               child: Text(
                 '${DateFormat("d MMMM y", "bg_BG").format(news.publicationDate)} година',
                 style: TextStyle(
-                  color: const Color.fromARGB(255, 0, 40, 92),
+                  //color: const Color.fromARGB(255, 0, 40, 92),
+                  color: const Color.fromARGB(255, 0, 0, 0),
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

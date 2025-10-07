@@ -1,10 +1,16 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:first_app_flutter/class/jackpot.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
 import 'package:first_app_flutter/widgets/jackpot_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class JackpotScreen extends StatelessWidget {
   const JackpotScreen({super.key});
@@ -25,17 +31,88 @@ class JackpotPage extends StatefulWidget {
 }
 
 class _JackpotState extends State<JackpotPage> {
+  Logger logger = Logger();
+  final MqttJackpotService mqttService = MqttJackpotService();
+
+  double miniMystery = 0;
+  double middleMystery = 0;
+  double megaMystery = 0;
+
+  //ДЛЯ ТЕСТА АНИМАЦИИ
+  Timer? _timer;
+  int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMqtt();
+    mqttService.jackpotStream.listen((json) {
+      final jackpots = json['jackpots'] as List<dynamic>;
+      for (var jackpot in jackpots) {
+        switch (jackpot['name']) {
+          case 'Mini':
+            setState(
+              () => miniMystery = jackpot['value']?.toDouble() + _counter ?? 0,
+            );
+            break;
+          case 'Middle':
+            setState(
+              () =>
+                  middleMystery = jackpot['value']?.toDouble() + _counter ?? 0,
+            );
+            break;
+          case 'sadf':
+            setState(
+              () => megaMystery = jackpot['value']?.toDouble() + _counter ?? 0,
+            );
+            break;
+        }
+      }
+    });
+    //ДЛЯ ТЕСТА АНИМАЦИИ
+    startTimer();
+  }
+
+  //ДЛЯ ТЕСТА АНИМАЦИИ
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _counter++;
+      });
+
+      // Остановить после 100 секунд
+      if (_counter >= 10) {
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> _loadMqtt() async {
+    try {
+      final result = await mqttService.main();
+      // Выводим результат в консоль через logger
+      logger.i('MQTT result: $result');
+    } catch (e) {
+      logger.w('Ошибка MQTT: $e');
+    }
+  }
+
   // Тестовые данные джекпотов
-  final List<Jackpot> jackpots = [
+  List<Jackpot> get jackpots => [
     Jackpot(
       city: 'Пловдив: Magic City',
       address: 'бул. Източен 48',
       imageUrl: 'assets/images/logo_magic_city5.png',
       isMysteryProgressive: true,
-      miniMystery: 359.76,
-      middleMystery: 1535.53,
-      megaMystery: 8321.84,
+      miniMystery: miniMystery,
+      middleMystery: middleMystery,
+      megaMystery: megaMystery,
+      //miniMystery: 359.76,
+      //middleMystery: 1535.53,
+      //megaMystery: 8321.84,
     ),
+
+    // Остальные адреса
     Jackpot(
       city: 'Кирково: MegaBet',
       address: 'ул. Димитър Благоев 23',
@@ -149,7 +226,39 @@ class _JackpotState extends State<JackpotPage> {
           // Список карточек джекпотов
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-              return JackpotWidget(jackpot: jackpots[index]);
+              return JackpotWidget(
+                jackpot: jackpots[index],
+                miniBuilder: (value) => TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: value, end: miniMystery),
+                  duration: const Duration(milliseconds: 800),
+                  builder: (context, animatedValue, child) {
+                    return Text(
+                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      style: const TextStyle(fontSize: 26, color: Colors.white),
+                    );
+                  },
+                ),
+                middleBuilder: (value) => TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: value, end: middleMystery),
+                  duration: const Duration(milliseconds: 800),
+                  builder: (context, animatedValue, child) {
+                    return Text(
+                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      style: const TextStyle(fontSize: 26, color: Colors.white),
+                    );
+                  },
+                ),
+                megaBuilder: (value) => TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: value, end: megaMystery),
+                  duration: const Duration(milliseconds: 800),
+                  builder: (context, animatedValue, child) {
+                    return Text(
+                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      style: const TextStyle(fontSize: 26, color: Colors.white),
+                    );
+                  },
+                ),
+              );
             }, childCount: jackpots.length),
           ),
           SliverToBoxAdapter(

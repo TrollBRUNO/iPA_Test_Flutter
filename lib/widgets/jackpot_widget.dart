@@ -9,8 +9,17 @@ import 'package:flutter/material.dart';
 
 class JackpotWidget extends StatelessWidget {
   final Jackpot jackpot;
+  final Widget Function(double value)? miniBuilder;
+  final Widget Function(double value)? middleBuilder;
+  final Widget Function(double value)? megaBuilder;
 
-  const JackpotWidget({super.key, required this.jackpot});
+  const JackpotWidget({
+    super.key,
+    required this.jackpot,
+    this.miniBuilder,
+    this.middleBuilder,
+    this.megaBuilder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +31,31 @@ class JackpotWidget extends StatelessWidget {
       topAddress = EdgeInsets.only(top: 16);
 
       if (jackpot.miniMystery > 0) {
-        jackpotValues.add(buildJackpotRow("Mini", jackpot.miniMystery));
+        jackpotValues.add(
+          buildJackpotRow(
+            "Mini",
+            jackpot.miniMystery,
+            valueBuilder: miniBuilder,
+          ),
+        );
       }
       if (jackpot.middleMystery > 0) {
-        jackpotValues.add(buildJackpotRow("Middle", jackpot.middleMystery));
+        jackpotValues.add(
+          buildJackpotRow(
+            "Middle",
+            jackpot.middleMystery,
+            valueBuilder: middleBuilder,
+          ),
+        );
       }
       if (jackpot.megaMystery > 0) {
-        jackpotValues.add(buildJackpotRow("Mega", jackpot.megaMystery));
+        jackpotValues.add(
+          buildJackpotRow(
+            "Mega",
+            jackpot.megaMystery,
+            valueBuilder: megaBuilder,
+          ),
+        );
       }
     } else {
       topAddress = EdgeInsets.only(top: 48);

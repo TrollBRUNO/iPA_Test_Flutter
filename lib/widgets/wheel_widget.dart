@@ -2,6 +2,7 @@ import 'dart:async';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
+import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
@@ -31,6 +32,32 @@ class _WheelState extends State<WheelWidget> {
       lastSelectedIndex = index;
       selected.add(index);
     });
+  }
+
+  void showPrizeDialog(String prize) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "PrizeDialog",
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: PrizeDialogWidget(
+              prize: prize,
+              onClaim: () => Navigator.of(context).pop(),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -209,7 +236,9 @@ class _WheelState extends State<WheelWidget> {
                 onAnimationEnd: () {
                   final prize = prizeList[lastSelectedIndex ?? 0];
 
-                  showDialog(
+                  showPrizeDialog(prize);
+
+                  /*showDialog(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       title: Text('Печалба! 🎉🎉🎉'),
@@ -227,7 +256,7 @@ class _WheelState extends State<WheelWidget> {
                         ),
                       ],
                     ),
-                  );
+                  );*/
                 },
               ),
             ),

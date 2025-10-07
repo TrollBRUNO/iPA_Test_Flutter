@@ -2,7 +2,11 @@
 
 import 'package:flutter/material.dart';
 
-Widget buildJackpotRow(String label, double value) {
+Widget buildJackpotRow(
+  String label,
+  double value, {
+  Widget Function(double value)? valueBuilder,
+}) {
   // Цвет в зависимости от типа джекпота
   Color labelColor;
   Color shadowColor;
@@ -91,10 +95,16 @@ Widget buildJackpotRow(String label, double value) {
           ),
         ),
 
-        Text(
+        /*Text(
           '${value.toStringAsFixed(2)} BGN',
           style: TextStyle(color: Colors.white, fontSize: countSize),
-        ),
+        ),*/
+        valueBuilder != null
+            ? valueBuilder(value)
+            : Text(
+                '${value.toStringAsFixed(2)} BGN',
+                style: TextStyle(color: Colors.white, fontSize: countSize),
+              ),
 
         const SizedBox(width: 10),
 
