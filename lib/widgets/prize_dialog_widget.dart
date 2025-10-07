@@ -40,10 +40,11 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
       child: Material(
         color: Colors.transparent,
         child: Container(
-          width: 320,
+          width: isBigWin ? 600 : 480,
+          height: isBigWin ? 500 : 320,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isBigWin ? Colors.orangeAccent[200] : Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Stack(
@@ -56,35 +57,64 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                     scale: _scaleAnim,
                     child: Icon(
                       isBigWin ? Icons.star : Icons.attach_money,
-                      color: isBigWin ? Colors.amber : Colors.green,
+                      color: isBigWin ? Colors.yellow[100] : Colors.green[400],
                       size: 80,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    isBigWin ? "Большой выигрыш!" : "Поздравляем!",
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  isBigWin
+                      ? Text(
+                          "BIG WIN",
+                          style: const TextStyle(
+                            fontSize: 64,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        )
+                      : Text(
+                          //isBigWin ? "Большой выигрыш!" : "Поздравляем!",
+                          "Поздравляем!",
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                  isBigWin ? SizedBox(height: 24) : SizedBox(height: 8),
                   Text(
                     "Вы выиграли ${widget.prize}",
-                    style: const TextStyle(fontSize: 18),
+                    style: isBigWin
+                        ? const TextStyle(
+                            fontSize: 48,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500,
+                          )
+                        : const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w400,
+                          ),
                   ),
-                  const SizedBox(height: 24),
+                  isBigWin ? SizedBox(height: 72) : SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: widget.onClaim,
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: isBigWin
+                            ? Colors.orangeAccent[100]
+                            : Colors.green[200],
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text("Забрать"),
+                      child: Text(
+                        "Забрать",
+                        style: isBigWin
+                            ? const TextStyle(fontSize: 40, color: Colors.black)
+                            : const TextStyle(
+                                fontSize: 24,
+                                color: Colors.black,
+                              ),
+                      ),
                     ),
                   ),
                 ],

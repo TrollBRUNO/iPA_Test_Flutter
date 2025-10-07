@@ -2,6 +2,7 @@ import 'dart:async';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
+import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
@@ -25,7 +26,10 @@ class _WheelState extends State<WheelWidget> {
   }
 
   void startSpin(int length) {
-    if (isSpinning) return;
+    if (isSpinning) {
+      if (isSpinning) showInfoDialog();
+      return;
+    }
     final index = Fortune.randomInt(0, length);
     setState(() {
       isSpinning = true;
@@ -54,6 +58,29 @@ class _WheelState extends State<WheelWidget> {
               prize: prize,
               onClaim: () => Navigator.of(context).pop(),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showInfoDialog() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "InfoDialog",
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: InfoDialogWidget(onClaim: () => Navigator.of(context).pop()),
           ),
         );
       },

@@ -13,7 +13,7 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/jackpot',
+  initialLocation: '/wheel',
   routes: [
     GoRoute(
       path: '/registration',
