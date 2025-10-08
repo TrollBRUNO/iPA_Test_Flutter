@@ -38,6 +38,9 @@ class _JackpotState extends State<JackpotPage> {
   double middleMystery = 0;
   double megaMystery = 0;
 
+  double majorBellLink = 0;
+  double grandBellLink = 0;
+
   //ДЛЯ ТЕСТА АНИМАЦИИ
   Timer? _timer;
   int _counter = 0;
@@ -56,15 +59,16 @@ class _JackpotState extends State<JackpotPage> {
             );
             break;
           case 'Middle':
-            setState(
-              () =>
-                  middleMystery = jackpot['value']?.toDouble() + _counter ?? 0,
-            );
+            setState(() {
+              middleMystery = jackpot['value']?.toDouble() + _counter ?? 0;
+              majorBellLink = jackpot['value']?.toDouble() + _counter ?? 0;
+            });
             break;
           case 'sadf':
-            setState(
-              () => megaMystery = jackpot['value']?.toDouble() + _counter ?? 0,
-            );
+            setState(() {
+              megaMystery = jackpot['value']?.toDouble() + _counter ?? 0;
+              grandBellLink = jackpot['value']?.toDouble() + _counter ?? 0;
+            });
             break;
         }
       }
@@ -104,12 +108,12 @@ class _JackpotState extends State<JackpotPage> {
       address: 'бул. Източен 48',
       imageUrl: 'assets/images/logo_magic_city5.png',
       isMysteryProgressive: true,
-      miniMystery: miniMystery,
-      middleMystery: middleMystery,
-      megaMystery: megaMystery,
-      //miniMystery: 359.76,
-      //middleMystery: 1535.53,
-      //megaMystery: 8321.84,
+      //miniMystery: miniMystery,
+      //middleMystery: middleMystery,
+      //megaMystery: megaMystery,
+      miniMystery: 359.76,
+      middleMystery: 1535.53,
+      megaMystery: 8321.84,
     ),
 
     // Остальные адреса
@@ -255,6 +259,26 @@ class _JackpotState extends State<JackpotPage> {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} BGN',
                       style: const TextStyle(fontSize: 26, color: Colors.white),
+                    );
+                  },
+                ),
+                majorBuilder: (value) => TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: value, end: majorBellLink),
+                  duration: const Duration(milliseconds: 800),
+                  builder: (context, animatedValue, child) {
+                    return Text(
+                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      style: const TextStyle(fontSize: 30, color: Colors.white),
+                    );
+                  },
+                ),
+                grandBuilder: (value) => TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: value, end: grandBellLink),
+                  duration: const Duration(milliseconds: 800),
+                  builder: (context, animatedValue, child) {
+                    return Text(
+                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      style: const TextStyle(fontSize: 30, color: Colors.white),
                     );
                   },
                 ),

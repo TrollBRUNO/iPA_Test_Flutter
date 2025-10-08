@@ -23,14 +23,14 @@ class NewsWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.orangeAccent.withOpacity(0.4),
+                    color: Colors.lightBlue.withOpacity(0.4),
                     spreadRadius: 2, // Насколько тень расширяется
                     blurRadius: 8, // Насколько тень размыта
-                    offset: Offset(0, 4), // Смещение тени (x, y)
+                    offset: Offset(0, 2), // Смещение тени (x, y)
                   ),
                 ],
                 //color: const Color.fromARGB(255, 24, 75, 141),
-                color: Colors.orangeAccent[700],
+                color: Colors.lightBlue[900],
                 borderRadius: BorderRadius.only(
                   //topLeft: Radius.circular(64),
                   //topRight: Radius.circular(64),

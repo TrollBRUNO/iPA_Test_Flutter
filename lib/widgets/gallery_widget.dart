@@ -22,13 +22,14 @@ class GalleryWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: const Color.fromARGB(255, 100, 100, 100),
+                    color: Colors.red.withOpacity(0.4), // Цвет тени
                     spreadRadius: 2, // Насколько тень расширяется
                     blurRadius: 8, // Насколько тень размыта
-                    offset: Offset(0, 4), // Смещение тени (x, y)
+                    offset: Offset(0, 2), // Смещение тени (x, y)
                   ),
                 ],
-                color: const Color.fromARGB(255, 134, 30, 30),
+                //color: const Color.fromARGB(255, 134, 30, 30),
+                color: Colors.red[900],
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(32),
                   bottomRight: Radius.circular(32),

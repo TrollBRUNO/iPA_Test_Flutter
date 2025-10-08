@@ -13,12 +13,17 @@ class JackpotWidget extends StatelessWidget {
   final Widget Function(double value)? middleBuilder;
   final Widget Function(double value)? megaBuilder;
 
+  final Widget Function(double value)? majorBuilder;
+  final Widget Function(double value)? grandBuilder;
+
   const JackpotWidget({
     super.key,
     required this.jackpot,
     this.miniBuilder,
     this.middleBuilder,
     this.megaBuilder,
+    this.majorBuilder,
+    this.grandBuilder,
   });
 
   @override
@@ -61,10 +66,22 @@ class JackpotWidget extends StatelessWidget {
       topAddress = EdgeInsets.only(top: 48);
 
       if (jackpot.majorBellLink > 0) {
-        jackpotValues.add(buildJackpotRow("Major", jackpot.majorBellLink));
+        jackpotValues.add(
+          buildJackpotRow(
+            "Major",
+            jackpot.majorBellLink,
+            valueBuilder: majorBuilder,
+          ),
+        );
       }
       if (jackpot.grandBellLink > 0) {
-        jackpotValues.add(buildJackpotRow("Grand", jackpot.grandBellLink));
+        jackpotValues.add(
+          buildJackpotRow(
+            "Grand",
+            jackpot.grandBellLink,
+            valueBuilder: grandBuilder,
+          ),
+        );
       }
     }
 
