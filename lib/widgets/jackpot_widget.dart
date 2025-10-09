@@ -134,10 +134,10 @@ class JackpotWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.orangeAccent.withOpacity(0.4),
+                color: Colors.white.withOpacity(0.6),
                 //Color.fromARGB(255, 46, 178, 255)
                 spreadRadius: 0.2,
-                blurRadius: 8,
+                blurRadius: 1,
                 offset: const Offset(0, 0),
               ),
             ],

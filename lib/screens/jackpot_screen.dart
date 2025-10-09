@@ -5,11 +5,13 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/jackpot.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
 import 'package:first_app_flutter/widgets/jackpot_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 
 class JackpotScreen extends StatelessWidget {
@@ -170,7 +172,7 @@ class _JackpotState extends State<JackpotPage> {
                 final percent =
                     (constraints.maxHeight - kToolbarHeight) /
                     (180 - kToolbarHeight);
-                final double fontSize = 32 + (72 - 32) * percent;
+                final double fontSize = 32 + (62 - 32) * percent;
 
                 return Stack(
                   fit: StackFit.expand,
@@ -204,16 +206,16 @@ class _JackpotState extends State<JackpotPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 30, bottom: 10),
                         child: Text(
-                          'Онлайн джакпот',
-                          style: TextStyle(
+                          'online_jackpot'.tr(),
+                          style: GoogleFonts.daysOne(
                             fontSize: fontSize,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.normal,
                             color: Colors.orangeAccent[200],
                             shadows: const [
                               Shadow(
                                 color: Color.fromARGB(255, 51, 51, 51),
-                                offset: Offset(2.5, 3.5),
+                                offset: Offset(3.5, 4.5),
                                 blurRadius: 3,
                               ),
                             ],

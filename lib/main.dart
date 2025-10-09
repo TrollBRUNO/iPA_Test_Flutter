@@ -1,25 +1,33 @@
 import 'package:first_app_flutter/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
   runApp(
-    MaterialApp.router(
-      routerConfig: router,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+    EasyLocalization(
       supportedLocales: const [
-        Locale('bg', 'BG'), // Болгарский
-        Locale('ru', 'RU'), // Русский
-        Locale('en', 'US'), // Английский
+        Locale('en', 'US'),
+        Locale('ru', 'RU'),
+        Locale('bg', 'BG'),
       ],
-      locale: Locale(
-        'ru',
-        'RU',
-      ), // Принудительно установить русский язык (опционально)
+      path: 'assets/translations',
+      fallbackLocale: const Locale('ru', 'RU'),
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: router,
 
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -30,6 +38,11 @@ void main() {
           seedColor: const Color.fromARGB(255, 34, 162, 236),
         ),
       ),
-    ),
-  );
+
+      // локализация
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+    );
+  }
 }

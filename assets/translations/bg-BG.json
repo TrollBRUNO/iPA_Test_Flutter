@@ -1,0 +1,23 @@
+{
+  "settings": "Настройки",
+  "app_language": "Език на приложението",
+  "bulgarian": "Български",
+  "russian": "Русский",
+  "english": "English",
+  "select_language": "Изберете език",
+  "breaking_news": "Актуални новини",
+  "online_jackpot": "Онлайн джакпот",
+  "daily_bonus": "Ежедневен бонус",
+  "your_profile": "Вашият профил",
+  "statistics": "Статистика",
+  "notice": "Известие",
+  "support": "Поддържка",
+  "confidentiality": "Конфидициалност",
+  "logout": "Излизане от акаунта",
+  "version": "Версия 1.0.0",
+  "balance": "Баланс:",
+  "news": "Новини",
+  "gallery": "Галерия",
+  "registration": "Регистрация",
+  "authorization": "Влизане"
+}

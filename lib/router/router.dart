@@ -1,8 +1,11 @@
+import 'package:first_app_flutter/screens/confidential_screen.dart';
 import 'package:first_app_flutter/screens/jackpot_screen.dart';
 import 'package:first_app_flutter/layout/layout_scaffold.dart';
 import 'package:first_app_flutter/screens/news_screen.dart';
+import 'package:first_app_flutter/screens/notification_screen.dart';
 import 'package:first_app_flutter/screens/profile_screen.dart';
 import 'package:first_app_flutter/screens/settings_screen.dart';
+import 'package:first_app_flutter/screens/support_screen.dart';
 import 'package:first_app_flutter/screens/wheel_screen.dart';
 import 'package:first_app_flutter/screens/authorization_screen.dart';
 import 'package:first_app_flutter/screens/registration_screen.dart';
@@ -66,6 +69,21 @@ final router = GoRouter(
                   path: '/settings',
                   builder: (context, state) =>
                       const SettingsPage(title: 'Settings'),
+                ),
+                GoRoute(
+                  path: '/notification',
+                  builder: (context, state) =>
+                      const NotificationPage(title: 'Notification'),
+                ),
+                GoRoute(
+                  path: '/support',
+                  builder: (context, state) =>
+                      const SupportPage(title: 'Support'),
+                ),
+                GoRoute(
+                  path: '/confidential',
+                  builder: (context, state) =>
+                      const ConfidentialPage(title: 'Confidential'),
                 ),
               ],
             ),

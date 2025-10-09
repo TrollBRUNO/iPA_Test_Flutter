@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -37,21 +39,21 @@ class _ProfileState extends State<ProfilePage> {
             const SizedBox(height: 120),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48),
+              padding: const EdgeInsets.symmetric(horizontal: 36),
               child: Text(
-                'Вашият профил',
-                style: TextStyle(
-                  fontSize: 72,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
+                'your_profile'.tr(),
+                style: GoogleFonts.daysOne(
+                  fontSize: 84,
+                  fontWeight: FontWeight.normal,
+                  fontStyle: FontStyle.normal,
                   color: Colors.orangeAccent[200],
-                  shadows: const [
+                  /* shadows: const [
                     Shadow(
                       color: Color.fromARGB(255, 51, 51, 51),
-                      offset: Offset(2.5, 3.5),
+                      offset: Offset(3.5, 4.5),
                       blurRadius: 3,
                     ),
-                  ],
+                  ], */
                 ),
               ),
             ),
@@ -59,7 +61,7 @@ class _ProfileState extends State<ProfilePage> {
             const SizedBox(height: 20),
 
             Card(
-              color: Colors.orangeAccent[100],
+              color: Colors.orangeAccent[200],
               elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(48),
@@ -87,8 +89,8 @@ class _ProfileState extends State<ProfilePage> {
                       children: [
                         Text(
                           'Йордан Атанасов',
-                          style: TextStyle(
-                            fontSize: 30,
+                          style: GoogleFonts.roboto(
+                            fontSize: 36,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -97,13 +99,16 @@ class _ProfileState extends State<ProfilePage> {
                           children: [
                             Icon(
                               Icons.account_balance_wallet,
-                              color: Colors.green,
+                              color: Colors.green[700],
                               size: 28,
                             ),
                             SizedBox(width: 8),
                             Text(
-                              'Balance: 999999.99 BGN',
-                              style: TextStyle(fontSize: 28),
+                              '${'balance'.tr()} 165.50 BGN',
+                              style: GoogleFonts.manrope(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -117,24 +122,30 @@ class _ProfileState extends State<ProfilePage> {
             const SizedBox(height: 20),
 
             Card(
-              color: Colors.orangeAccent[100],
+              color: Colors.orangeAccent[200],
               elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(48),
               ),
-              margin: EdgeInsets.all(48),
+              margin: EdgeInsets.all(24),
               child: Padding(
                 padding: EdgeInsets.all(28),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ListTile(
-                      leading: Icon(Icons.settings, size: 48),
+                      leading: Icon(
+                        Icons.settings,
+                        size: 48,
+                        color: Color.fromARGB(221, 22, 20, 20),
+                      ),
                       title: Text(
-                        'Настройки',
-                        style: TextStyle(
-                          fontSize: 38,
-                          fontStyle: FontStyle.italic,
+                        'settings'.tr(),
+                        style: GoogleFonts.openSans(
+                          fontSize: 40,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(221, 22, 20, 20),
                         ),
                       ),
                       onTap: () {
@@ -143,19 +154,25 @@ class _ProfileState extends State<ProfilePage> {
                     ),
                     Divider(height: 24, color: Colors.black45),
                     ListTile(
-                      leading: Icon(Icons.bar_chart, size: 48),
+                      leading: Icon(
+                        Icons.bar_chart,
+                        size: 48,
+                        color: Color.fromARGB(221, 22, 20, 20),
+                      ),
                       title: Text(
-                        'Статистика',
-                        style: TextStyle(
-                          fontSize: 38,
-                          fontStyle: FontStyle.italic,
+                        'statistics'.tr(),
+                        style: GoogleFonts.openSans(
+                          fontSize: 40,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(221, 22, 20, 20),
                         ),
                       ),
                       onTap: () {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
-                            title: Text('Статистика'),
+                            title: Text('statistics'.tr()),
                             content: Text('СТАТИСТИКА НА ИГРАЧА\n\n'),
                             actions: <Widget>[
                               TextButton(
@@ -171,30 +188,64 @@ class _ProfileState extends State<ProfilePage> {
                     ),
                     Divider(height: 24, color: Colors.black45),
                     ListTile(
-                      leading: Icon(Icons.notifications, size: 48),
+                      leading: Icon(
+                        Icons.notifications,
+                        size: 48,
+                        color: Color.fromARGB(221, 22, 20, 20),
+                      ),
                       title: Text(
-                        'Известие',
-                        style: TextStyle(
-                          fontSize: 38,
-                          fontStyle: FontStyle.italic,
+                        'notice'.tr(),
+                        style: GoogleFonts.openSans(
+                          fontSize: 40,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(221, 22, 20, 20),
                         ),
                       ),
                       onTap: () {
-                        context.go('/profile/settings');
+                        context.go('/profile/notification');
                       },
                     ),
                     Divider(height: 24, color: Colors.black45),
                     ListTile(
-                      leading: Icon(Icons.privacy_tip, size: 48),
+                      leading: Icon(
+                        Icons.support_agent_rounded,
+                        size: 48,
+                        color: Color.fromARGB(221, 22, 20, 20),
+                      ),
                       title: Text(
-                        'Конфидициалност',
-                        style: TextStyle(
-                          fontSize: 38,
-                          fontStyle: FontStyle.italic,
+                        'support'.tr(),
+                        style: GoogleFonts.openSans(
+                          fontSize: 40,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(221, 22, 20, 20),
                         ),
                       ),
                       onTap: () {
-                        context.go('/profile/settings');
+                        context.go('/profile/support');
+                      },
+                    ),
+                    Divider(height: 24, color: Colors.black45),
+                    ListTile(
+                      leading: Icon(
+                        Icons.privacy_tip,
+                        size: 48,
+                        color: Color.fromARGB(221, 22, 20, 20),
+                      ),
+                      title: Text(
+                        'confidentiality'.tr(),
+                        style: GoogleFonts.openSans(
+                          fontSize: context.locale.languageCode == 'ru'
+                              ? 39
+                              : 40,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(221, 22, 20, 20),
+                        ),
+                      ),
+                      onTap: () {
+                        context.go('/profile/confidential');
                       },
                     ),
                     Divider(height: 24, color: Colors.black45),
@@ -202,14 +253,27 @@ class _ProfileState extends State<ProfilePage> {
                       minVerticalPadding: 16,
                       contentPadding: EdgeInsets.symmetric(
                         //vertical: 16.0,
-                        horizontal: 56.0,
+                        horizontal: 24.0,
                       ),
-                      leading: Icon(Icons.logout, size: 48),
+                      leading: Icon(
+                        Icons.logout,
+                        size: 48,
+                        color: Color.fromARGB(221, 22, 20, 20),
+                        shadows: [
+                          Shadow(
+                            blurRadius: 3,
+                            offset: Offset(0.5, 0.5),
+                            color: Colors.black.withOpacity(0.5),
+                          ),
+                        ],
+                      ),
                       title: Text(
-                        'Излизане от акаунта',
-                        style: TextStyle(
-                          fontSize: 38,
-                          fontStyle: FontStyle.italic,
+                        'logout'.tr(),
+                        style: GoogleFonts.openSans(
+                          fontSize: 40,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(221, 22, 20, 20),
                         ),
                       ),
                       onTap: () {
@@ -239,8 +303,8 @@ class _ProfileState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Version 1.0.0',
+                  Text(
+                    'version'.tr(),
                     style: TextStyle(
                       fontSize: 20,
                       fontStyle: FontStyle.italic,

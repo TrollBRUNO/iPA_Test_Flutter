@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/widgets/wheel_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
@@ -28,22 +30,28 @@ class _WheelState extends State<WheelPage> {
       length: 2,
       child: Column(
         children: [
-          const SizedBox(height: 120),
+          SizedBox(height: context.locale.languageCode == 'ru' ? 100 : 120),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              'Ежедневен бонус',
-              style: TextStyle(
-                fontSize: 72,
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
+              textAlign: TextAlign.center,
+              'daily_bonus'.tr(),
+              style: GoogleFonts.daysOne(
+                fontSize: 90,
+                fontWeight: FontWeight.w500,
+                fontStyle: FontStyle.normal,
                 color: Colors.orangeAccent[200],
-                shadows: const [
+                shadows: [
                   Shadow(
-                    color: Color.fromARGB(255, 51, 51, 51),
-                    offset: Offset(2.5, 3.5),
+                    color: Color.fromARGB(255, 244, 105, 179),
+                    offset: Offset(3.5, 4.5),
                     blurRadius: 3,
+                  ),
+                  Shadow(
+                    color: Color.fromARGB(255, 224, 67, 146),
+                    offset: Offset(5.5, 6.5),
+                    blurRadius: 20,
                   ),
                 ],
               ),

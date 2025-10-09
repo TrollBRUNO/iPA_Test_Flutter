@@ -2,9 +2,11 @@
 
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/screens/gallery_tab.dart';
 import 'package:first_app_flutter/screens/news_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 //import 'package:intl/intl.dart';
 
 class NewsScreen extends StatelessWidget {
@@ -55,7 +57,11 @@ class _NewsState extends State<NewsPage> {
                             .clamp(0.0, 1.0);
 
                     // Keep font size constant
-                    final double fontSize = 72; // Constant font size
+                    final double fontSize =
+                        context.locale.languageCode == "ru" ||
+                            context.locale.languageCode == "bg"
+                        ? 58
+                        : 72; // Constant font size
                     // Smooth fade out - starts fading immediately but completes quickly
                     // Map percent from 0.8-1.0 range to 0.0-1.0 range for a quick fade
                     final double opacity = percent < 0.8
@@ -100,25 +106,30 @@ class _NewsState extends State<NewsPage> {
                               child: Transform.translate(
                                 offset: Offset(0, translateY),
                                 child: Center(
-                                  child: Text(
-                                    'Актуални новини',
-                                    style: TextStyle(
-                                      fontSize: fontSize,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.orangeAccent[200],
-                                      shadows: const [
-                                        Shadow(
-                                          color: Color.fromARGB(
-                                            255,
-                                            51,
-                                            51,
-                                            51,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    child: Text(
+                                      'breaking_news'.tr(),
+                                      style: GoogleFonts.daysOne(
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.normal,
+                                        color: Colors.orangeAccent[200],
+                                        shadows: const [
+                                          Shadow(
+                                            color: Color.fromARGB(
+                                              255,
+                                              51,
+                                              51,
+                                              51,
+                                            ),
+                                            offset: Offset(3.5, 4.5),
+                                            blurRadius: 3,
                                           ),
-                                          offset: Offset(2.5, 3.5),
-                                          blurRadius: 3,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -155,9 +166,9 @@ class _NewsState extends State<NewsPage> {
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
-                        tabs: const [
-                          Tab(text: 'Новини'),
-                          Tab(text: 'Галерия'),
+                        tabs: [
+                          Tab(text: 'news'.tr()),
+                          Tab(text: 'gallery'.tr()),
                         ],
                       ),
                     ),

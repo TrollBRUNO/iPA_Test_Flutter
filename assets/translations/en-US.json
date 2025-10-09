@@ -1,0 +1,23 @@
+{
+  "settings": "Settings",
+  "app_language": "App Language",
+  "bulgarian": "Български",
+  "russian": "Русский",
+  "english": "English",
+  "select_language": "Select Language",
+  "breaking_news": "Breaking news",
+  "online_jackpot": "Online jackpot",
+  "daily_bonus": "Daily Bonus",
+  "your_profile": "Your profile",
+  "statistics": "Statistics",
+  "notice": "Notice",
+  "support": "Support",
+  "confidentiality": "Confidentiality",
+  "logout": "Log out account",
+  "version": "Version 1.0.0",
+  "balance": "Balance:",
+  "news": "News",
+  "gallery": "Gallery",
+  "registration": "Registration",
+  "authorization": "Authorization"
+}

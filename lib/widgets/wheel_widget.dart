@@ -264,26 +264,6 @@ class _WheelState extends State<WheelWidget> {
                   final prize = prizeList[lastSelectedIndex ?? 0];
 
                   showPrizeDialog(prize);
-
-                  /*showDialog(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: Text('Печалба! 🎉🎉🎉'),
-
-                      content: prize == "100 BGN"
-                          ? Text('YOOOOU WIN THE BIG WIN!!! $prize\n\n')
-                          : Text('YOU WIN! $prize\n\n'),
-
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Закрыть диалог
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );*/
                 },
               ),
             ),

@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LayoutScaffold extends StatelessWidget {
   const LayoutScaffold({
@@ -43,13 +44,15 @@ class LayoutScaffold extends StatelessWidget {
             selectedItemColor:
                 Colors.orangeAccent[200], //Colors.lightBlueAccent,
             selectedFontSize: 20,
+            selectedLabelStyle: GoogleFonts.jura(fontWeight: FontWeight.w900),
             unselectedItemColor: const Color.fromARGB(
               255,
               255,
               209,
               128,
             ).withOpacity(0.5),
-            unselectedFontSize: 16,
+            unselectedFontSize: 18,
+            unselectedLabelStyle: GoogleFonts.jura(fontWeight: FontWeight.w700),
             currentIndex: navigationShell.currentIndex,
             onTap: (index) {
               if (index != navigationShell.currentIndex) {
