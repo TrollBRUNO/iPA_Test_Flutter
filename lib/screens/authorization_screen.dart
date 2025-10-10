@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AuthorizationScreen extends StatelessWidget {
   const AuthorizationScreen({super.key});
@@ -33,29 +35,30 @@ class _AuthorizationState extends State<AuthorizationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /* appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
-      ),
+      ), */
       body: Center(
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                'Authorization',
-                style: TextStyle(
-                  fontSize: 90,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 51, 51, 51),
-                  shadows: [
+              Text(
+                'authorization'.tr(),
+                style: GoogleFonts.daysOne(
+                  fontSize: 84,
+                  fontWeight: FontWeight.normal,
+                  fontStyle: FontStyle.normal,
+                  color: Colors.orangeAccent[200],
+                  /* shadows: const [
                     Shadow(
-                      color: Color.fromARGB(223, 134, 134, 134),
-                      offset: Offset(4, 5),
-                      blurRadius: 4,
+                      color: Color.fromARGB(255, 51, 51, 51),
+                      offset: Offset(3.5, 4.5),
+                      blurRadius: 3,
                     ),
-                  ],
+                  ], */
                 ),
               ),
 
@@ -70,7 +73,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                     controller: _loginController,
                     focusNode: _loginFocus,
 
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24, color: Colors.white70),
 
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -80,6 +83,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                       labelStyle: TextStyle(
                         fontSize: 20,
                         fontStyle: FontStyle.italic,
+                        color: Colors.white54,
                       ),
 
                       icon: Icon(Icons.person_4_sharp, size: 30),
@@ -106,7 +110,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                     controller: _passwordController,
                     focusNode: _passwordFocus,
 
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24, color: Colors.white70),
 
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -116,6 +120,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                       labelStyle: TextStyle(
                         fontSize: 20,
                         fontStyle: FontStyle.italic,
+                        color: Colors.white54,
                       ),
 
                       icon: Icon(Icons.lock, size: 30),
@@ -144,8 +149,8 @@ class _AuthorizationState extends State<AuthorizationPage> {
                   key: Key('register_button'),
 
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 84, 144, 255),
-                    foregroundColor: Color(0xFFFFFFFF),
+                    backgroundColor: Colors.orangeAccent[200],
+                    foregroundColor: Color.fromARGB(221, 22, 20, 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -186,7 +191,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                       );
                     }
                   },
-                  child: Text('Sign In'),
+                  child: Text('sign_in'.tr()),
                 ),
               ),
 
@@ -196,11 +201,11 @@ class _AuthorizationState extends State<AuthorizationPage> {
                 onTap: () {
                   context.go('/registration'); // Переход на экран регистрации
                 },
-                child: const Text(
-                  "Don't you have an account?",
+                child: Text(
+                  'no_account'.tr(),
                   style: TextStyle(
                     fontSize: 20,
-                    color: Color.fromARGB(255, 51, 51, 51),
+                    color: Color.fromARGB(255, 90, 90, 90),
                     decoration:
                         TextDecoration.underline, // чтобы выглядело как ссылка
                   ),
