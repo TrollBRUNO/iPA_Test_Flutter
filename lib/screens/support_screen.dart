@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,7 +50,7 @@ class _SupportState extends State<SupportPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Поддържка',
+                'support'.tr(),
                 style: GoogleFonts.daysOne(
                   fontSize: 36,
                   fontWeight: FontWeight.w100,

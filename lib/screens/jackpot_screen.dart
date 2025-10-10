@@ -106,8 +106,8 @@ class _JackpotState extends State<JackpotPage> {
   // Тестовые данные джекпотов
   List<Jackpot> get jackpots => [
     Jackpot(
-      city: 'Пловдив: Magic City',
-      address: 'бул. Източен 48',
+      city: 'address_plovdiv_city'.tr(),
+      address: 'address_plovdiv_address'.tr(),
       imageUrl: 'assets/images/logo_magic_city5.png',
       isMysteryProgressive: true,
       //miniMystery: miniMystery,
@@ -120,16 +120,16 @@ class _JackpotState extends State<JackpotPage> {
 
     // Остальные адреса
     Jackpot(
-      city: 'Кирково: MegaBet',
-      address: 'ул. Димитър Благоев 23',
+      city: 'address_kirkovo_city'.tr(),
+      address: 'address_kirkovo_address'.tr(),
       imageUrl: 'assets/images/logo5.png',
       isMysteryProgressive: false,
       majorBellLink: 876.19,
       grandBellLink: 13369.97,
     ),
     Jackpot(
-      city: 'Велинград: Amon',
-      address: 'бул. Съединение 2',
+      city: 'address_velingrad_city'.tr(),
+      address: 'address_velingrad_address'.tr(),
       imageUrl: 'assets/images/logo3.png',
       isMysteryProgressive: true,
       miniMystery: 466.92,
@@ -137,8 +137,8 @@ class _JackpotState extends State<JackpotPage> {
       megaMystery: 9487.66,
     ),
     Jackpot(
-      city: 'Гоце Делчев: Magic City',
-      address: 'ул. Дунав 75',
+      city: 'address_gotse_delchev_city'.tr(),
+      address: 'address_gotse_delchev_address'.tr(),
       imageUrl: 'assets/images/logo_magic_city5.png',
       isMysteryProgressive: true,
       miniMystery: 533.09,
@@ -146,8 +146,8 @@ class _JackpotState extends State<JackpotPage> {
       megaMystery: 10876.23,
     ),
     Jackpot(
-      city: 'Сатовча: Magic City',
-      address: 'ул. Тодор Шопов 87',
+      city: 'address_satovcha_city'.tr(),
+      address: 'address_satovcha_address'.tr(),
       imageUrl: 'assets/images/logo_magic_city5.png',
       isMysteryProgressive: true,
       miniMystery: 376.12,

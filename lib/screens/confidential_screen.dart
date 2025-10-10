@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -69,7 +70,7 @@ class _ConfidentialState extends State<ConfidentialPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Конфидициалност и условия',
+                'confidentiality_condition'.tr(),
                 style: GoogleFonts.daysOne(
                   fontSize: 36,
                   fontWeight: FontWeight.w100,

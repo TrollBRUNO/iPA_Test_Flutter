@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/gallery.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -78,7 +79,7 @@ class GalleryWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '${DateFormat("d MMMM y", "bg_BG").format(gallery.publicationDate)} година',
+                '${DateFormat("d MMMM y", context.locale.languageCode).format(gallery.publicationDate)} ${'year'.tr()}',
                 style: TextStyle(
                   color: const Color.fromARGB(255, 56, 0, 0),
                   fontSize: 18,

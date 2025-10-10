@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/news.dart';
 import 'package:first_app_flutter/widgets/smart_marquee_widget.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +89,7 @@ class NewsWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '${DateFormat("d MMMM y", "bg_BG").format(news.publicationDate)} година',
+                '${DateFormat("d MMMM y", context.locale.languageCode).format(news.publicationDate)} ${'year'.tr()}',
                 style: TextStyle(
                   //color: const Color.fromARGB(255, 0, 40, 92),
                   color: const Color.fromARGB(255, 0, 0, 0),

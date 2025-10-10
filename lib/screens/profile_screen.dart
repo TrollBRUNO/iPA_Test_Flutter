@@ -127,9 +127,9 @@ class _ProfileState extends State<ProfilePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(48),
               ),
-              margin: EdgeInsets.all(24),
+              margin: EdgeInsets.all(48),
               child: Padding(
-                padding: EdgeInsets.all(28),
+                padding: EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

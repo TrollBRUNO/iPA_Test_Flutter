@@ -58,7 +58,7 @@ class _WheelState extends State<WheelPage> {
             ),
           ),
 
-          const SizedBox(height: 160),
+          const SizedBox(height: 120),
 
           SizedBox(
             height: MediaQuery.of(context).size.width * 0.95,

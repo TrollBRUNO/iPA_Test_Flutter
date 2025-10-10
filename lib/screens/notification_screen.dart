@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -113,7 +114,7 @@ class _NotificationState extends State<NotificationPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Известие',
+                'notice'.tr(),
                 style: GoogleFonts.daysOne(
                   fontSize: 36,
                   fontWeight: FontWeight.w100,
