@@ -1,7 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthorizationScreen extends StatelessWidget {
   const AuthorizationScreen({super.key});
@@ -22,6 +25,7 @@ class AuthorizationPage extends StatefulWidget {
 }
 
 class _AuthorizationState extends State<AuthorizationPage> {
+  Logger logger = Logger();
   final _formKey = GlobalKey<FormState>();
 
   final _loginController = TextEditingController();
@@ -29,6 +33,9 @@ class _AuthorizationState extends State<AuthorizationPage> {
 
   final _loginFocus = FocusNode();
   final _passwordFocus = FocusNode();
+
+  static const String _login = 'login';
+  static const String _password = 'password';
 
   String? serverError;
 
@@ -162,12 +169,25 @@ class _AuthorizationState extends State<AuthorizationPage> {
                       letterSpacing: 3.5,
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final user = _loginController.text;
                       final password = _passwordController.text;
 
-                      debugPrint('Email: $user, Password: $password');
+                      logger.i('Email: $user, Password: $password');
+
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString(_login, user);
+                      await prefs.setString(_password, password);
+
+                      String? jwtToken = await AuthService.getJwt();
+                      if (jwtToken == null) {
+                        jwtToken = await AuthService.loginAndSaveJwt();
+                        if (jwtToken == null) {
+                          logger.w('Такого аккаунта нет');
+                          return;
+                        }
+                      }
 
                       showDialog(
                         context: context,

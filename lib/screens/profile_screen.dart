@@ -1,7 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/web.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -23,6 +26,37 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfileState extends State<ProfilePage> {
   //final _formKey = GlobalKey<FormState>();
+  Logger logger = Logger();
+
+  static const String _login = 'login';
+  static const String _password = 'password';
+
+  String? balanceCount = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBalance();
+  }
+
+  Future<void> _loadBalance() async {
+    // Получаем JWT токен
+    String? jwtToken = await AuthService.getJwt();
+    if (jwtToken == null) {
+      jwtToken = await AuthService.loginAndSaveJwt();
+      if (jwtToken == null) {
+        throw Exception('Не удалось получить JWT токен');
+      }
+    }
+
+    final balance = await AuthService.getBalance(jwtToken);
+
+    setState(() {
+      balanceCount = balance;
+    });
+
+    logger.i("BALANCE: $balanceCount");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +138,7 @@ class _ProfileState extends State<ProfilePage> {
                             ),
                             SizedBox(width: 8),
                             Text(
-                              '${'balance'.tr()} 165.50 BGN',
+                              '${'balance'.tr()} $balanceCount',
                               style: GoogleFonts.manrope(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w600,
@@ -276,7 +310,10 @@ class _ProfileState extends State<ProfilePage> {
                           color: Color.fromARGB(221, 22, 20, 20),
                         ),
                       ),
-                      onTap: () {
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.remove(_login);
+                        await prefs.remove(_password);
                         context.go('/authorization');
                       },
                     ),

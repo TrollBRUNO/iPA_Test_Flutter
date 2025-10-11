@@ -5,6 +5,7 @@ import 'package:first_app_flutter/screens/news_screen.dart';
 import 'package:first_app_flutter/screens/notification_screen.dart';
 import 'package:first_app_flutter/screens/profile_screen.dart';
 import 'package:first_app_flutter/screens/settings_screen.dart';
+import 'package:first_app_flutter/screens/splash_screen.dart';
 import 'package:first_app_flutter/screens/support_screen.dart';
 import 'package:first_app_flutter/screens/wheel_screen.dart';
 import 'package:first_app_flutter/screens/authorization_screen.dart';
@@ -16,8 +17,9 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/profile',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(
       path: '/registration',
       builder: (context, state) => const RegistrationScreen(),
