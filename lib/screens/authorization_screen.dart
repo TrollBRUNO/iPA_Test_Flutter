@@ -87,7 +87,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
-                      labelText: 'Username',
+                      labelText: 'username'.tr(),
                       labelStyle: TextStyle(
                         fontSize: 20,
                         fontStyle: FontStyle.italic,
@@ -99,7 +99,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                     ),
                     validator: (val) {
                       if (val == null || val.length < 6) {
-                        return 'Username too short.';
+                        return 'to_short_username'.tr();
                       }
                       return null;
                     },
@@ -124,7 +124,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
-                      labelText: 'Password',
+                      labelText: 'password'.tr(),
                       labelStyle: TextStyle(
                         fontSize: 20,
                         fontStyle: FontStyle.italic,
@@ -136,10 +136,10 @@ class _AuthorizationState extends State<AuthorizationPage> {
                     ),
                     validator: (val) {
                       if (val == null || val.length < 6) {
-                        return 'Password too short.';
+                        return 'to_short_password'.tr();
                       }
                       if (RegExp(r'^\d+$').hasMatch(val)) {
-                        return 'Password cannot be only numbers.';
+                        return 'only_number_password'.tr();
                       }
                       return null;
                     },
@@ -186,7 +186,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                         jwtToken = await AuthService.loginAndSaveJwt();
                         if (jwtToken == null) {
                           setState(() {
-                            serverError = 'Wrong username or password';
+                            serverError = 'wrong'.tr();
                           });
                           await prefs.remove(_login);
                           await prefs.remove(_password);
@@ -206,7 +206,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Authorization Successful! Welcome dear $user!',
+                                '${'welcome'.tr()} $user!',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
