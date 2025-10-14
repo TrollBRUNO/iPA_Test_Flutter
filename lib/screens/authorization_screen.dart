@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class AuthorizationScreen extends StatelessWidget {
   const AuthorizationScreen({super.key});
@@ -184,31 +185,59 @@ class _AuthorizationState extends State<AuthorizationPage> {
                       if (jwtToken == null) {
                         jwtToken = await AuthService.loginAndSaveJwt();
                         if (jwtToken == null) {
+                          setState(() {
+                            serverError = 'Wrong username or password';
+                          });
+                          await prefs.remove(_login);
+                          await prefs.remove(_password);
                           logger.w('Такого аккаунта нет');
                           return;
                         }
                       }
 
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: Text('Authorization'),
-                          content: Text(
-                            'Authorization Successful! Welcome dear $user!',
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Закрыть диалог
-                                context.go(
-                                  '/wheel',
-                                ); // Переход на окно wheel через роутер
-                              },
-                              child: Text('OK'),
+                      setState(() {
+                        serverError = null;
+                      });
+
+                      Flushbar(
+                        messageText: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.white),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Authorization Successful! Welcome dear $user!',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                      );
+                        flushbarPosition: FlushbarPosition.TOP,
+                        flushbarStyle: FlushbarStyle.FLOATING,
+                        margin: const EdgeInsets.all(16),
+                        borderRadius: BorderRadius.circular(12),
+                        backgroundGradient: const LinearGradient(
+                          colors: [Color(0xFF00C853), Color(0xFF64DD17)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadows: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            offset: const Offset(0, 3),
+                            blurRadius: 6,
+                          ),
+                        ],
+                        duration: const Duration(seconds: 2),
+                        animationDuration: const Duration(milliseconds: 600),
+                      ).show(context);
+
+                      await Future.delayed(const Duration(seconds: 2));
+                      context.go('/wheel');
                     }
                   },
                   child: Text('sign_in'.tr()),
