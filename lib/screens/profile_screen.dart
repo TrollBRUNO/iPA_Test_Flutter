@@ -180,6 +180,7 @@ class _ProfileState extends State<ProfilePage> {
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(221, 22, 20, 20),
+                          letterSpacing: 0.1,
                         ),
                       ),
                       onTap: () {
@@ -200,6 +201,7 @@ class _ProfileState extends State<ProfilePage> {
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(221, 22, 20, 20),
+                          letterSpacing: 0.1,
                         ),
                       ),
                       onTap: () {
@@ -234,6 +236,7 @@ class _ProfileState extends State<ProfilePage> {
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(221, 22, 20, 20),
+                          letterSpacing: 0.1,
                         ),
                       ),
                       onTap: () {
@@ -254,6 +257,7 @@ class _ProfileState extends State<ProfilePage> {
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(221, 22, 20, 20),
+                          letterSpacing: 0.1,
                         ),
                       ),
                       onTap: () {
@@ -276,6 +280,7 @@ class _ProfileState extends State<ProfilePage> {
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(221, 22, 20, 20),
+                          letterSpacing: 0.1,
                         ),
                       ),
                       onTap: () {
@@ -308,6 +313,7 @@ class _ProfileState extends State<ProfilePage> {
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(221, 22, 20, 20),
+                          letterSpacing: 0.1,
                         ),
                       ),
                       onTap: () async {

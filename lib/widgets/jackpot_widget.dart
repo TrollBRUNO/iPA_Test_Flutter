@@ -91,33 +91,35 @@ class JackpotWidget extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 500),
+            transitionDuration: const Duration(milliseconds: 1000),
             pageBuilder: (context, animation, secondaryAnimation) =>
                 JackpotDetailsScreen(jackpot: jackpot),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-                  // Анимация появления с масштабом и плавной прозрачностью
-                  const beginScale = 0.95;
-                  const endScale = 1.0;
+                  // Новый вариант: масштабирование + затемнение сразу
+                  final scaleAnimation = Tween<double>(
+                    begin: 0.92,
+                    end: 1.0,
+                  ).chain(CurveTween(curve: Curves.linear)).animate(animation);
 
-                  const beginOpacity = 0.0;
-                  const endOpacity = 1.0;
-
-                  final curve = Curves.easeInOut;
-
-                  final scaleAnimation = Tween(
-                    begin: beginScale,
-                    end: endScale,
-                  ).chain(CurveTween(curve: curve)).animate(animation);
-
-                  final opacityAnimation = Tween(
-                    begin: beginOpacity,
-                    end: endOpacity,
-                  ).chain(CurveTween(curve: curve)).animate(animation);
-
-                  return FadeTransition(
-                    opacity: opacityAnimation,
-                    child: ScaleTransition(scale: scaleAnimation, child: child),
+                  return Stack(
+                    children: [
+                      // Мгновенное затемнение фона
+                      Positioned.fill(
+                        child: AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            // opacity от 0 до 0.85
+                            final opacity = 1 * animation.value;
+                            return Container(
+                              color: Colors.black.withOpacity(opacity),
+                            );
+                          },
+                        ),
+                      ),
+                      // Анимация раскрытия карточки
+                      ScaleTransition(scale: scaleAnimation, child: child),
+                    ],
                   );
                 },
           ),
