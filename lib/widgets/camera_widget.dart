@@ -6,13 +6,13 @@ import 'package:first_app_flutter/widgets/video_stream_html.dart';
 import 'package:logger/logger.dart';
 
 class CameraWidget extends StatefulWidget {
-  final String cameraId;
-  final String cameraName;
+  final List<String> cameraIds;
+  final List<String> cameraNames;
 
   const CameraWidget({
     super.key,
-    required this.cameraId,
-    required this.cameraName,
+    required this.cameraIds,
+    required this.cameraNames,
   });
 
   @override
@@ -20,9 +20,11 @@ class CameraWidget extends StatefulWidget {
 }
 
 class _CameraWidgetState extends State<CameraWidget> {
+  int _currentIndex = 0;
   InAppWebViewController? _webViewController;
   String? _htmlContent;
   Logger logger = Logger();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -40,7 +42,10 @@ class _CameraWidgetState extends State<CameraWidget> {
     }
 
     setState(() {
-      _htmlContent = getVideoStreamHtml(jwtToken!, widget.cameraId);
+      _htmlContent = getVideoStreamHtml(
+        jwtToken!,
+        widget.cameraIds[_currentIndex],
+      );
     });
 
     if (_webViewController != null && _htmlContent != null) {
@@ -54,51 +59,109 @@ class _CameraWidgetState extends State<CameraWidget> {
     }
   }
 
+  void _switchCamera(int direction) async {
+    setState(() {
+      _isLoading = true;
+      _currentIndex = (_currentIndex + direction) % widget.cameraIds.length;
+      if (_currentIndex < 0) _currentIndex = widget.cameraIds.length - 1;
+    });
+
+    await _loadLocalHtml();
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.red, width: 2),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(13),
-        child: InAppWebView(
-          initialOptions: InAppWebViewGroupOptions(
-            crossPlatform: InAppWebViewOptions(
-              javaScriptEnabled: true,
-              useOnDownloadStart: true,
-              mediaPlaybackRequiresUserGesture: false,
+    return Column(
+      children: [
+        // Переключатели камер
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_left, size: 40, color: Colors.red),
+              onPressed: () => _switchCamera(-1),
             ),
-            android: AndroidInAppWebViewOptions(
-              useHybridComposition: true,
-              builtInZoomControls: true,
-              displayZoomControls: false,
-              domStorageEnabled: true,
-              supportMultipleWindows: true,
+            Text(
+              widget.cameraNames[_currentIndex],
+              style: const TextStyle(fontSize: 24, color: Colors.white),
             ),
-          ),
-          onWebViewCreated: (controller) {
-            _webViewController = controller;
-            if (_htmlContent != null) {
-              controller.loadData(
-                data: _htmlContent!,
-                baseUrl: WebUri('https://live.teleslot.net'),
-                mimeType: 'text/html',
-                encoding: 'utf-8',
-                androidHistoryUrl: WebUri('https://live.teleslot.net'),
-              );
-            }
-          },
-          androidOnPermissionRequest: (controller, origin, resources) async {
-            return PermissionRequestResponse(
-              resources: resources,
-              action: PermissionRequestResponseAction.GRANT,
-            );
-          },
+            IconButton(
+              icon: const Icon(Icons.arrow_right, size: 40, color: Colors.red),
+              onPressed: () => _switchCamera(1),
+            ),
+          ],
         ),
-      ),
+        const SizedBox(height: 8),
+        Container(
+          height: 380,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(255, 255, 0, 0).withOpacity(0.6),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 0),
+              ),
+            ],
+            color: Colors.red,
+            border: Border.all(color: Colors.red, width: 2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(13),
+                child: InAppWebView(
+                  initialOptions: InAppWebViewGroupOptions(
+                    crossPlatform: InAppWebViewOptions(
+                      javaScriptEnabled: true,
+                      useOnDownloadStart: true,
+                      mediaPlaybackRequiresUserGesture: false,
+                    ),
+                    android: AndroidInAppWebViewOptions(
+                      useHybridComposition: true,
+                      builtInZoomControls: true,
+                      displayZoomControls: false,
+                      domStorageEnabled: true,
+                      supportMultipleWindows: true,
+                    ),
+                  ),
+                  onWebViewCreated: (controller) {
+                    _webViewController = controller;
+                    if (_htmlContent != null) {
+                      controller.loadData(
+                        data: _htmlContent!,
+                        baseUrl: WebUri('https://live.teleslot.net'),
+                        mimeType: 'text/html',
+                        encoding: 'utf-8',
+                        androidHistoryUrl: WebUri('https://live.teleslot.net'),
+                      );
+                    }
+                  },
+                  androidOnPermissionRequest:
+                      (controller, origin, resources) async {
+                        return PermissionRequestResponse(
+                          resources: resources,
+                          action: PermissionRequestResponseAction.GRANT,
+                        );
+                      },
+                ),
+              ),
+              if (_isLoading)
+                Container(
+                  color: Colors.black,
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.red),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

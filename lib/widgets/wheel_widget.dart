@@ -2,10 +2,12 @@ import 'dart:async';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
+import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WheelWidget extends StatefulWidget {
   const WheelWidget({super.key});
@@ -56,7 +58,45 @@ class _WheelState extends State<WheelWidget> {
             scale: curved,
             child: PrizeDialogWidget(
               prize: prize,
-              onClaim: () => Navigator.of(context).pop(),
+              onClaim: () {
+                Navigator.of(context).pop();
+                showAdsDialog(prize);
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showAdsDialog(String prize) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "AbsDialog",
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: AdsDialogWidget(
+              prize: prize,
+              onClaim: () async {
+                Navigator.of(context).pop();
+
+                final url = Uri.parse('https://live.teleslot.net/login');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else {
+                  throw 'Не удалось открыть сайт: $url';
+                }
+              },
             ),
           ),
         );

@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'dart:ui';
 //import 'package:first_app_flutter/screens/camera_live_screen.dart';
 //import 'package:first_app_flutter/trash/camera_viewer_screen.dart';
-import 'package:first_app_flutter/screens/video_stream_screen.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/widgets/camera_widget.dart';
 import 'package:flutter/material.dart';
@@ -125,9 +124,11 @@ class JackpotDetailsScreen extends StatelessWidget {
 
                           // ВСТРОЕННАЯ КАМЕРА ВМЕСТО КНОПКИ
                           CameraWidget(
-                            // ← Используем виджет камеры
-                            cameraId: '82dee2d3-0893-4a4d-b9bc-129179b692c2',
-                            cameraName: 'Камера ${jackpot.city}',
+                            cameraIds: [
+                              '82dee2d3-0893-4a4d-b9bc-129179b692c2',
+                              'a1360da3-09ea-4dde-b0e7-1f23bcc592e1',
+                            ],
+                            cameraNames: ['Камера 1', 'Камера 2'],
                           ),
 
                           const SizedBox(height: 24),
@@ -137,17 +138,30 @@ class JackpotDetailsScreen extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
-                                vertical: 8,
+                                vertical: 6,
                               ),
                               decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color.fromARGB(
+                                      255,
+                                      255,
+                                      0,
+                                      0,
+                                    ).withOpacity(0.6),
+                                    spreadRadius: 1,
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 0),
+                                  ),
+                                ],
                                 color: Colors.red,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 'LIVE ТРАНСЛЯЦИЯ',
                                 style: GoogleFonts.roboto(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
