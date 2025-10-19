@@ -2,6 +2,7 @@ import 'dart:async';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
+import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
@@ -27,11 +28,20 @@ class _WheelState extends State<WheelWidget> {
     super.dispose();
   }
 
-  void startSpin(int length) {
+  void startSpin(int length) async {
     if (isSpinning) {
       if (isSpinning) showInfoDialog();
       return;
     }
+
+    final canSpin = await SpinTimeService.canSpinToday();
+    if (!canSpin) {
+      showInfoDialog(); // или свой диалог "Попробуй завтра!"
+      return;
+    }
+
+    await SpinTimeService.saveSpinDate(); // сохраняем дату после начала кручения
+
     final index = Fortune.randomInt(0, length);
     setState(() {
       isSpinning = true;
@@ -86,8 +96,7 @@ class _WheelState extends State<WheelWidget> {
           child: ScaleTransition(
             scale: curved,
             child: AdsDialogWidget(
-              prize: prize,
-              onClaim: () async {
+              onTry: () async {
                 Navigator.of(context).pop();
 
                 final url = Uri.parse('https://live.teleslot.net/login');
@@ -96,6 +105,9 @@ class _WheelState extends State<WheelWidget> {
                 } else {
                   throw 'Не удалось открыть сайт: $url';
                 }
+              },
+              onClose: () {
+                Navigator.of(context).pop();
               },
             ),
           ),

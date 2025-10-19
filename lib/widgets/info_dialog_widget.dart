@@ -67,7 +67,7 @@ class _InfoDialogState extends State<InfoDialogWidget>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Следующий бонус будет доступен через 24 часа.",
+                    "Следующий бонус будет доступен завтра.",
                     style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 24),

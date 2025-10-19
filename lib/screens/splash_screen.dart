@@ -1,3 +1,4 @@
+import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +22,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final user = prefs.getString('login');
     final password = prefs.getString('password');
     await Future.delayed(const Duration(seconds: 1)); // для красоты
+
+    //чтобы ресетнуть колесо
+    //await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
 
     if (user != null && password != null) {
       context.go('/wheel'); // если авторизован

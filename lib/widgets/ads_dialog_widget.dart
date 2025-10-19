@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AdsDialogWidget extends StatefulWidget {
-  final String prize;
-  final VoidCallback onClaim;
+  final VoidCallback onTry;
+  final VoidCallback onClose;
 
-  const AdsDialogWidget({required this.prize, required this.onClaim});
+  const AdsDialogWidget({required this.onTry, required this.onClose});
 
   @override
   State<AdsDialogWidget> createState() => _AdsDialogState();
@@ -35,8 +35,6 @@ class _AdsDialogState extends State<AdsDialogWidget>
 
   @override
   Widget build(BuildContext context) {
-    final isBigWin = widget.prize == '100 BGN';
-
     return Center(
       child: ScaleTransition(
         scale: _scaleAnim,
@@ -103,7 +101,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
                         height: 1.4,
                       ),
                     ),
-                    SizedBox(height: isBigWin ? 60 : 40),
+                    SizedBox(height: 40),
                     _buildFancyButton(),
                   ],
                 ),
@@ -116,7 +114,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
                       size: 34,
                       color: Colors.black54,
                     ),
-                    onPressed: widget.onClaim,
+                    onPressed: widget.onClose,
                   ),
                 ),
               ],
@@ -129,7 +127,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
 
   Widget _buildFancyButton() {
     return GestureDetector(
-      onTap: widget.onClaim,
+      onTap: widget.onTry,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 18),
