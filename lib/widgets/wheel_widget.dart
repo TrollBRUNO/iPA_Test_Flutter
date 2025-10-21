@@ -29,11 +29,6 @@ class _WheelState extends State<WheelWidget> {
   }
 
   void startSpin(int length) async {
-    if (isSpinning) {
-      if (isSpinning) showInfoDialog();
-      return;
-    }
-
     final canSpin = await SpinTimeService.canSpinToday();
     if (!canSpin) {
       showInfoDialog(); // или свой диалог "Попробуй завтра!"

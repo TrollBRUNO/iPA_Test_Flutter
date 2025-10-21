@@ -13,10 +13,20 @@ class SpinTimeService {
 
   static Future<DateTime> getServerTime() async {
     try {
-      final response = await http.get(Uri.parse(_apiUrl));
+      final response = await http
+          .get(Uri.parse(_apiUrl))
+          .timeout(
+            const Duration(seconds: 3),
+            onTimeout: () {
+              logger.i(
+                'Время сервера превысило лимит ожидания, используем локальное время',
+              );
+              throw Exception('⏱ Таймаут при обращении к API');
+            },
+          );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        logger.i('Все четко');
+        logger.i('Используем глобальное время: ${data['dateTime']}');
         return DateTime.parse(data['dateTime']).toUtc();
       } else {
         // fallback — если API не отвечает, всё же используем локальное время

@@ -4,11 +4,13 @@ import 'dart:ui';
 
 import 'package:first_app_flutter/class/jackpot.dart';
 import 'package:first_app_flutter/screens/jackpot_details_screen.dart';
+import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
 import 'package:first_app_flutter/widgets/jackpot_row_widget.dart';
 import 'package:flutter/material.dart';
 
 class JackpotWidget extends StatelessWidget {
   final Jackpot jackpot;
+  final MqttJackpotService? mqttService;
   final Widget Function(double value)? miniBuilder;
   final Widget Function(double value)? middleBuilder;
   final Widget Function(double value)? megaBuilder;
@@ -19,6 +21,7 @@ class JackpotWidget extends StatelessWidget {
   const JackpotWidget({
     super.key,
     required this.jackpot,
+    this.mqttService,
     this.miniBuilder,
     this.middleBuilder,
     this.megaBuilder,
@@ -93,7 +96,10 @@ class JackpotWidget extends StatelessWidget {
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 1000),
             pageBuilder: (context, animation, secondaryAnimation) =>
-                JackpotDetailsScreen(jackpot: jackpot),
+                JackpotDetailsScreen(
+                  jackpot: jackpot,
+                  mqttService: mqttService,
+                ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   // Новый вариант: масштабирование + затемнение сразу

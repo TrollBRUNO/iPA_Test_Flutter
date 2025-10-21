@@ -36,6 +36,8 @@ class _JackpotState extends State<JackpotPage> {
   Logger logger = Logger();
   final MqttJackpotService mqttService = MqttJackpotService();
 
+  List<Jackpot> _jackpots = [];
+
   double miniMystery = 0;
   double middleMystery = 0;
   double megaMystery = 0;
@@ -50,33 +52,102 @@ class _JackpotState extends State<JackpotPage> {
   @override
   void initState() {
     super.initState();
+
+    // Тестовые данные джекпотов
+    //List<Jackpot> get jackpots => [
+    _jackpots = [
+      Jackpot(
+        city: 'address_plovdiv_city'.tr(),
+        address: 'address_plovdiv_address'.tr(),
+        imageUrl: 'assets/images/logo_magic_city5.png',
+        isMysteryProgressive: true,
+        miniMystery: 359.76,
+        middleMystery: 1535.53,
+        megaMystery: 8321.84,
+      ),
+
+      // Остальные адреса
+      Jackpot(
+        city: 'address_kirkovo_city'.tr(),
+        address: 'address_kirkovo_address'.tr(),
+        imageUrl: 'assets/images/logo5.png',
+        isMysteryProgressive: false,
+        majorBellLink: 876.19,
+        grandBellLink: 13369.97,
+      ),
+      Jackpot(
+        city: 'address_velingrad_city'.tr(),
+        address: 'address_velingrad_address'.tr(),
+        imageUrl: 'assets/images/logo3.png',
+        isMysteryProgressive: true,
+        miniMystery: 466.92,
+        middleMystery: 1877.11,
+        megaMystery: 9487.66,
+      ),
+      Jackpot(
+        city: 'address_gotse_delchev_city'.tr(),
+        address: 'address_gotse_delchev_address'.tr(),
+        imageUrl: 'assets/images/logo_magic_city5.png',
+        isMysteryProgressive: true,
+        miniMystery: 533.09,
+        middleMystery: 1456.43,
+        megaMystery: 10876.23,
+      ),
+      Jackpot(
+        city: 'address_satovcha_city'.tr(),
+        address: 'address_satovcha_address'.tr(),
+        imageUrl: 'assets/images/logo_magic_city5.png',
+        isMysteryProgressive: true,
+        miniMystery: 376.12,
+        middleMystery: 999.86,
+        megaMystery: 7631.18,
+      ),
+    ];
+
     _loadMqtt();
+
     mqttService.jackpotStream.listen((json) {
       final jackpots = json['jackpots'] as List<dynamic>;
-      for (var jackpot in jackpots) {
-        switch (jackpot['name']) {
-          case 'Mini':
-            setState(
-              () => miniMystery = jackpot['value']?.toDouble() + _counter ?? 0,
-            );
-            break;
-          case 'Middle':
-            setState(() {
-              middleMystery = jackpot['value']?.toDouble() + _counter ?? 0;
-              majorBellLink = jackpot['value']?.toDouble() + _counter ?? 0;
-            });
-            break;
-          case 'sadf':
-            setState(() {
-              megaMystery = jackpot['value']?.toDouble() + _counter ?? 0;
-              grandBellLink = jackpot['value']?.toDouble() + _counter ?? 0;
-            });
-            break;
+      if (!mounted) return;
+      setState(() {
+        if (_jackpots.isEmpty) return;
+        for (var j in jackpots) {
+          final name = (j['name'] ?? '').toString();
+          final value = (j['value'] is num)
+              ? (j['value'] as num).toDouble()
+              : double.tryParse('${j['value']}') ?? 0.0;
+
+          switch (name) {
+            case 'Mini':
+              miniMystery = value + _counter;
+              _jackpots[0].miniMystery = miniMystery;
+              break;
+            case 'Middle':
+              middleMystery = value + _counter;
+              majorBellLink = value + _counter;
+              _jackpots[0].middleMystery = middleMystery;
+              _jackpots[0].majorBellLink = majorBellLink;
+              break;
+            case 'sadf':
+              megaMystery = value + _counter;
+              grandBellLink = value + _counter;
+              _jackpots[0].megaMystery = megaMystery;
+              _jackpots[0].grandBellLink = grandBellLink;
+              break;
+            // при необходимости добавь mapping для major/grand
+          }
         }
-      }
+      });
     });
     //ДЛЯ ТЕСТА АНИМАЦИИ
     startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    // если mqttService имеет метод для остановки, вызови его; иначе просто супер
+    super.dispose();
   }
 
   //ДЛЯ ТЕСТА АНИМАЦИИ
@@ -87,7 +158,7 @@ class _JackpotState extends State<JackpotPage> {
       });
 
       // Остановить после 100 секунд
-      if (_counter >= 10) {
+      if (_counter >= 1000) {
         timer.cancel();
       }
     });
@@ -102,59 +173,6 @@ class _JackpotState extends State<JackpotPage> {
       logger.w('Ошибка MQTT: $e');
     }
   }
-
-  // Тестовые данные джекпотов
-  List<Jackpot> get jackpots => [
-    Jackpot(
-      city: 'address_plovdiv_city'.tr(),
-      address: 'address_plovdiv_address'.tr(),
-      imageUrl: 'assets/images/logo_magic_city5.png',
-      isMysteryProgressive: true,
-      //miniMystery: miniMystery,
-      //middleMystery: middleMystery,
-      //megaMystery: megaMystery,
-      miniMystery: 359.76,
-      middleMystery: 1535.53,
-      megaMystery: 8321.84,
-    ),
-
-    // Остальные адреса
-    Jackpot(
-      city: 'address_kirkovo_city'.tr(),
-      address: 'address_kirkovo_address'.tr(),
-      imageUrl: 'assets/images/logo5.png',
-      isMysteryProgressive: false,
-      majorBellLink: 876.19,
-      grandBellLink: 13369.97,
-    ),
-    Jackpot(
-      city: 'address_velingrad_city'.tr(),
-      address: 'address_velingrad_address'.tr(),
-      imageUrl: 'assets/images/logo3.png',
-      isMysteryProgressive: true,
-      miniMystery: 466.92,
-      middleMystery: 1877.11,
-      megaMystery: 9487.66,
-    ),
-    Jackpot(
-      city: 'address_gotse_delchev_city'.tr(),
-      address: 'address_gotse_delchev_address'.tr(),
-      imageUrl: 'assets/images/logo_magic_city5.png',
-      isMysteryProgressive: true,
-      miniMystery: 533.09,
-      middleMystery: 1456.43,
-      megaMystery: 10876.23,
-    ),
-    Jackpot(
-      city: 'address_satovcha_city'.tr(),
-      address: 'address_satovcha_address'.tr(),
-      imageUrl: 'assets/images/logo_magic_city5.png',
-      isMysteryProgressive: true,
-      miniMystery: 376.12,
-      middleMystery: 999.86,
-      megaMystery: 7631.18,
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -232,8 +250,10 @@ class _JackpotState extends State<JackpotPage> {
           // Список карточек джекпотов
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
+              final jackpot = _jackpots[index];
               return JackpotWidget(
-                jackpot: jackpots[index],
+                jackpot: jackpot,
+                mqttService: mqttService,
                 miniBuilder: (value) => TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: value, end: miniMystery),
                   duration: const Duration(milliseconds: 800),
@@ -285,7 +305,7 @@ class _JackpotState extends State<JackpotPage> {
                   },
                 ),
               );
-            }, childCount: jackpots.length),
+            }, childCount: _jackpots.length),
           ),
           SliverToBoxAdapter(
             child: SizedBox(height: MediaQuery.of(context).padding.bottom + 40),

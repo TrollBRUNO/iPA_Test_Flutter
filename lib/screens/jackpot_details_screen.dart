@@ -1,22 +1,113 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 //import 'package:first_app_flutter/screens/camera_live_screen.dart';
-//import 'package:first_app_flutter/trash/camera_viewer_screen.dart';
+//import 'package:first_utter/trash/camera_viewer_screen.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
 import 'package:first_app_flutter/widgets/camera_widget.dart';
+import 'package:first_app_flutter/widgets/jackpot_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../class/jackpot.dart';
 
-class JackpotDetailsScreen extends StatelessWidget {
+class JackpotDetailsScreen extends StatefulWidget {
   final Jackpot jackpot;
+  final MqttJackpotService? mqttService;
 
-  const JackpotDetailsScreen({super.key, required this.jackpot});
+  const JackpotDetailsScreen({
+    super.key,
+    required this.jackpot,
+    this.mqttService,
+  });
+
+  @override
+  State<JackpotDetailsScreen> createState() => _JackpotDetailsScreenState();
+}
+
+class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
+  late Jackpot _current;
+  StreamSubscription? _sub;
+
+  final Map<String, double> _prevValues = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _current = Jackpot.from(
+      jackpot: widget.jackpot,
+    ); // реализуй copy-конструктор или клонирование в классе Jackpot
+
+    _prevValues['Mini'] = _current.miniMystery;
+    _prevValues['Middle'] = _current.middleMystery;
+    _prevValues['sadf'] = _current.megaMystery;
+    _prevValues['Major'] = _current.majorBellLink;
+    _prevValues['Grand'] = _current.grandBellLink;
+
+    // Подписываемся на обновления и обновляем только нужные поля
+    if (widget.mqttService != null) {
+      _sub = widget.mqttService!.jackpotStream.listen((json) {
+        final jackpots = json['jackpots'] as List<dynamic>;
+        bool changed = false;
+        for (var j in jackpots) {
+          final name = (j['name'] ?? '').toString();
+          final value = (j['value'] is num)
+              ? (j['value'] as num).toDouble()
+              : double.tryParse('${j['value']}') ?? 0.0;
+          switch (name) {
+            case 'Mini':
+              if (_current.miniMystery != value) {
+                _prevValues['Mini'] = _current.miniMystery;
+                _current.miniMystery = value;
+                changed = true;
+              }
+              break;
+            case 'Middle':
+              if (_current.middleMystery != value) {
+                _prevValues['Middle'] = _current.middleMystery;
+                _current.middleMystery = value;
+                changed = true;
+              }
+
+              if (_current.majorBellLink != value) {
+                _prevValues['Middle'] = _current.majorBellLink;
+                _current.majorBellLink = value;
+                changed = true;
+              }
+              break;
+            case 'sadf':
+              if (_current.megaMystery != value) {
+                _prevValues['sadf'] = _current.megaMystery;
+                _current.megaMystery = value;
+                changed = true;
+              }
+
+              if (_current.grandBellLink != value) {
+                _prevValues['sadf'] = _current.grandBellLink;
+                _current.grandBellLink = value;
+                changed = true;
+              }
+              break;
+            default:
+              break;
+          }
+        }
+        if (changed && mounted) setState(() {});
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final jackpot = _current;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Hero(
@@ -99,7 +190,7 @@ class JackpotDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            jackpot.address,
+                            _current.address,
                             style: GoogleFonts.roboto(
                               color: Colors.white,
                               fontSize: 24,
@@ -167,65 +258,6 @@ class JackpotDetailsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          /* const SizedBox(height: 420),
-
-                          Center(
-                            child: ElevatedButton(
-                              key: Key('live_button'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Color(0xFFFFFFFF),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                textStyle: GoogleFonts.roboto(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 32,
-                                  color: Colors.white,
-                                  wordSpacing: 5.5,
-                                  letterSpacing: 3.5,
-                                ),
-                              ),
-                              onPressed: () async {
-                                try {
-                                  /*final jwt =
-                                await AuthService.getJwt() ??
-                                await AuthService.loginAndSaveJwt();
-
-                            if (jwt == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Не удалось авторизоваться'),
-                                ),
-                              );
-                              return;
-                            }*/
-
-                                  // Добавляем небольшую задержку для плавного перехода
-                                  await Future.delayed(
-                                    Duration(milliseconds: 100),
-                                  );
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => VideoStreamScreen(
-                                        cameraId:
-                                            '82dee2d3-0893-4a4d-b9bc-129179b692c2', // Первая камера
-                                        cameraName: 'Камера ${jackpot.city}',
-                                      ),
-                                    ),
-                                  );
-                                } catch (e) {
-                                  log('Ошибка при переходе к трансляциям: $e');
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Ошибка: $e')),
-                                  );
-                                }
-                              },
-                              child: Text('SHOW CAMERA!'),
-                            ),
-                          ), */
                         ],
                       ),
                     ),
@@ -242,22 +274,22 @@ class JackpotDetailsScreen extends StatelessWidget {
   List<Widget> _buildJackpotDetails(Jackpot jackpot) {
     final List<Widget> rows = [];
 
-    if (jackpot.isMysteryProgressive) {
-      if (jackpot.miniMystery > 0) {
-        rows.add(_buildRow("Mini", jackpot.miniMystery));
+    if (_current.isMysteryProgressive) {
+      if (_current.miniMystery > 0) {
+        rows.add(_buildRow("Mini", _current.miniMystery));
       }
-      if (jackpot.middleMystery > 0) {
-        rows.add(_buildRow("Middle", jackpot.middleMystery));
+      if (_current.middleMystery > 0) {
+        rows.add(_buildRow("Middle", _current.middleMystery));
       }
-      if (jackpot.megaMystery > 0) {
-        rows.add(_buildRow("Mega", jackpot.megaMystery));
+      if (_current.megaMystery > 0) {
+        rows.add(_buildRow("Mega", _current.megaMystery));
       }
     } else {
-      if (jackpot.majorBellLink > 0) {
-        rows.add(_buildRow("Major", jackpot.majorBellLink));
+      if (_current.majorBellLink > 0) {
+        rows.add(_buildRow("Major", _current.majorBellLink));
       }
-      if (jackpot.grandBellLink > 0) {
-        rows.add(_buildRow("Grand", jackpot.grandBellLink));
+      if (_current.grandBellLink > 0) {
+        rows.add(_buildRow("Grand", _current.grandBellLink));
       }
     }
 
@@ -265,19 +297,109 @@ class JackpotDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildRow(String label, double value) {
+    Color labelColor;
+    Color shadowColor;
+    String rangeMystery;
+    IconData iconJackpot;
+    switch (label.toLowerCase()) {
+      case 'mini':
+        labelColor = Colors.cyanAccent;
+        shadowColor = const Color.fromARGB(255, 0, 124, 128).withOpacity(0.5);
+        iconJackpot = Icons.star_border_purple500_rounded;
+        rangeMystery = "(300 - 800 BGN)";
+        break;
+      case 'middle':
+        labelColor = Colors.blueAccent;
+        shadowColor = const Color.fromARGB(255, 0, 0, 128).withOpacity(0.6);
+        iconJackpot = Icons.grade_outlined;
+        rangeMystery = "(1200 - 2500 BGN)";
+        break;
+      case 'mega':
+        labelColor = Colors.deepPurpleAccent;
+        shadowColor = const Color.fromARGB(255, 92, 0, 128).withOpacity(0.9);
+        iconJackpot = Icons.auto_awesome_outlined;
+        rangeMystery = "(7000 - 10000 BGN)";
+        break;
+      case 'major':
+        labelColor = Colors.greenAccent;
+        shadowColor = const Color.fromARGB(255, 15, 128, 0).withOpacity(0.5);
+        iconJackpot = Icons.grade_outlined;
+        rangeMystery = "(500 - 1500 BGN)";
+        break;
+      case 'grand':
+        labelColor = Colors.redAccent;
+        shadowColor = const Color.fromARGB(255, 128, 0, 0).withOpacity(0.9);
+        iconJackpot = Icons.auto_awesome_outlined;
+        rangeMystery = "(8000 - 20000 BGN)";
+        break;
+      default:
+        labelColor = Colors.white;
+        shadowColor = Colors.white;
+        iconJackpot = Icons.abc;
+        rangeMystery = "10000-20000";
+    }
+    final prev = _prevValues[label] ?? value;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.openSans(fontSize: 24, color: Colors.white70),
+          Icon(
+            iconJackpot,
+            color: labelColor,
+            size: 40,
+            shadows: [
+              Shadow(color: shadowColor, blurRadius: 10, offset: Offset(2, 2)),
+            ],
           ),
+
+          const SizedBox(width: 10),
+
           Text(
-            '${value.toStringAsFixed(2)} BGN',
-            style: GoogleFonts.openSans(fontSize: 24, color: Colors.white),
+            '$label: ',
+            style: TextStyle(
+              color: labelColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 36,
+              shadows: [
+                Shadow(
+                  color: shadowColor,
+                  blurRadius: 25,
+                  offset: const Offset(2, -3),
+                ),
+              ],
+            ),
           ),
+
+          const Spacer(),
+
+          // Плавная анимация числа от предыдущего к новому
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: prev, end: value),
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeOut,
+            builder: (context, animatedValue, child) {
+              return Text(
+                '${animatedValue.toStringAsFixed(2)} BGN',
+                style: GoogleFonts.tourney(
+                  fontSize: 32,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              );
+            },
+
+            onEnd: () {
+              // обновляем prev чтобы следующий tween начинался корректно
+              _prevValues[label] = value;
+            },
+          ),
+
+          //const SizedBox(width: 10),
+          /* Text(
+            rangeMystery,
+            style: TextStyle(color: Colors.white70, fontSize: 18),
+          ), */
         ],
       ),
     );

@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     //await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
 
     if (user != null && password != null) {
-      context.go('/wheel'); // если авторизован
+      context.go('/jackpot'); // если авторизован
     } else {
       context.go('/authorization'); // если нет
     }

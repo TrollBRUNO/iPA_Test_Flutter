@@ -109,7 +109,7 @@ class MqttJackpotService {
     */
 
     logger.i('EXAMPLE::Sleeping....');
-    await MqttUtilities.asyncSleep(10);
+    await MqttUtilities.asyncSleep(1000);
 
     logger.i('EXAMPLE::Unsubscribing');
     client.unsubscribe(topic);
