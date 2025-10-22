@@ -43,7 +43,7 @@ class AuthService {
         jwt = response.data['token'] ?? response.data['jwt'];
       }
 
-      logger.i('JWT received: $jwt');
+      //logger.i('JWT received: $jwt');
 
       if (jwt == null || jwt.isEmpty) return null;
 

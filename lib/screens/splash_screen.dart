@@ -24,10 +24,13 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 1)); // для красоты
 
     //чтобы ресетнуть колесо
-    //await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
+    await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
+    //await prefs.setString('bonus_balance', '0');
+
+    //await prefs.remove('bonus_balance');
 
     if (user != null && password != null) {
-      context.go('/jackpot'); // если авторизован
+      context.go('/profile'); // если авторизован
     } else {
       context.go('/authorization'); // если нет
     }

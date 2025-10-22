@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +33,19 @@ class _ProfileState extends State<ProfilePage> {
   static const String _login = 'login';
   static const String _password = 'password';
 
-  String? balanceCount = "";
+  String? balanceCount = "0";
+  String? bonusBalanceCount = "0";
+
+  Timer? _balanceTimer;
 
   @override
   void initState() {
     super.initState();
     _loadBalance();
+
+    _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) _loadBalance();
+    });
   }
 
   Future<void> _loadBalance() async {
@@ -49,13 +58,21 @@ class _ProfileState extends State<ProfilePage> {
       }
     }
 
-    final balance = await AuthService.getBalance(jwtToken);
+    try {
+      final balance = await AuthService.getBalance(jwtToken);
 
-    setState(() {
-      balanceCount = balance;
-    });
+      final prefs = await SharedPreferences.getInstance();
 
-    logger.i("BALANCE: $balanceCount");
+      if (!mounted) return;
+      setState(() {
+        balanceCount = balance;
+        bonusBalanceCount = prefs.getString('bonus_balance') ?? "0";
+      });
+
+      //logger.i("BALANCE: $balanceCount BONUS: $bonusBalanceCount");
+    } catch (e, st) {
+      logger.w('Error loading balance: $e\n$st');
+    }
   }
 
   @override
@@ -141,6 +158,15 @@ class _ProfileState extends State<ProfilePage> {
                               '${'balance'.tr()} $balanceCount',
                               style: GoogleFonts.manrope(
                                 fontSize: 28,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              '(+$bonusBalanceCount бонус)',
+                              style: GoogleFonts.manrope(
+                                fontSize: 24,
+                                color: const Color.fromARGB(255, 71, 71, 71),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

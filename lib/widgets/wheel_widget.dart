@@ -2,12 +2,14 @@ import 'dart:async';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
+import 'package:first_app_flutter/class/prize.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WheelWidget extends StatefulWidget {
@@ -136,43 +138,43 @@ class _WheelState extends State<WheelWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final prizeList = <String>[
-      '20 BGN',
-      '10 BGN',
-      '50 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
-      '20 BGN',
-      '10 BGN',
-      '50 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
-      '20 BGN',
-      '10 BGN',
-      '50 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
-      '20 BGN',
-      '10 BGN',
-      '100 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
-      '20 BGN',
-      '10 BGN',
-      '40 BGN',
+    final prizeList = <Prize>[
+      const Prize(20),
+      const Prize(10),
+      const Prize(50),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
+      const Prize(20),
+      const Prize(10),
+      const Prize(50),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
+      const Prize(20),
+      const Prize(10),
+      const Prize(50),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
+      const Prize(20),
+      const Prize(10),
+      const Prize(100),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
+      const Prize(20),
+      const Prize(10),
+      const Prize(40),
     ];
 
     return Scaffold(
@@ -202,13 +204,13 @@ class _WheelState extends State<WheelWidget> {
                   ),
                 ],
                 items: List.generate(prizeList.length, (index) {
-                  final value = prizeList[index];
+                  final prize = prizeList[index];
                   final Color bgColor;
 
                   double fontSize = 22.0;
                   Color textColor = Colors.white;
-                  switch (value) {
-                    case '10 BGN':
+                  switch (prize.value) {
+                    case 10:
                       bgColor = const Color.fromARGB(
                         255,
                         255,
@@ -216,7 +218,7 @@ class _WheelState extends State<WheelWidget> {
                         193,
                       ); // светло-розовый
                       break;
-                    case '20 BGN':
+                    case 20:
                       bgColor = const Color.fromARGB(
                         255,
                         244,
@@ -224,7 +226,7 @@ class _WheelState extends State<WheelWidget> {
                         179,
                       ); // розовый
                       break;
-                    case '40 BGN':
+                    case 40:
                       bgColor = const Color.fromARGB(
                         255,
                         224,
@@ -232,7 +234,7 @@ class _WheelState extends State<WheelWidget> {
                         146,
                       ); // фуксия
                       break;
-                    case '50 BGN':
+                    case 50:
                       bgColor = const Color.fromARGB(
                         255,
                         205,
@@ -240,7 +242,7 @@ class _WheelState extends State<WheelWidget> {
                         119,
                       ); // малиновый
                       break;
-                    case '100 BGN':
+                    case 100:
                       // для градиента создаём контейнер ниже
                       bgColor = Colors.transparent;
                       fontSize = 30.0;
@@ -250,7 +252,7 @@ class _WheelState extends State<WheelWidget> {
                       bgColor = Colors.grey;
                   }
 
-                  final bool isBigWin = value == '100 BGN';
+                  final bool isBigWin = prize.value == 100;
 
                   return FortuneItem(
                     style: isBigWin
@@ -281,7 +283,7 @@ class _WheelState extends State<WheelWidget> {
                                 ),
                                 padding: const EdgeInsets.only(left: 12.0),
                                 child: Text(
-                                  value,
+                                  prize.formatted,
                                   style: TextStyle(
                                     fontSize: fontSize,
                                     color: textColor,
@@ -292,7 +294,7 @@ class _WheelState extends State<WheelWidget> {
                             : Padding(
                                 padding: const EdgeInsets.only(left: 12.0),
                                 child: Text(
-                                  value,
+                                  prize.formatted,
                                   style: TextStyle(
                                     fontSize: fontSize,
                                     color: textColor,
@@ -307,10 +309,21 @@ class _WheelState extends State<WheelWidget> {
 
                 onFling: () => startSpin(prizeList.length),
 
-                onAnimationEnd: () {
+                onAnimationEnd: () async {
+                  final prefs = await SharedPreferences.getInstance();
                   final prize = prizeList[lastSelectedIndex ?? 0];
 
-                  showPrizeDialog(prize);
+                  final bonusBalance = prefs.getString('bonus_balance') ?? "0";
+                  final bonusBalanceToDouble =
+                      int.tryParse(bonusBalance) ?? 0.0;
+
+                  final currentBalance = bonusBalanceToDouble + prize.value;
+
+                  await prefs.setString(
+                    'bonus_balance',
+                    currentBalance.toString(),
+                  );
+                  showPrizeDialog(prize.formatted);
                 },
               ),
             ),
