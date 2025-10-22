@@ -80,7 +80,7 @@ class _WheelState extends State<WheelWidget> {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
-      barrierLabel: "AbsDialog",
+      barrierLabel: "AdsDialog",
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (_, __, ___) => const SizedBox.shrink(),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -188,7 +188,7 @@ class _WheelState extends State<WheelWidget> {
               child: FortuneWheel(
                 rotationCount: 30,
                 curve: Curves.easeOutCirc,
-                duration: Duration(milliseconds: 20000),
+                duration: Duration(milliseconds: 1000),
                 animateFirst: false,
                 hapticImpact: HapticImpact.medium,
                 selected: selected.stream,

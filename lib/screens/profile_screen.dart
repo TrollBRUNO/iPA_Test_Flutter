@@ -163,7 +163,7 @@ class _ProfileState extends State<ProfilePage> {
                             ),
                             SizedBox(width: 8),
                             Text(
-                              '(+$bonusBalanceCount бонус)',
+                              '(+$bonusBalanceCount ${'bonus'.tr()})',
                               style: GoogleFonts.manrope(
                                 fontSize: 24,
                                 color: const Color.fromARGB(255, 71, 71, 71),

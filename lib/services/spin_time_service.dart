@@ -16,7 +16,7 @@ class SpinTimeService {
       final response = await http
           .get(Uri.parse(_apiUrl))
           .timeout(
-            const Duration(seconds: 3),
+            const Duration(seconds: 1),
             onTimeout: () {
               logger.i(
                 'Время сервера превысило лимит ожидания, используем локальное время',

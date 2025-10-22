@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -57,8 +58,14 @@ class _AdsDialogState extends State<AdsDialogWidget>
                 BoxShadow(
                   color: Colors.pinkAccent.withOpacity(0.4),
                   blurRadius: 20,
-                  spreadRadius: 5,
-                  offset: const Offset(0, 8),
+                  spreadRadius: 10,
+                  offset: const Offset(0, 0),
+                ),
+                BoxShadow(
+                  color: const Color.fromARGB(255, 244, 105, 179),
+                  blurRadius: 1,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 0),
                 ),
               ],
             ),
@@ -80,7 +87,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
                     ),
                     const SizedBox(height: 30),
                     Text(
-                      "Играйте из дома!",
+                      "play_home".tr(),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.pacifico(
                         fontSize: 52,
@@ -91,9 +98,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      "Примите возможность поучаствовать в новом проекте! "
-                      "Играйте в любимые игры прямо из дома — "
-                      "в реальном времени, как на настоящем игровом автомате!",
+                      "description_ads".tr(),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 26,
@@ -148,7 +153,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
         ),
         child: Center(
           child: Text(
-            "Попробовать",
+            "lets_try".tr(),
             style: GoogleFonts.poppins(
               fontSize: 38,
               color: Colors.white,

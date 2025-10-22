@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'dart:ui';
 //import 'package:first_app_flutter/screens/camera_live_screen.dart';
 //import 'package:first_utter/trash/camera_viewer_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
 import 'package:first_app_flutter/widgets/camera_widget.dart';
@@ -181,7 +182,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Адрес:",
+                            "address".tr(),
                             style: GoogleFonts.roboto(
                               color: Colors.white,
                               fontSize: 30,
@@ -200,7 +201,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                           const SizedBox(height: 48),
 
                           Text(
-                            "Джекпоты:",
+                            "jackpot".tr(),
                             style: GoogleFonts.roboto(
                               color: Colors.white,
                               fontSize: 30,
@@ -219,7 +220,10 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                               '82dee2d3-0893-4a4d-b9bc-129179b692c2',
                               'a1360da3-09ea-4dde-b0e7-1f23bcc592e1',
                             ],
-                            cameraNames: ['Камера 1', 'Камера 2'],
+                            cameraNames: [
+                              '${'camera'.tr()} 1',
+                              '${'camera'.tr()} 2',
+                            ],
                           ),
 
                           const SizedBox(height: 24),
@@ -249,7 +253,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                'LIVE ТРАНСЛЯЦИЯ',
+                                'live'.tr(),
                                 style: GoogleFonts.roboto(
                                   color: Colors.white,
                                   fontSize: 20,
