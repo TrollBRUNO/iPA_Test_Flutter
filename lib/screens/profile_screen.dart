@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/widgets/statistics_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,6 +47,31 @@ class _ProfileState extends State<ProfilePage> {
     _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) _loadBalance();
     });
+  }
+
+  void showStatisticsDialog(String prize) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "PrizeDialog",
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(parent: animation, curve: Curves.easeIn);
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: StatisticsDialogWidget(
+              prize: prize,
+              onClaim: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _loadBalance() async {
@@ -231,21 +257,7 @@ class _ProfileState extends State<ProfilePage> {
                         ),
                       ),
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: Text('statistics'.tr()),
-                            content: Text('СТАТИСТИКА НА ИГРАЧА\n\n'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // Закрыть диалог
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
+                        showStatisticsDialog("1000");
                       },
                     ),
                     Divider(height: 24, color: Colors.black45),

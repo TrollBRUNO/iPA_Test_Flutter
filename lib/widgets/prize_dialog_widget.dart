@@ -214,7 +214,7 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
     );
   }
 
-  Widget _buildButton() {
+  /* Widget _buildButton() {
     return GestureDetector(
       child: Container(
         width: double.infinity,
@@ -246,5 +246,5 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
         ),
       ),
     );
-  }
+  } */
 }
