@@ -2,83 +2,85 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Widget buildStatisticsRow(BuildContext context, DateTime date, int prize) {
   // Цвет в зависимости от типа джекпота
   Color labelColor;
   Color shadowColor;
-  IconData iconPrize;
+
+  final isBigWin = prize == 100;
+
   switch (prize) {
     case 10:
-      labelColor = const Color.fromARGB(255, 255, 182, 193); // светло-розовый
-      shadowColor = const Color.fromARGB(255, 244, 105, 179).withOpacity(0.5);
-      iconPrize = Icons.attach_money;
+      labelColor = Colors.pinkAccent.shade200;
+      shadowColor = Colors.pink.shade900;
       break;
     case 20:
-      labelColor = const Color.fromARGB(255, 244, 105, 179); // розовый
-      shadowColor = const Color.fromARGB(255, 224, 67, 146).withOpacity(0.6);
-      iconPrize = Icons.attach_money;
+      labelColor = Colors.pink.shade500;
+      shadowColor = Colors.pink.shade900;
       break;
     case 40:
-      labelColor = const Color.fromARGB(255, 224, 67, 146); // фуксия
-      shadowColor = const Color.fromARGB(255, 205, 25, 119).withOpacity(0.9);
-      iconPrize = Icons.attach_money;
+      labelColor = Colors.pink.shade700;
+      shadowColor = Colors.pinkAccent.shade700;
       break;
     case 50:
-      labelColor = const Color.fromARGB(255, 205, 25, 119); // малиновый
-      shadowColor = const Color.fromARGB(255, 145, 16, 70).withOpacity(0.5);
-      iconPrize = Icons.attach_money;
+      labelColor = Colors.deepPurple.shade600; // малиновый
+      shadowColor = Colors.deepPurple.shade300;
       break;
     case 100:
-      labelColor = const Color.fromARGB(255, 255, 190, 51);
-      shadowColor = const Color.fromARGB(255, 128, 0, 0).withOpacity(0.9);
-      iconPrize = Icons.star;
+      labelColor = Colors.orange.shade400;
+      shadowColor = Colors.black87;
       break;
     default:
       labelColor = Colors.white;
       shadowColor = Colors.white;
-      iconPrize = Icons.abc;
   }
 
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 24),
     child: Row(
       children: [
-        Icon(
-          iconPrize,
-          color: labelColor,
-          size: 25,
-          shadows: [
-            Shadow(color: shadowColor, blurRadius: 10, offset: Offset(2, 2)),
-          ],
-        ),
+        if (isBigWin)
+          Icon(
+            Icons.star,
+            color: labelColor,
+            size: 36,
+            shadows: [
+              Shadow(color: shadowColor, blurRadius: 4, offset: Offset(3, 1)),
+            ],
+          ),
 
-        const SizedBox(width: 10),
+        SizedBox(width: isBigWin ? 12 : 48),
 
         Text(
           '${DateFormat("d MMMM y", context.locale.languageCode).format(date)}:  ',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 30),
         ),
 
         Text(
           '$prize BGN',
-          style: TextStyle(
+          style: GoogleFonts.radioCanada(
             color: labelColor,
-            fontSize: 25,
-            fontWeight: FontWeight.w800,
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+            shadows: [
+              Shadow(color: shadowColor, blurRadius: 2, offset: Offset(2, 1)),
+            ],
           ),
         ),
 
-        const SizedBox(width: 10),
+        const SizedBox(width: 12),
 
-        Icon(
-          iconPrize,
-          color: labelColor,
-          size: 25,
-          shadows: [
-            Shadow(color: shadowColor, blurRadius: 10, offset: Offset(2, 2)),
-          ],
-        ),
+        if (isBigWin)
+          Icon(
+            Icons.star,
+            color: labelColor,
+            size: 36,
+            shadows: [
+              Shadow(color: shadowColor, blurRadius: 4, offset: Offset(-3, 1)),
+            ],
+          ),
       ],
     ),
   );

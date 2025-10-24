@@ -26,9 +26,9 @@ final List<Statistics> galleryList = [
 
   Statistics(publicationDate: DateTime(2025, 10, 20), prizeCount: 100),
 
-  Statistics(publicationDate: DateTime(2025, 10, 12), prizeCount: 50),
+  Statistics(publicationDate: DateTime(2025, 10, 12), prizeCount: 40),
 
-  Statistics(publicationDate: DateTime(2025, 9, 30), prizeCount: 10),
+  Statistics(publicationDate: DateTime(2025, 9, 30), prizeCount: 40),
 
   Statistics(publicationDate: DateTime(2025, 9, 22), prizeCount: 20),
 
@@ -142,19 +142,27 @@ class _StatisticsDialogState extends State<StatisticsDialogWidget>
                       SizedBox(height: 24),
                       Flexible(
                         child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          color: Colors.black.withOpacity(0.04),
                           constraints: BoxConstraints(maxHeight: 600),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: galleryList
-                                  .map(
-                                    (stat) => buildStatisticsRow(
-                                      context,
-                                      stat.publicationDate,
-                                      stat.prizeCount,
-                                    ),
-                                  )
-                                  .toList(),
+                          child: Scrollbar(
+                            thumbVisibility:
+                                false, // <- полоса будет всегда видна
+                            radius: const Radius.circular(20),
+                            thickness: 4, // толщина полосы
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: galleryList
+                                    .map(
+                                      (stat) => buildStatisticsRow(
+                                        context,
+                                        stat.publicationDate,
+                                        stat.prizeCount,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
                             ),
                           ),
                         ),
