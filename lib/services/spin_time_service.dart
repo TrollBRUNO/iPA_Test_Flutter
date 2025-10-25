@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,18 +46,18 @@ class SpinTimeService {
     final lastSpinString = prefs.getString('last_spin_date');
     final now = await getServerTime();
 
-    if (lastSpinString == null) return false;
+    if (lastSpinString == null) return true;
 
     final lastSpin = DateTime.parse(lastSpinString);
 
-    // Проверяем, другой ли календарный день (UTC)
-    if (now.year > lastSpin.year ||
-        now.month > lastSpin.month ||
-        now.day > lastSpin.day) {
-      return true;
-    }
-
-    return false;
+    // Сравниваем только календарные даты в UTC — если сегодня позже даты последнего спина, разрешаем
+    final todayUtc = DateTime.utc(now.year, now.month, now.day);
+    final lastDayUtc = DateTime.utc(
+      lastSpin.year,
+      lastSpin.month,
+      lastSpin.day,
+    );
+    return todayUtc.isAfter(lastDayUtc);
   }
 
   static Future<void> saveSpinDate() async {

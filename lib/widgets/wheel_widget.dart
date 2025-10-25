@@ -21,8 +21,30 @@ class WheelWidget extends StatefulWidget {
 
 class _WheelState extends State<WheelWidget> {
   StreamController<int> selected = StreamController<int>();
-  bool isSpinning = false;
   int? lastSelectedIndex;
+  bool _canSpinToday = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpinAvailability();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Обновляем статус при каждом возвращении на экран
+    _loadSpinAvailability();
+  }
+
+  Future<void> _loadSpinAvailability() async {
+    final prefs = await SharedPreferences.getInstance();
+    final canSpin = prefs.getBool('can_spin_today') ?? true;
+
+    setState(() {
+      _canSpinToday = canSpin;
+    });
+  }
 
   @override
   void dispose() {
@@ -31,20 +53,24 @@ class _WheelState extends State<WheelWidget> {
   }
 
   void startSpin(int length) async {
-    final canSpin = await SpinTimeService.canSpinToday();
-    if (!canSpin) {
-      showInfoDialog(); // или свой диалог "Попробуй завтра!"
+    if (!_canSpinToday) {
+      showInfoDialog();
       return;
     }
 
-    await SpinTimeService.saveSpinDate(); // сохраняем дату после начала кручения
-
     final index = Fortune.randomInt(0, length);
     setState(() {
-      isSpinning = true;
       lastSelectedIndex = index;
       selected.add(index);
     });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('can_spin_today', false);
+    setState(() {
+      _canSpinToday = false;
+    });
+
+    await SpinTimeService.saveSpinDate(); // сохраняем дату после начала кручения
   }
 
   void showPrizeDialog(String prize) {
@@ -188,7 +214,7 @@ class _WheelState extends State<WheelWidget> {
               child: FortuneWheel(
                 rotationCount: 30,
                 curve: Curves.easeOutCirc,
-                duration: Duration(milliseconds: 1000),
+                duration: Duration(milliseconds: 20000),
                 animateFirst: false,
                 hapticImpact: HapticImpact.medium,
                 selected: selected.stream,
