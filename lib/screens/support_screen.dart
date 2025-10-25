@@ -215,9 +215,9 @@ class _SupportState extends State<SupportPage> {
                                       color: Colors.white,
                                     ),
                                     const SizedBox(width: 12),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        'Дорогой пользователь, ваша заявка отправлена в поддержку. Мы свяжемся с вами в ближайшее время и решим проблему.',
+                                        'successful_send'.tr(),
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,

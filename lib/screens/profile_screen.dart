@@ -116,11 +116,13 @@ class _ProfileState extends State<ProfilePage> {
             const SizedBox(height: 120),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.locale.languageCode == 'bg' ? 24 : 36,
+              ),
               child: Text(
                 'your_profile'.tr(),
                 style: GoogleFonts.daysOne(
-                  fontSize: 84,
+                  fontSize: context.locale.languageCode == 'bg' ? 76 : 84,
                   fontWeight: FontWeight.normal,
                   fontStyle: FontStyle.normal,
                   color: Colors.orangeAccent[200],
@@ -135,7 +137,7 @@ class _ProfileState extends State<ProfilePage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: context.locale.languageCode == 'bg' ? 30 : 20),
 
             Card(
               color: Colors.orangeAccent[200],

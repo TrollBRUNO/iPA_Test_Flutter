@@ -26,6 +26,7 @@
   "describe_problem" : "Describe your problem.",
   "warning_describe_problem" : "Please enter a description of your problem.",
   "send" : "Send",
+  "successful_send": "Dear user, your application has been sent to support. We will read it soon and solve the problem.",
   "confidentiality": "Confidentiality",
   "confidentiality_condition": "Confidentiality and conditions",
   "logout": "Log out account",
