@@ -143,7 +143,7 @@ class _StatisticsDialogState extends State<StatisticsDialogWidget>
                       Flexible(
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 16),
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withOpacity(0.02),
                           constraints: BoxConstraints(maxHeight: 600),
                           child: Scrollbar(
                             thumbVisibility:

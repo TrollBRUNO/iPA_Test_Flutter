@@ -80,6 +80,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                     key: Key('login_controller'),
                     controller: _loginController,
                     focusNode: _loginFocus,
+                    textInputAction: TextInputAction.next,
 
                     style: TextStyle(fontSize: 24, color: Colors.white70),
 
@@ -117,6 +118,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                     key: Key('password_controller'),
                     controller: _passwordController,
                     focusNode: _passwordFocus,
+                    textInputAction: TextInputAction.done,
 
                     style: TextStyle(fontSize: 24, color: Colors.white70),
 
