@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:first_app_flutter/class/prize.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
@@ -164,6 +165,8 @@ class _WheelState extends State<WheelWidget> {
 
   @override
   Widget build(BuildContext context) {
+    AdaptiveSizes.init(context);
+
     final prizeList = <Prize>[
       const Prize(20),
       const Prize(10),
@@ -222,9 +225,9 @@ class _WheelState extends State<WheelWidget> {
                   FortuneIndicator(
                     alignment: Alignment.topCenter,
                     child: TriangleIndicator(
-                      color: const Color.fromARGB(255, 255, 160, 51),
-                      width: 30,
-                      height: 40,
+                      color: Colors.orangeAccent[200],
+                      width: 20,
+                      height: 20,
                       elevation: 20,
                     ),
                   ),
@@ -233,7 +236,7 @@ class _WheelState extends State<WheelWidget> {
                   final prize = prizeList[index];
                   final Color bgColor;
 
-                  double fontSize = 22.0;
+                  double fontSize = AdaptiveSizes.getFontPrizeSize();
                   Color textColor = Colors.white;
                   switch (prize.value) {
                     case 10:
@@ -271,7 +274,7 @@ class _WheelState extends State<WheelWidget> {
                     case 100:
                       // для градиента создаём контейнер ниже
                       bgColor = Colors.transparent;
-                      fontSize = 30.0;
+                      fontSize = AdaptiveSizes.getFontBigPrizeSize();
                       textColor = const Color.fromARGB(255, 255, 190, 51);
                       break;
                     default:
@@ -307,7 +310,7 @@ class _WheelState extends State<WheelWidget> {
                                     ],
                                   ),
                                 ),
-                                padding: const EdgeInsets.only(left: 12.0),
+                                padding: AdaptiveSizes.getLeftPrizePadding(),
                                 child: Text(
                                   prize.formatted,
                                   style: TextStyle(
@@ -318,7 +321,7 @@ class _WheelState extends State<WheelWidget> {
                                 ),
                               )
                             : Padding(
-                                padding: const EdgeInsets.only(left: 12.0),
+                                padding: AdaptiveSizes.getLeftPrizePadding(),
                                 child: Text(
                                   prize.formatted,
                                   style: TextStyle(

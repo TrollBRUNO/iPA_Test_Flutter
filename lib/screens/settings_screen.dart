@@ -1,3 +1,4 @@
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -21,7 +22,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsState extends State<SettingsPage> {
-  //final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   void _showLanguageDialog(BuildContext context) {
     showDialog(
@@ -103,104 +104,128 @@ class _SettingsState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    AdaptiveSizes.init(context);
+
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            const SizedBox(height: 100),
-
-            Positioned(
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.orangeAccent[200],
-                  size: 32,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'settings'.tr(),
-                style: GoogleFonts.daysOne(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w100,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.orangeAccent[200],
-                  shadows: const [
-                    Shadow(
-                      color: Color.fromARGB(255, 51, 51, 51),
-                      offset: Offset(3.5, 4.5),
-                      blurRadius: 3,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 32.0,
-                vertical: 6,
-              ),
-              child: Container(
-                height: 100,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 25.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'app_language'.tr(),
-                            style: GoogleFonts.raleway(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 12,
+                          left: 8,
+                          right: 8,
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Кнопка "назад" — слева
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back_ios_new_rounded,
+                                  color: Colors.orangeAccent[200],
+                                  size: AdaptiveSizes.getIconBackSettingsSize(),
+                                ),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
                             ),
-                          ),
-                        ],
+
+                            // Заголовок — по центру
+                            Text(
+                              'settings'.tr(),
+                              style: GoogleFonts.daysOne(
+                                fontSize: AdaptiveSizes.getFontUsernameSize(),
+                                fontWeight: FontWeight.w100,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.orangeAccent[200],
+                                shadows: const [
+                                  Shadow(
+                                    color: Color.fromARGB(255, 51, 51, 51),
+                                    offset: Offset(3.5, 4.5),
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Открыть выбор языка
-                        _showLanguageDialog(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: Text(
-                          _getCurrentLanguageText(context),
-                          style: GoogleFonts.raleway(
-                            fontSize: 24,
-                            color: Colors.orangeAccent[200],
-                            fontWeight: FontWeight.w700,
+
+                      const SizedBox(height: 20),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32.0,
+                          vertical: 6,
+                        ),
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E1E1E),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 25.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'app_language'.tr(),
+                                      style: GoogleFonts.raleway(
+                                        fontSize:
+                                            AdaptiveSizes.getFontLanguageSize(),
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Открыть выбор языка
+                                  _showLanguageDialog(context);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 20.0),
+                                  child: Text(
+                                    _getCurrentLanguageText(context),
+                                    style: GoogleFonts.raleway(
+                                      fontSize:
+                                          AdaptiveSizes.getFontLanguageSize(),
+                                      color: Colors.orangeAccent[200],
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-
-            const SizedBox(height: 20),
-          ],
+            );
+          },
         ),
       ),
     );
