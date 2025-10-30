@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, unnecessary_string_interpolations
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,45 +39,50 @@ Widget buildStatisticsRow(BuildContext context, DateTime date, int prize) {
   }
 
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 24),
+    padding: AdaptiveSizes.getStatisticsRowPadding(),
     child: Row(
       children: [
         if (isBigWin)
           Icon(
             Icons.star,
             color: labelColor,
-            size: 36,
+            size: AdaptiveSizes.getFontUsernameSize(),
             shadows: [
               Shadow(color: shadowColor, blurRadius: 4, offset: Offset(3, 1)),
             ],
           ),
 
-        SizedBox(width: isBigWin ? 12 : 48),
+        SizedBox(
+          width: isBigWin ? AdaptiveSizes.h(0.00769) : AdaptiveSizes.h(0.03076),
+        ),
 
         Text(
           '${DateFormat("d MMMM y", context.locale.languageCode).format(date)}:  ',
-          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 30),
+          style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: AdaptiveSizes.getIconBackSettingsSize(),
+          ),
         ),
 
         Text(
           '$prize BGN',
           style: GoogleFonts.radioCanada(
             color: labelColor,
-            fontSize: 30,
+            fontSize: AdaptiveSizes.getIconBackSettingsSize(),
             fontWeight: FontWeight.w700,
             shadows: [
-              Shadow(color: shadowColor, blurRadius: 2, offset: Offset(2, 1)),
+              Shadow(color: shadowColor, blurRadius: 2, offset: Offset(2, 2)),
             ],
           ),
         ),
 
-        const SizedBox(width: 12),
+        SizedBox(width: AdaptiveSizes.w(0.01666)),
 
         if (isBigWin)
           Icon(
             Icons.star,
             color: labelColor,
-            size: 36,
+            size: AdaptiveSizes.getFontUsernameSize(),
             shadows: [
               Shadow(color: shadowColor, blurRadius: 4, offset: Offset(-3, 1)),
             ],

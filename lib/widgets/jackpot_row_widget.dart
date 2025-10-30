@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 
 Widget buildJackpotRow(
@@ -18,54 +19,54 @@ Widget buildJackpotRow(
     case 'mini':
       labelColor = Colors.cyanAccent;
       shadowColor = const Color.fromARGB(255, 0, 124, 128).withOpacity(0.5);
-      labelSize = 30;
-      countSize = 26;
+      labelSize = AdaptiveSizes.getIconBackSettingsSize();
+      countSize = AdaptiveSizes.getJackpotCountSize();
       iconJackpot = Icons.star_border_purple500_rounded;
       rangeMystery = "(300 - 800 BGN)";
       break;
     case 'middle':
       labelColor = Colors.blueAccent;
       shadowColor = const Color.fromARGB(255, 0, 0, 128).withOpacity(0.6);
-      labelSize = 30;
-      countSize = 26;
+      labelSize = AdaptiveSizes.getIconBackSettingsSize();
+      countSize = AdaptiveSizes.getJackpotCountSize();
       iconJackpot = Icons.grade_outlined;
       rangeMystery = "(1200 - 2500 BGN)";
       break;
     case 'mega':
       labelColor = Colors.deepPurpleAccent;
       shadowColor = const Color.fromARGB(255, 92, 0, 128).withOpacity(0.9);
-      labelSize = 30;
-      countSize = 26;
+      labelSize = AdaptiveSizes.getIconBackSettingsSize();
+      countSize = AdaptiveSizes.getJackpotCountSize();
       iconJackpot = Icons.auto_awesome_outlined;
       rangeMystery = "(7000 - 10000 BGN)";
       break;
     case 'major':
       labelColor = Colors.greenAccent;
       shadowColor = const Color.fromARGB(255, 15, 128, 0).withOpacity(0.5);
-      labelSize = 36;
-      countSize = 30;
+      labelSize = AdaptiveSizes.getFontUsernameSize();
+      countSize = AdaptiveSizes.getIconBackSettingsSize();
       iconJackpot = Icons.grade_outlined;
       rangeMystery = "(500 - 1500 BGN)";
       break;
     case 'grand':
       labelColor = Colors.redAccent;
       shadowColor = const Color.fromARGB(255, 128, 0, 0).withOpacity(0.9);
-      labelSize = 36;
-      countSize = 30;
+      labelSize = AdaptiveSizes.getFontUsernameSize();
+      countSize = AdaptiveSizes.getIconBackSettingsSize();
       iconJackpot = Icons.auto_awesome_outlined;
       rangeMystery = "(8000 - 20000 BGN)";
       break;
     default:
       labelColor = Colors.white;
       shadowColor = Colors.white;
-      labelSize = 30;
-      countSize = 30;
+      labelSize = AdaptiveSizes.getJackpotCountSize();
+      countSize = AdaptiveSizes.getJackpotCountSize();
       iconJackpot = Icons.abc;
       rangeMystery = "10000-20000";
   }
 
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: EdgeInsets.symmetric(vertical: 4),
     child: Row(
       children: [
         Icon(
@@ -77,7 +78,7 @@ Widget buildJackpotRow(
           ],
         ),
 
-        const SizedBox(width: 10),
+        SizedBox(width: AdaptiveSizes.w(0.01388)),
 
         Text(
           '$label: ',
@@ -106,11 +107,14 @@ Widget buildJackpotRow(
                 style: TextStyle(color: Colors.white, fontSize: countSize),
               ),
 
-        const SizedBox(width: 10),
+        SizedBox(width: AdaptiveSizes.w(0.01388)),
 
         Text(
           rangeMystery,
-          style: TextStyle(color: Colors.white70, fontSize: 21),
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: AdaptiveSizes.getRangeJackpotSize(),
+          ),
         ),
       ],
     ),

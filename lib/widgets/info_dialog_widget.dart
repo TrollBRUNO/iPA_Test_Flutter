@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 
 class InfoDialogWidget extends StatefulWidget {
@@ -81,7 +83,12 @@ class _InfoDialogState extends State<InfoDialogWidget>
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text("Окей"),
+                      child: Text(
+                        'okay'.tr(),
+                        style: TextStyle(
+                          fontSize: AdaptiveSizes.getFontPrizeSize(),
+                        ),
+                      ),
                     ),
                   ),
                 ],

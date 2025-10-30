@@ -1,5 +1,6 @@
 import 'package:confetti/confetti.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -58,7 +59,9 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
             ConfettiWidget(
               confettiController: _confettiController,
               blastDirectionality: BlastDirectionality.explosive,
-              numberOfParticles: isBigWin ? 140 : 100,
+              numberOfParticles: isBigWin
+                  ? AdaptiveSizes.h(0.08974).toInt()
+                  : AdaptiveSizes.h(0.06410).toInt(),
               gravity: 0.1,
               colors: const [
                 Colors.yellow,
@@ -71,8 +74,12 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
 
             // Основной контейнер с тенью
             Container(
-              width: isBigWin ? 600 : 480,
-              height: isBigWin ? 500 : 320,
+              width: isBigWin
+                  ? AdaptiveSizes.getPrizeDialogMaxWidth()
+                  : AdaptiveSizes.getPrizeDialogMinWidth(),
+              height: isBigWin
+                  ? AdaptiveSizes.getPrizeDialogMaxHeight()
+                  : AdaptiveSizes.getPrizeDialogMinHeight(),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -117,15 +124,15 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                           color: isBigWin
                               ? Colors.yellow[100]
                               : Colors.green[400],
-                          size: 80,
+                          size: AdaptiveSizes.getLogoPrizeSize(),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: AdaptiveSizes.h(0.01026)),
                       isBigWin
-                          ? const Text(
+                          ? Text(
                               "BIG WIN",
                               style: TextStyle(
-                                fontSize: 64,
+                                fontSize: AdaptiveSizes.getBigWinFontSize(),
                                 fontWeight: FontWeight.w800,
                                 shadows: [
                                   Shadow(
@@ -138,8 +145,8 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                             )
                           : Text(
                               "congratulate".tr(),
-                              style: const TextStyle(
-                                fontSize: 32,
+                              style: TextStyle(
+                                fontSize: AdaptiveSizes.getFontBigPrizeSize(),
                                 fontWeight: FontWeight.w600,
                                 shadows: [
                                   Shadow(
@@ -150,11 +157,17 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                                 ],
                               ),
                             ),
-                      SizedBox(height: isBigWin ? 24 : 8),
+                      SizedBox(
+                        height: isBigWin
+                            ? AdaptiveSizes.h(0.01539)
+                            : AdaptiveSizes.h(0.00513),
+                      ),
                       Text(
                         "${"you_win".tr()} ${widget.prize}",
                         style: TextStyle(
-                          fontSize: isBigWin ? 52 : 28,
+                          fontSize: isBigWin
+                              ? AdaptiveSizes.getBigWinYouWinPrizeSize()
+                              : AdaptiveSizes.getFontProfileSize(),
                           fontStyle: isBigWin
                               ? FontStyle.italic
                               : FontStyle.normal,
@@ -170,7 +183,11 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                           ],
                         ),
                       ),
-                      SizedBox(height: isBigWin ? 72 : 24),
+                      SizedBox(
+                        height: isBigWin
+                            ? AdaptiveSizes.h(0.04615)
+                            : AdaptiveSizes.h(0.01539),
+                      ),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -188,7 +205,9 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                           child: Text(
                             'take_it'.tr(),
                             style: TextStyle(
-                              fontSize: isBigWin ? 40 : 24,
+                              fontSize: isBigWin
+                                  ? AdaptiveSizes.getFontSettingsSize()
+                                  : AdaptiveSizes.getFontLanguageSize(),
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
                             ),

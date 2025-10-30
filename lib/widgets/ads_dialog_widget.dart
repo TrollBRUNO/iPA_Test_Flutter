@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,96 +37,110 @@ class _AdsDialogState extends State<AdsDialogWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ScaleTransition(
-        scale: _scaleAnim,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            width: 650,
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.orangeAccent.shade100,
-                  Colors.pinkAccent.shade100,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(40),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.pinkAccent.withOpacity(0.4),
-                  blurRadius: 20,
-                  spreadRadius: 10,
-                  offset: const Offset(0, 0),
-                ),
-                BoxShadow(
-                  color: const Color.fromARGB(255, 244, 105, 179),
-                  blurRadius: 1,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 0),
-                ),
-              ],
-            ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 40),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Image.asset(
-                        'assets/images/site.png',
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 300,
+    return SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: ScaleTransition(
+                  scale: _scaleAnim,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      width: AdaptiveSizes.getAdsDialogMaxWidth(),
+                      padding: AdaptiveSizes.getAdsPadding(),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(255, 206, 25, 161),
+                            Color.fromARGB(255, 85, 89, 232),
+                            /* Colors.orangeAccent.shade100,
+                            Colors.pinkAccent.shade100, */
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: AdaptiveSizes.getAdsDialogRadius(),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.pinkAccent.withOpacity(0.4),
+                            blurRadius: 20,
+                            spreadRadius: 10,
+                            offset: const Offset(0, 0),
+                          ),
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 244, 105, 179),
+                            blurRadius: 1,
+                            spreadRadius: 2,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: AdaptiveSizes.h(0.02564)),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(30),
+                                child: Image.asset(
+                                  'assets/images/site.png',
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: AdaptiveSizes.h(0.19230),
+                                ),
+                              ),
+                              SizedBox(height: AdaptiveSizes.h(0.01923)),
+                              Text(
+                                "play_home".tr(),
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.pacifico(
+                                  fontSize:
+                                      AdaptiveSizes.getBigWinYouWinPrizeSize(),
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.deepOrange.shade900,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                              SizedBox(height: AdaptiveSizes.h(0.01282)),
+                              Text(
+                                "description_ads".tr(),
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  fontSize: AdaptiveSizes.getJackpotCountSize(),
+                                  color: Colors.brown.shade800,
+                                  height: 1.4,
+                                ),
+                              ),
+                              SizedBox(height: AdaptiveSizes.h(0.02564)),
+                              _buildFancyButton(),
+                            ],
+                          ),
+                          Positioned(
+                            top: -10,
+                            right: -10,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                size: 34,
+                                color: Colors.black54,
+                              ),
+                              onPressed: widget.onClose,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    Text(
-                      "play_home".tr(),
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.pacifico(
-                        fontSize: 52,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.deepOrange.shade900,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "description_ads".tr(),
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 26,
-                        color: Colors.brown.shade800,
-                        height: 1.4,
-                      ),
-                    ),
-                    SizedBox(height: 40),
-                    _buildFancyButton(),
-                  ],
-                ),
-                Positioned(
-                  top: -10,
-                  right: -10,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      size: 34,
-                      color: Colors.black54,
-                    ),
-                    onPressed: widget.onClose,
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -155,7 +170,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
           child: Text(
             "lets_try".tr(),
             style: GoogleFonts.poppins(
-              fontSize: 38,
+              fontSize: AdaptiveSizes.getFancyButtonTextSize(),
               color: Colors.white,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.1,

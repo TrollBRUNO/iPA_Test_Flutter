@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:first_app_flutter/class/jackpot.dart';
 import 'package:first_app_flutter/screens/jackpot_details_screen.dart';
 import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/jackpot_row_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -33,11 +34,8 @@ class JackpotWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // Собираем список отображаемых полей динамически
     final List<Widget> jackpotValues = [];
-    final EdgeInsets topAddress;
 
     if (jackpot.isMysteryProgressive) {
-      topAddress = EdgeInsets.only(top: 16);
-
       if (jackpot.miniMystery > 0) {
         jackpotValues.add(
           buildJackpotRow(
@@ -66,8 +64,6 @@ class JackpotWidget extends StatelessWidget {
         );
       }
     } else {
-      topAddress = EdgeInsets.only(top: 48);
-
       if (jackpot.majorBellLink > 0) {
         jackpotValues.add(
           buildJackpotRow(
@@ -134,12 +130,12 @@ class JackpotWidget extends StatelessWidget {
       child: Hero(
         tag: jackpot.city, // Уникальный идентификатор
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          height: 310, // задай нужную высоту
+          margin: AdaptiveSizes.getJackpotWidgetPadding(),
+          height: AdaptiveSizes.getJackpotWidgetHeight(),
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: AdaptiveSizes.getJackpotWidgetBorderRadius(),
             boxShadow: [
               BoxShadow(
                 color: Colors.white.withOpacity(0.6),
@@ -171,7 +167,7 @@ class JackpotWidget extends StatelessWidget {
 
               // Контент карточки
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                padding: AdaptiveSizes.getJackpotContentWidgetPadding(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -179,23 +175,20 @@ class JackpotWidget extends StatelessWidget {
                     Center(
                       child: Text(
                         jackpot.city,
-                        style: const TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: AdaptiveSizes.getCityJackpotTextStyle(),
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    SizedBox(height: AdaptiveSizes.h(0.00769)),
 
                     Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      padding:
+                          AdaptiveSizes.getJackpotContentWidgetThirdPadding(
+                            jackpot.isMysteryProgressive,
+                          ),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 6,
-                        ),
+                        padding:
+                            AdaptiveSizes.getJackpotContentWidgetSecondPadding(),
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
@@ -211,7 +204,8 @@ class JackpotWidget extends StatelessWidget {
                             ),
                           ],
                           color: const Color.fromARGB(20, 212, 212, 212),
-                          borderRadius: BorderRadius.circular(36),
+                          borderRadius:
+                              AdaptiveSizes.getJackpotWidgetBorderSecondRadius(),
                         ),
                         // Джекпоты
                         child: Expanded(
@@ -222,22 +216,21 @@ class JackpotWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                    // Адрес внизу слева
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: topAddress,
-                        child: Text(
-                          jackpot.address,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
+                ),
+              ),
+              Positioned(
+                left: 16,
+                bottom: 8,
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    jackpot.address,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: AdaptiveSizes.getAddressSize(),
+                    ),
+                  ),
                 ),
               ),
 
@@ -265,15 +258,12 @@ class JackpotWidget extends StatelessWidget {
                       ),
                     ],
                     color: Colors.red,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius:
+                        AdaptiveSizes.getLiveJackpotWidgetBorderRadius(),
                   ),
-                  child: const Text(
+                  child: Text(
                     'LIVE',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+                    style: AdaptiveSizes.getLiveJackpotTextStyle(),
                   ),
                 ),
               ),

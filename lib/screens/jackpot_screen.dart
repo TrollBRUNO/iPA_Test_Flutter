@@ -9,6 +9,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/jackpot.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/jackpot_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -182,15 +183,19 @@ class _JackpotState extends State<JackpotPage> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: 160,
+            expandedHeight: AdaptiveSizes.h(0.10256),
             elevation: 0,
             backgroundColor: Colors.transparent,
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 final percent =
                     (constraints.maxHeight - kToolbarHeight) /
-                    (180 - kToolbarHeight);
-                final double fontSize = 32 + (62 - 32) * percent;
+                    (AdaptiveSizes.getJackpotPercentSize() - kToolbarHeight);
+                final double fontSize =
+                    AdaptiveSizes.getJackpotLogoFontSize() +
+                    (AdaptiveSizes.getJackpotLogoFontSecondSize() -
+                            AdaptiveSizes.getJackpotLogoFontSize()) *
+                        percent;
 
                 return Stack(
                   fit: StackFit.expand,
@@ -222,7 +227,7 @@ class _JackpotState extends State<JackpotPage> {
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 30, bottom: 10),
+                        padding: const EdgeInsets.only(bottom: 10),
                         child: Text(
                           'online_jackpot'.tr(),
                           style: GoogleFonts.daysOne(
@@ -260,7 +265,10 @@ class _JackpotState extends State<JackpotPage> {
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} BGN',
-                      style: const TextStyle(fontSize: 26, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: AdaptiveSizes.getJackpotCountSize(),
+                        color: Colors.white,
+                      ),
                     );
                   },
                 ),
@@ -270,7 +278,10 @@ class _JackpotState extends State<JackpotPage> {
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} BGN',
-                      style: const TextStyle(fontSize: 26, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: AdaptiveSizes.getJackpotCountSize(),
+                        color: Colors.white,
+                      ),
                     );
                   },
                 ),
@@ -280,7 +291,10 @@ class _JackpotState extends State<JackpotPage> {
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} BGN',
-                      style: const TextStyle(fontSize: 26, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: AdaptiveSizes.getJackpotCountSize(),
+                        color: Colors.white,
+                      ),
                     );
                   },
                 ),
@@ -290,7 +304,10 @@ class _JackpotState extends State<JackpotPage> {
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} BGN',
-                      style: const TextStyle(fontSize: 30, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: AdaptiveSizes.getIconBackSettingsSize(),
+                        color: Colors.white,
+                      ),
                     );
                   },
                 ),
@@ -300,7 +317,10 @@ class _JackpotState extends State<JackpotPage> {
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} BGN',
-                      style: const TextStyle(fontSize: 30, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: AdaptiveSizes.getIconBackSettingsSize(),
+                        color: Colors.white,
+                      ),
                     );
                   },
                 ),
@@ -308,7 +328,7 @@ class _JackpotState extends State<JackpotPage> {
             }, childCount: _jackpots.length),
           ),
           SliverToBoxAdapter(
-            child: SizedBox(height: MediaQuery.of(context).padding.bottom + 40),
+            child: SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
           ),
         ],
       ),

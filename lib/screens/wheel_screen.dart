@@ -42,11 +42,18 @@ class _WheelState extends State<WheelPage> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
                             'daily_bonus'.tr(),
+                            textAlign: TextAlign.center,
                             style: GoogleFonts.daysOne(
-                              fontSize: AdaptiveSizes.getWheelTitleSize(),
+                              fontSize: context.locale.languageCode == 'bg'
+                                  ? AdaptiveSizes.getWheelTitleSize() -
+                                        AdaptiveSizes.getLanguageMinusTitle()
+                                  : context.locale.languageCode == 'ru'
+                                  ? AdaptiveSizes.getWheelTitleSize() -
+                                        AdaptiveSizes.getLanguageMinusTitle()
+                                  : AdaptiveSizes.getWheelTitleSize(),
                               fontWeight: FontWeight.w500,
                               fontStyle: FontStyle.normal,
                               color: Colors.orangeAccent[200],
@@ -66,7 +73,13 @@ class _WheelState extends State<WheelPage> {
                           ),
                         ),
 
-                        SizedBox(height: AdaptiveSizes.screenHeight * 0.08),
+                        SizedBox(
+                          height: context.locale.languageCode == 'bg'
+                              ? AdaptiveSizes.h(0.09) - 45
+                              : context.locale.languageCode == 'ru'
+                              ? AdaptiveSizes.h(0.09) - 45
+                              : AdaptiveSizes.h(0.09),
+                        ),
 
                         SizedBox(
                           height: MediaQuery.of(context).size.width * 0.95,
@@ -74,7 +87,16 @@ class _WheelState extends State<WheelPage> {
                           child: const WheelWidget(),
                         ),
 
-                        SizedBox(height: AdaptiveSizes.screenHeight * 0.08),
+                        SizedBox(
+                          height: context.locale.languageCode == 'bg'
+                              ? AdaptiveSizes.h(0.08) +
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                              : context.locale.languageCode == 'ru'
+                              ? AdaptiveSizes.h(0.08) +
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                              : AdaptiveSizes.h(0.08) +
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode(),
+                        ),
                       ],
                     ),
                   ),

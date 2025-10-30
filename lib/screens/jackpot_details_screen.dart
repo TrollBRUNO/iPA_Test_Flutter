@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/camera_widget.dart';
 import 'package:first_app_flutter/widgets/jackpot_row_widget.dart';
 import 'package:flutter/material.dart';
@@ -108,6 +109,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AdaptiveSizes.init(context);
     final jackpot = _current;
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -117,7 +119,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
           children: [
             // Фоновое изображение + blur
             Positioned(
-              top: -1150,
+              top: AdaptiveSizes.h(-0.70512),
               left: 0,
               right: 0,
               bottom: 0,
@@ -137,7 +139,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
               padding: EdgeInsets.only(
                 top:
                     MediaQuery.of(context).padding.top +
-                    24, // Отступ как у SafeArea
+                    AdaptiveSizes.getLikeSafeAreaJackpotPadding(), // Отступ как у SafeArea
                 left: 24,
                 right: 24,
                 bottom: 24,
@@ -145,35 +147,33 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Назад
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 40,
+                  Stack(
+                    // Назад
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: AdaptiveSizes.getIconBackSettingsSize(),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
                       ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
+
+                      //const SizedBox(height: 15),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Text(
+                          "  ${jackpot.city.replaceAll(': ', ':\n')}",
+                          style: AdaptiveSizes.getCityJackpotDetailTextStyle(),
+                        ),
+                      ),
+                    ],
                   ),
 
-                  const SizedBox(height: 15),
-
-                  Center(
-                    child: Text(
-                      jackpot.city,
-                      style: GoogleFonts.daysOne(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 64),
-
-                  // ОСТАВШИЙСЯ КОНТЕНТ...
+                  SizedBox(height: AdaptiveSizes.h(0.01538)),
 
                   // Важно: добавить Expanded чтобы контент мог скроллиться
                   Expanded(
@@ -181,26 +181,31 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          /* Text(
                             "address".tr(),
                             style: GoogleFonts.roboto(
                               color: Colors.white,
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            _current.address,
-                            style: GoogleFonts.roboto(
-                              color: Colors.white,
-                              fontSize: 24,
+                          ), 
+                          const SizedBox(height: 6), */
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Text(
+                              "${_current.address}  ",
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize:
+                                    AdaptiveSizes.getIconBackSettingsSize(),
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                           ),
 
-                          const SizedBox(height: 48),
+                          SizedBox(height: AdaptiveSizes.h(0.03077)),
 
-                          Text(
+                          /* Text(
                             "jackpot".tr(),
                             style: GoogleFonts.roboto(
                               color: Colors.white,
@@ -208,33 +213,16 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 6),
-
+                          const SizedBox(height: 6), */
                           ..._buildJackpotDetails(jackpot),
 
-                          const SizedBox(height: 48),
-
-                          // ВСТРОЕННАЯ КАМЕРА ВМЕСТО КНОПКИ
-                          CameraWidget(
-                            cameraIds: [
-                              '82dee2d3-0893-4a4d-b9bc-129179b692c2',
-                              'a1360da3-09ea-4dde-b0e7-1f23bcc592e1',
-                            ],
-                            cameraNames: [
-                              '${'camera'.tr()} 1',
-                              '${'camera'.tr()} 2',
-                            ],
-                          ),
-
-                          const SizedBox(height: 24),
+                          SizedBox(height: AdaptiveSizes.h(0.03077)),
 
                           // Метка "LIVE трансляция"
                           Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 6,
-                              ),
+                              padding:
+                                  AdaptiveSizes.getCameraWidgetInfoPadding(),
                               decoration: BoxDecoration(
                                 boxShadow: [
                                   BoxShadow(
@@ -254,13 +242,23 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                               ),
                               child: Text(
                                 'live'.tr(),
-                                style: GoogleFonts.roboto(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: AdaptiveSizes.getLiveJackpotTextStyle(),
                               ),
                             ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // ВСТРОЕННАЯ КАМЕРА ВМЕСТО КНОПКИ
+                          CameraWidget(
+                            cameraIds: [
+                              '82dee2d3-0893-4a4d-b9bc-129179b692c2',
+                              'a1360da3-09ea-4dde-b0e7-1f23bcc592e1',
+                            ],
+                            cameraNames: [
+                              '${'camera'.tr()} 1',
+                              '${'camera'.tr()} 2',
+                            ],
                           ),
                         ],
                       ),
@@ -344,27 +342,27 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
     }
     final prev = _prevValues[label] ?? value;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: AdaptiveSizes.getJackpotWidgetRowPadding(),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(
             iconJackpot,
             color: labelColor,
-            size: 40,
+            size: AdaptiveSizes.getFontSettingsSize(),
             shadows: [
               Shadow(color: shadowColor, blurRadius: 10, offset: Offset(2, 2)),
             ],
           ),
 
-          const SizedBox(width: 10),
+          SizedBox(width: AdaptiveSizes.w(0.013888)),
 
           Text(
             '$label: ',
             style: TextStyle(
               color: labelColor,
               fontWeight: FontWeight.bold,
-              fontSize: 36,
+              fontSize: AdaptiveSizes.getFontUsernameSize(),
               shadows: [
                 Shadow(
                   color: shadowColor,
@@ -386,7 +384,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
               return Text(
                 '${animatedValue.toStringAsFixed(2)} BGN',
                 style: GoogleFonts.tourney(
-                  fontSize: 32,
+                  fontSize: AdaptiveSizes.getJackpotLogoFontSize(),
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),

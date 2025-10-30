@@ -1,4 +1,5 @@
 // camera_widget.dart
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
@@ -40,7 +41,7 @@ class _CameraWidgetState extends State<CameraWidget> {
         throw Exception('Не удалось получить JWT токен');
       }
     }
-
+    if (!mounted) return;
     setState(() {
       _htmlContent = getVideoStreamHtml(
         jwtToken!,
@@ -77,27 +78,8 @@ class _CameraWidgetState extends State<CameraWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Переключатели камер
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_left, size: 40, color: Colors.red),
-              onPressed: () => _switchCamera(-1),
-            ),
-            Text(
-              widget.cameraNames[_currentIndex],
-              style: const TextStyle(fontSize: 24, color: Colors.white),
-            ),
-            IconButton(
-              icon: const Icon(Icons.arrow_right, size: 40, color: Colors.red),
-              onPressed: () => _switchCamera(1),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
         Container(
-          height: 380,
+          height: AdaptiveSizes.getCameraWidgetHeight(),
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
@@ -160,6 +142,30 @@ class _CameraWidgetState extends State<CameraWidget> {
                 ),
             ],
           ),
+        ),
+
+        SizedBox(height: AdaptiveSizes.h(0.00512)),
+
+        // Переключатели камер
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(Icons.arrow_left, size: 40, color: Colors.red),
+              onPressed: () => _switchCamera(-1),
+            ),
+            Text(
+              widget.cameraNames[_currentIndex],
+              style: TextStyle(
+                fontSize: AdaptiveSizes.getAddressSize(),
+                color: Colors.white,
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.arrow_right, size: 40, color: Colors.red),
+              onPressed: () => _switchCamera(1),
+            ),
+          ],
         ),
       ],
     );
