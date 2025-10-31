@@ -165,12 +165,9 @@ class _SettingsState extends State<SettingsPage> {
                       const SizedBox(height: 20),
 
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32.0,
-                          vertical: 6,
-                        ),
+                        padding: AdaptiveSizes.getSettingsRowPadding(),
                         child: Container(
-                          height: 100,
+                          height: AdaptiveSizes.getSettingsLanguageHeight(),
                           decoration: BoxDecoration(
                             color: const Color(0xFF1E1E1E),
                             borderRadius: BorderRadius.circular(12),
@@ -179,7 +176,9 @@ class _SettingsState extends State<SettingsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 25.0),
+                                padding: EdgeInsets.only(
+                                  left: AdaptiveSizes.w(0.03472),
+                                ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,

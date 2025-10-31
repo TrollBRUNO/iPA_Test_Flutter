@@ -42,9 +42,9 @@ class _SplashScreenState extends State<SplashScreen> {
       await prefs.setBool('can_spin_today', canSpin);
 
       // чтобы ресетнуть колесо
-      await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
+      //await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
 
-      await prefs.setBool('can_spin_today', true);
+      //await prefs.setBool('can_spin_today', true);
       //await prefs.remove('bonus_balance');
     } catch (e) {
       // В случае ошибки разрешаем спин

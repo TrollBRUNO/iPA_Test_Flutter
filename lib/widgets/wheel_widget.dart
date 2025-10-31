@@ -123,13 +123,30 @@ class _WheelState extends State<WheelWidget> {
               onTry: () async {
                 Navigator.of(context).pop();
 
-                final url = Uri.parse('https://live.teleslot.net/login');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  throw 'Не удалось открыть сайт: $url';
+                const url = 'https://live.teleslot.net/login';
+
+                final uri = Uri.parse(url);
+
+                try {
+                  final launched = await launchUrl(
+                    uri,
+                    mode: LaunchMode.externalApplication,
+                  );
+
+                  if (!launched) {
+                    throw 'Не удалось открыть сайт: $url';
+                  }
+                } catch (e) {
+                  debugPrint('Ошибка при открытии ссылки: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Не удалось открыть сайт'),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
                 }
               },
+
               onClose: () {
                 Navigator.of(context).pop();
               },

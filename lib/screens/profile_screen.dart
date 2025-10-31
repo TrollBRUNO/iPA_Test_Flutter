@@ -175,7 +175,7 @@ class _ProfileState extends State<ProfilePage> {
                                   ),
                                   //child: Icon(Icons.person, size: 72),
                                 ),
-                                SizedBox(width: AdaptiveSizes.w(0.04444)),
+                                SizedBox(width: AdaptiveSizes.w(0.04444) - 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -194,7 +194,7 @@ class _ProfileState extends State<ProfilePage> {
                                           Icons.account_balance_wallet,
                                           color: Colors.green[700],
                                           size:
-                                              AdaptiveSizes.getFontProfileSize(),
+                                              AdaptiveSizes.getFontBalanceSize(),
                                         ),
                                         SizedBox(
                                           width: AdaptiveSizes.w(0.01111),
@@ -203,7 +203,7 @@ class _ProfileState extends State<ProfilePage> {
                                           '${'balance'.tr()} $balanceCount',
                                           style: GoogleFonts.manrope(
                                             fontSize:
-                                                AdaptiveSizes.getFontProfileSize(),
+                                                AdaptiveSizes.getFontBalanceSize(),
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),

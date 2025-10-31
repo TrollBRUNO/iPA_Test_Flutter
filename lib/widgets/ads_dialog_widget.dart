@@ -52,16 +52,19 @@ class _AdsDialogState extends State<AdsDialogWidget>
                       width: AdaptiveSizes.getAdsDialogMaxWidth(),
                       padding: AdaptiveSizes.getAdsPadding(),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 206, 25, 161),
-                            Color.fromARGB(255, 85, 89, 232),
-                            /* Colors.orangeAccent.shade100,
-                            Colors.pinkAccent.shade100, */
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: AdaptiveSizes.screenWidth < 500
+                            ? const Color.fromARGB(255, 255, 139, 178)
+                            : null,
+                        gradient: AdaptiveSizes.screenWidth >= 500
+                            ? LinearGradient(
+                                colors: [
+                                  Colors.orangeAccent.shade100,
+                                  Colors.pinkAccent.shade100,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )
+                            : null,
                         borderRadius: AdaptiveSizes.getAdsDialogRadius(),
                         boxShadow: [
                           BoxShadow(
@@ -91,7 +94,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
                                   'assets/images/site.png',
                                   fit: BoxFit.cover,
                                   width: double.infinity,
-                                  height: AdaptiveSizes.h(0.19230),
+                                  height: AdaptiveSizes.h(0.19230) + 40,
                                 ),
                               ),
                               SizedBox(height: AdaptiveSizes.h(0.01923)),
@@ -102,7 +105,7 @@ class _AdsDialogState extends State<AdsDialogWidget>
                                   fontSize:
                                       AdaptiveSizes.getBigWinYouWinPrizeSize(),
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.deepOrange.shade900,
+                                  color: Colors.deepOrange.shade700,
                                   letterSpacing: 1.2,
                                 ),
                               ),
@@ -121,12 +124,12 @@ class _AdsDialogState extends State<AdsDialogWidget>
                             ],
                           ),
                           Positioned(
-                            top: -10,
-                            right: -10,
+                            top: -12,
+                            right: -12,
                             child: IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close,
-                                size: 34,
+                                size: AdaptiveSizes.getIconBackSettingsSize(),
                                 color: Colors.black54,
                               ),
                               onPressed: widget.onClose,
@@ -152,17 +155,27 @@ class _AdsDialogState extends State<AdsDialogWidget>
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: AdaptiveSizes.screenWidth < 500
+              ? Colors.orangeAccent.shade400
+              : null,
+          gradient: AdaptiveSizes.screenWidth >= 500
+              ? LinearGradient(
+                  colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.orangeAccent.withOpacity(0.5),
               blurRadius: 12,
               offset: const Offset(0, 6),
+            ),
+            BoxShadow(
+              color: const Color.fromARGB(255, 255, 255, 255).withOpacity(1),
+              blurRadius: 2,
+              offset: const Offset(0, 0),
             ),
           ],
         ),

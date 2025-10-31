@@ -39,7 +39,7 @@ class _InfoDialogState extends State<InfoDialogWidget>
       child: Material(
         color: Colors.transparent,
         child: Container(
-          width: 480,
+          width: AdaptiveSizes.getInfoDialogMaxWidth(),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -56,23 +56,24 @@ class _InfoDialogState extends State<InfoDialogWidget>
                     child: Icon(
                       Icons.warning_amber_rounded,
                       color: Colors.red,
-                      size: 80,
+                      size: AdaptiveSizes.getLogoSize(),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AdaptiveSizes.h(0.01026)),
                   Text(
-                    "Извините!",
+                    "sorry".tr(),
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: AdaptiveSizes.h(0.00513)),
                   Text(
-                    "Следующий бонус будет доступен завтра.",
+                    "next_time".tr(),
+                    textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 18),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: AdaptiveSizes.h(0.01539)),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -86,7 +87,7 @@ class _InfoDialogState extends State<InfoDialogWidget>
                       child: Text(
                         'okay'.tr(),
                         style: TextStyle(
-                          fontSize: AdaptiveSizes.getFontPrizeSize(),
+                          fontSize: AdaptiveSizes.getFontInfoSize(),
                         ),
                       ),
                     ),

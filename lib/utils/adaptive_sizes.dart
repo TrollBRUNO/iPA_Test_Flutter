@@ -58,14 +58,14 @@ class AdaptiveSizes {
   }
 
   static double getInfoDialogMaxWidth() {
-    if (screenWidth > 600) return screenHeight * 0.30769;
-    if (screenWidth > 400) return screenHeight * 0.30769;
-    return screenHeight * 0.30769;
+    if (screenWidth > 600) return screenWidth * 0.66667;
+    if (screenWidth > 400) return screenWidth * 0.88889;
+    return screenWidth * 0.88889;
   }
 
   static double getAdsDialogMaxWidth() {
     if (screenWidth > 600) return screenWidth * 0.90277;
-    if (screenWidth > 400) return screenWidth * 0.85763;
+    if (screenWidth > 400) return screenWidth * 0.86555;
     return screenWidth * 0.85763;
   }
 
@@ -79,6 +79,12 @@ class AdaptiveSizes {
     if (screenWidth > 600) return screenWidth * 0.66667;
     if (screenWidth > 400) return screenWidth * 0.83334;
     return screenWidth * 0.83334;
+  }
+
+  static double getSettingsLanguageHeight() {
+    if (screenWidth > 600) return 100;
+    if (screenWidth > 400) return 80;
+    return 80;
   }
 
   static double getPrizeDialogMaxHeight() {
@@ -157,14 +163,22 @@ class AdaptiveSizes {
 
   static EdgeInsets getAdsPadding() {
     if (screenWidth > 600) return const EdgeInsets.all(28);
-    if (screenWidth > 400) return const EdgeInsets.all(14);
-    return const EdgeInsets.all(14);
+    if (screenWidth > 400) return const EdgeInsets.all(16);
+    return const EdgeInsets.all(16);
   }
 
   static EdgeInsets getProfileSettinsPadding() {
     if (screenWidth > 600) return const EdgeInsets.all(24);
     if (screenWidth > 400) return const EdgeInsets.all(12);
     return const EdgeInsets.all(12);
+  }
+
+  static EdgeInsets getSettingsRowPadding() {
+    if (screenWidth > 600)
+      return const EdgeInsets.symmetric(vertical: 6, horizontal: 32);
+    if (screenWidth > 400)
+      const EdgeInsets.symmetric(vertical: 4, horizontal: 12);
+    return const EdgeInsets.symmetric(vertical: 4, horizontal: 12);
   }
 
   static EdgeInsets getStatisticsRowPadding() {
@@ -321,6 +335,12 @@ class AdaptiveSizes {
     return 18;
   }
 
+  static double getFontBalanceSize() {
+    if (screenWidth > 600) return 28;
+    if (screenWidth > 400) return 18;
+    return 18;
+  }
+
   static double getFontProfileSize() {
     if (screenWidth > 600) return 28;
     if (screenWidth > 400) return 24;
@@ -337,6 +357,12 @@ class AdaptiveSizes {
     if (screenWidth > 600) return 24;
     if (screenWidth > 400) return 14;
     return 14;
+  }
+
+  static double getFontInfoSize() {
+    if (screenWidth > 600) return 24;
+    if (screenWidth > 400) return 18;
+    return 18;
   }
 
   static double getAddressSize() {
