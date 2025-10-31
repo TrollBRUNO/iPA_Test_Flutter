@@ -33,8 +33,8 @@ class NewsWidget extends StatelessWidget {
                 //color: const Color.fromARGB(255, 24, 75, 141),
                 color: Colors.lightBlue[900],
                 borderRadius: BorderRadius.only(
-                  //topLeft: Radius.circular(64),
-                  //topRight: Radius.circular(64),
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
                   bottomLeft: Radius.circular(32),
                   bottomRight: Radius.circular(32),
                 ),

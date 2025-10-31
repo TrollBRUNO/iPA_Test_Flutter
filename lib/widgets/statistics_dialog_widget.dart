@@ -159,7 +159,7 @@ class _StatisticsDialogState extends State<StatisticsDialogWidget>
                                   Flexible(
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
-                                        vertical: 16,
+                                        vertical: 12,
                                       ),
                                       color: Colors.white.withOpacity(0.09),
                                       constraints: BoxConstraints(

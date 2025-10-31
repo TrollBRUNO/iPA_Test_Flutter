@@ -1,4 +1,5 @@
 import 'package:first_app_flutter/class/news.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/news_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -23,13 +24,20 @@ class NewsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: newsList.length,
+    return CustomScrollView(
       physics: BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        final news = newsList[index];
-        return NewsWidget(news: news);
-      },
+      slivers: [
+        SliverToBoxAdapter(child: SizedBox(height: AdaptiveSizes.h(0.025))),
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final news = newsList[index];
+            return NewsWidget(news: news);
+          }, childCount: newsList.length),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
+        ),
+      ],
     );
   }
 }

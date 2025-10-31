@@ -46,7 +46,7 @@ Widget buildStatisticsRow(BuildContext context, DateTime date, int prize) {
           Icon(
             Icons.star,
             color: labelColor,
-            size: AdaptiveSizes.getFontUsernameSize(),
+            size: AdaptiveSizes.getFontStatisticsIconSize(),
             shadows: [
               Shadow(color: shadowColor, blurRadius: 4, offset: Offset(3, 1)),
             ],
@@ -82,7 +82,7 @@ Widget buildStatisticsRow(BuildContext context, DateTime date, int prize) {
           Icon(
             Icons.star,
             color: labelColor,
-            size: AdaptiveSizes.getFontUsernameSize(),
+            size: AdaptiveSizes.getFontStatisticsIconSize(),
             shadows: [
               Shadow(color: shadowColor, blurRadius: 4, offset: Offset(-3, 1)),
             ],

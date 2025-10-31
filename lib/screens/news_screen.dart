@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/screens/gallery_tab.dart';
 import 'package:first_app_flutter/screens/news_tab.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import 'package:intl/intl.dart';
@@ -43,9 +44,10 @@ class _NewsState extends State<NewsPage> {
                 pinned: true,
                 //floating: true, // Allow the app bar to float
                 //snap: false,
-                expandedHeight: 200,
-                toolbarHeight:
-                    40, // Provide some minimum height to prevent overflow
+                expandedHeight: AdaptiveSizes.getNewsTabHeight(),
+                toolbarHeight: AdaptiveSizes.h(
+                  0.02564,
+                ), // Provide some minimum height to prevent overflow
                 elevation: 0,
                 backgroundColor: Colors.transparent,
                 flexibleSpace: LayoutBuilder(
@@ -60,8 +62,8 @@ class _NewsState extends State<NewsPage> {
                     final double fontSize =
                         context.locale.languageCode == "ru" ||
                             context.locale.languageCode == "bg"
-                        ? 58
-                        : 72; // Constant font size
+                        ? AdaptiveSizes.getFontNewsTitleSize()
+                        : AdaptiveSizes.getFontNewsTitleSecondSize(); // Constant font size
                     // Smooth fade out - starts fading immediately but completes quickly
                     // Map percent from 0.8-1.0 range to 0.0-1.0 range for a quick fade
                     final double opacity = percent < 0.8
@@ -142,12 +144,19 @@ class _NewsState extends State<NewsPage> {
                   },
                 ),
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(48), // Reduced height
+                  preferredSize: const Size.fromHeight(52), // Reduced height
+                  /* preferredSize: Size.fromHeight(
+                    AdaptiveSizes.getNewsTabSecondHeight(),
+                  ),  */
+                  // Reduced height
                   child: Container(
+                    height: AdaptiveSizes.getNewsTabContainerHeight(),
                     // Adaptive padding based on available space
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 20, // Reduced vertical padding
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: AdaptiveSizes.h(
+                        0.01282,
+                      ), // Reduced vertical padding
                     ),
                     child: Material(
                       shadowColor: const Color.fromARGB(122, 0, 0, 0),
@@ -159,11 +168,15 @@ class _NewsState extends State<NewsPage> {
                           color: Colors.orangeAccent[200],
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        indicatorPadding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 4,
+                        ),
                         indicatorSize: TabBarIndicatorSize.tab,
                         labelColor: const Color.fromARGB(255, 19, 19, 19),
                         unselectedLabelColor: Colors.orangeAccent[200],
-                        labelStyle: const TextStyle(
-                          fontSize: 24,
+                        labelStyle: TextStyle(
+                          fontSize: AdaptiveSizes.getFontInfoSize(),
                           fontWeight: FontWeight.bold,
                         ),
                         tabs: [

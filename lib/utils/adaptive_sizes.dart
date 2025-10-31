@@ -71,8 +71,8 @@ class AdaptiveSizes {
 
   static double getPrizeDialogMaxWidth() {
     if (screenWidth > 600) return screenWidth * 0.83333;
-    if (screenWidth > 400) return screenWidth * 1.04166;
-    return screenWidth * 1.04166;
+    if (screenWidth > 400) return screenWidth * 0.91666;
+    return screenWidth * 0.91666;
   }
 
   static double getPrizeDialogMinWidth() {
@@ -89,8 +89,8 @@ class AdaptiveSizes {
 
   static double getPrizeDialogMaxHeight() {
     if (screenWidth > 600) return screenHeight * 0.32051;
-    if (screenWidth > 400) return screenHeight * 0.4808;
-    return screenHeight * 0.4808;
+    if (screenWidth > 400) return screenHeight * 0.42269;
+    return screenHeight * 0.42269;
   }
 
   static double getPrizeDialogMinHeight() {
@@ -103,6 +103,24 @@ class AdaptiveSizes {
     if (screenWidth > 600) return 320;
     if (screenWidth > 400) return screenWidth * 0.4444;
     return screenWidth * 0.4444;
+  }
+
+  static double getNewsTabSecondHeight() {
+    if (screenWidth > 600) return screenHeight * 0.03077;
+    if (screenWidth > 400) return screenHeight * 0.06254;
+    return screenWidth * 0.04616;
+  }
+
+  static double getNewsTabHeight() {
+    if (screenWidth > 600) return screenHeight * 0.11218;
+    if (screenWidth > 400) return screenHeight * 0.19631;
+    return screenWidth * 0.19631;
+  }
+
+  static double getNewsTabContainerHeight() {
+    if (screenWidth > 600) return screenHeight * 0.0565;
+    if (screenWidth > 400) return screenHeight * 0.07813;
+    return screenWidth * 0.07813;
   }
 
   static double getJackpotWidgetHeight() {
@@ -183,10 +201,9 @@ class AdaptiveSizes {
 
   static EdgeInsets getStatisticsRowPadding() {
     if (screenWidth > 600)
-      return const EdgeInsets.symmetric(vertical: 4, horizontal: 36);
-    if (screenWidth > 400)
-      const EdgeInsets.symmetric(vertical: 4, horizontal: 1);
-    return const EdgeInsets.symmetric(vertical: 4, horizontal: 1);
+      return const EdgeInsets.symmetric(vertical: 4, horizontal: 24);
+    if (screenWidth > 400) const EdgeInsets.symmetric(vertical: 4);
+    return const EdgeInsets.symmetric(vertical: 4);
   }
 
   static EdgeInsets getJackpotWidgetRowPadding() {
@@ -305,6 +322,12 @@ class AdaptiveSizes {
     return 24;
   }
 
+  static double getFontStatisticsIconSize() {
+    if (screenWidth > 600) return 36;
+    if (screenWidth > 400) return 20;
+    return 20;
+  }
+
   static double getFontUsernameSize() {
     if (screenWidth > 600) return 36;
     if (screenWidth > 400) return 26;
@@ -341,6 +364,20 @@ class AdaptiveSizes {
     return 18;
   }
 
+  ///
+  static double getFontNewsTitleSize() {
+    if (screenWidth > 600) return 58;
+    if (screenWidth > 400) return 32;
+    return 32;
+  }
+
+  static double getFontNewsTitleSecondSize() {
+    if (screenWidth > 600) return 72;
+    if (screenWidth > 400) return 42;
+    return 42;
+  }
+
+  ///
   static double getFontProfileSize() {
     if (screenWidth > 600) return 28;
     if (screenWidth > 400) return 24;

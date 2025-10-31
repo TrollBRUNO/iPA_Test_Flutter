@@ -94,7 +94,7 @@ class _WheelState extends State<WheelWidget> {
               prize: prize,
               onClaim: () {
                 Navigator.of(context).pop();
-                showAdsDialog(prize);
+                showAdsDialog();
               },
             ),
           ),
@@ -103,7 +103,7 @@ class _WheelState extends State<WheelWidget> {
     );
   }
 
-  void showAdsDialog(String prize) {
+  void showAdsDialog() {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -370,6 +370,7 @@ class _WheelState extends State<WheelWidget> {
                     currentBalance.toString(),
                   );
                   showPrizeDialog(prize.formatted);
+                  //showPrizeDialog('100 BGN');
                 },
               ),
             ),

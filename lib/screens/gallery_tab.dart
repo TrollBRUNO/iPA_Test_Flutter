@@ -1,4 +1,5 @@
 import 'package:first_app_flutter/class/gallery.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/Gallery_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -22,13 +23,20 @@ class GalleryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: galleryList.length,
+    return CustomScrollView(
       physics: BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        final gallery = galleryList[index];
-        return GalleryWidget(gallery: gallery);
-      },
+      slivers: [
+        SliverToBoxAdapter(child: SizedBox(height: AdaptiveSizes.h(0.025))),
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final gallery = galleryList[index];
+            return GalleryWidget(gallery: gallery);
+          }, childCount: galleryList.length),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
+        ),
+      ],
     );
   }
 }
