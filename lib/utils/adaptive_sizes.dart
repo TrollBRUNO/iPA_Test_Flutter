@@ -111,6 +111,18 @@ class AdaptiveSizes {
     return screenWidth * 0.04616;
   }
 
+  static double getVisibleTitleNewsHeight() {
+    if (screenWidth > 600) return screenHeight * 0.12821;
+    if (screenWidth > 400) return screenHeight * 0.15625;
+    return screenHeight * 0.15625;
+  }
+
+  static double getNewsWidgetHeight() {
+    if (screenWidth > 600) return screenHeight * 0.28013;
+    if (screenWidth > 400) return screenHeight * 0.32552;
+    return screenWidth * 0.32552;
+  }
+
   static double getNewsTabHeight() {
     if (screenWidth > 600) return screenHeight * 0.11218;
     if (screenWidth > 400) return screenHeight * 0.19631;
@@ -177,6 +189,14 @@ class AdaptiveSizes {
     if (screenWidth > 600) return const EdgeInsets.only(left: 12);
     if (screenWidth > 400) return const EdgeInsets.only(left: 6);
     return const EdgeInsets.only(left: 4);
+  }
+
+  static EdgeInsets getWidgetNewsPadding() {
+    if (screenWidth > 600)
+      return EdgeInsets.only(top: (screenHeight * 0.25641), bottom: 40);
+    if (screenWidth > 400)
+      return EdgeInsets.only(top: (screenHeight * 0.27995), bottom: 40);
+    return EdgeInsets.only(top: (screenHeight * 0.27995), bottom: 40);
   }
 
   static EdgeInsets getAdsPadding() {
@@ -254,6 +274,12 @@ class AdaptiveSizes {
     if (screenWidth > 600) return 60;
     if (screenWidth > 400) return 50;
     return screenWidth * 0.12;
+  }
+
+  static double getTitleNewsHeight() {
+    if (screenWidth > 600) return screenHeight * 0.05128;
+    if (screenWidth > 400) return screenHeight * 0.08463;
+    return screenHeight * 0.08463;
   }
 
   static double getButtonWidth() {

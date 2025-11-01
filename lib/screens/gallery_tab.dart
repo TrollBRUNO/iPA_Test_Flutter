@@ -16,6 +16,13 @@ final List<Gallery> galleryList = [
     imageUrl: 'assets/images/2.jpg',
     publicationDate: DateTime(2024, 6, 1),
   ),
+
+  Gallery(
+    description:
+        'Класически BIG WIN във Велинград! Редица седем! Поздравления за 4000 лева!',
+    imageUrl: 'assets/images/2.jpg',
+    publicationDate: DateTime(2024, 6, 1),
+  ),
 ];
 
 class GalleryTab extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/news.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/smart_marquee_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -12,13 +13,16 @@ class NewsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 0),
+      padding: EdgeInsets.symmetric(
+        horizontal: AdaptiveSizes.getFontStatisticsIconSize(),
+        vertical: 0,
+      ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           // Нижний блок с текстом
           Padding(
-            padding: const EdgeInsets.only(top: 445.0, bottom: 40),
+            padding: AdaptiveSizes.getWidgetNewsPadding(),
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -47,17 +51,13 @@ class NewsWidget extends StatelessWidget {
                 children: [
                   SmartMarquee(
                     text: news.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AdaptiveSizes.getCityJackpotTextStyle(),
                   ),
 
-                  SizedBox(height: 12),
+                  SizedBox(height: AdaptiveSizes.h(0.00769)),
                   Text(
                     news.description,
-                    style: TextStyle(color: Colors.white70, fontSize: 24),
+                    style: AdaptiveSizes.getInputTextStyle(),
                   ),
                 ],
               ),
@@ -74,7 +74,7 @@ class NewsWidget extends StatelessWidget {
               news.imageUrl,
               fit: BoxFit.cover,
               width: double.infinity,
-              height: 480,
+              height: AdaptiveSizes.getNewsWidgetHeight(),
             ),
           ),
 
@@ -93,7 +93,7 @@ class NewsWidget extends StatelessWidget {
                 style: TextStyle(
                   //color: const Color.fromARGB(255, 0, 40, 92),
                   color: const Color.fromARGB(255, 0, 0, 0),
-                  fontSize: 18,
+                  fontSize: AdaptiveSizes.getUnselectedFontSize(),
                   fontWeight: FontWeight.bold,
                 ),
               ),

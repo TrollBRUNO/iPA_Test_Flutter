@@ -166,8 +166,9 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                       Align(
                         alignment: Alignment.topRight,
                         child: Text(
-                          "  ${jackpot.city.replaceAll(': ', ':\n')}",
+                          "  ${(jackpot.city.tr().replaceAll(': ', ':\n'))}",
                           style: AdaptiveSizes.getCityJackpotDetailTextStyle(),
+                          textAlign: TextAlign.right,
                         ),
                       ),
                     ],
@@ -193,7 +194,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
                           Align(
                             alignment: Alignment.topRight,
                             child: Text(
-                              "${_current.address}  ",
+                              "${_current.address.tr()}  ",
                               style: GoogleFonts.roboto(
                                 color: Colors.white,
                                 fontSize:

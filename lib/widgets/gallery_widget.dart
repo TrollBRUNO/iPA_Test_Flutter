@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/gallery.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,13 +12,16 @@ class GalleryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 0),
+      padding: EdgeInsets.symmetric(
+        horizontal: AdaptiveSizes.getFontStatisticsIconSize(),
+        vertical: 0,
+      ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           // Нижний блок с текстом
           Padding(
-            padding: const EdgeInsets.only(top: 445.0, bottom: 40),
+            padding: AdaptiveSizes.getWidgetNewsPadding(),
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -32,22 +36,20 @@ class GalleryWidget extends StatelessWidget {
                 //color: const Color.fromARGB(255, 134, 30, 30),
                 color: Colors.red[900],
                 borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
                   bottomLeft: Radius.circular(32),
                   bottomRight: Radius.circular(32),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(30, 50, 30, 30),
+              padding: EdgeInsets.fromLTRB(30, 50, 30, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     gallery.description,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AdaptiveSizes.getCityJackpotTextStyle(),
                   ),
                 ],
               ),
@@ -64,7 +66,7 @@ class GalleryWidget extends StatelessWidget {
               gallery.imageUrl,
               fit: BoxFit.cover,
               width: double.infinity,
-              height: 480,
+              height: AdaptiveSizes.getNewsWidgetHeight(),
             ),
           ),
 
@@ -81,8 +83,8 @@ class GalleryWidget extends StatelessWidget {
               child: Text(
                 '${DateFormat("d MMMM y", context.locale.languageCode).format(gallery.publicationDate)} ${'year'.tr()}',
                 style: TextStyle(
-                  color: const Color.fromARGB(255, 56, 0, 0),
-                  fontSize: 18,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  fontSize: AdaptiveSizes.getUnselectedFontSize(),
                   fontWeight: FontWeight.bold,
                 ),
               ),

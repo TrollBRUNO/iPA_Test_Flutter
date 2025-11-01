@@ -2,6 +2,7 @@
 
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/jackpot.dart';
 import 'package:first_app_flutter/screens/jackpot_details_screen.dart';
 import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
@@ -174,7 +175,7 @@ class JackpotWidget extends StatelessWidget {
                     // Название города
                     Center(
                       child: Text(
-                        jackpot.city,
+                        jackpot.city.tr(),
                         style: AdaptiveSizes.getCityJackpotTextStyle(),
                       ),
                     ),
@@ -225,7 +226,7 @@ class JackpotWidget extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   child: Text(
-                    jackpot.address,
+                    jackpot.address.tr(),
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: AdaptiveSizes.getAddressSize(),

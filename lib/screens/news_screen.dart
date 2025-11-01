@@ -55,7 +55,8 @@ class _NewsState extends State<NewsPage> {
                     // Высчитываем процент открытия панели (0.0 - свернута, 1.0 - полностью)
                     final double percent =
                         ((constraints.maxHeight - kToolbarHeight) /
-                                (200 - kToolbarHeight))
+                                (AdaptiveSizes.getVisibleTitleNewsHeight() -
+                                    kToolbarHeight))
                             .clamp(0.0, 1.0);
 
                     // Keep font size constant
@@ -96,7 +97,7 @@ class _NewsState extends State<NewsPage> {
                           ),
                         ),
                         Positioned(
-                          bottom: 80,
+                          bottom: AdaptiveSizes.getTitleNewsHeight(),
                           left: 0,
                           right: 0,
                           child: Visibility(

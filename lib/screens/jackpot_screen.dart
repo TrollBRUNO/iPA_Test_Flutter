@@ -58,8 +58,8 @@ class _JackpotState extends State<JackpotPage> {
     //List<Jackpot> get jackpots => [
     _jackpots = [
       Jackpot(
-        city: 'address_plovdiv_city'.tr(),
-        address: 'address_plovdiv_address'.tr(),
+        city: 'address_plovdiv_city',
+        address: 'address_plovdiv_address',
         imageUrl: 'assets/images/logo_magic_city5.png',
         isMysteryProgressive: true,
         miniMystery: 359.76,
@@ -69,16 +69,16 @@ class _JackpotState extends State<JackpotPage> {
 
       // Остальные адреса
       Jackpot(
-        city: 'address_kirkovo_city'.tr(),
-        address: 'address_kirkovo_address'.tr(),
+        city: 'address_kirkovo_city',
+        address: 'address_kirkovo_address',
         imageUrl: 'assets/images/logo5.png',
         isMysteryProgressive: false,
         majorBellLink: 876.19,
         grandBellLink: 13369.97,
       ),
       Jackpot(
-        city: 'address_velingrad_city'.tr(),
-        address: 'address_velingrad_address'.tr(),
+        city: 'address_velingrad_city',
+        address: 'address_velingrad_address',
         imageUrl: 'assets/images/logo3.png',
         isMysteryProgressive: true,
         miniMystery: 466.92,
@@ -86,8 +86,8 @@ class _JackpotState extends State<JackpotPage> {
         megaMystery: 9487.66,
       ),
       Jackpot(
-        city: 'address_gotse_delchev_city'.tr(),
-        address: 'address_gotse_delchev_address'.tr(),
+        city: 'address_gotse_delchev_city',
+        address: 'address_gotse_delchev_address',
         imageUrl: 'assets/images/logo_magic_city5.png',
         isMysteryProgressive: true,
         miniMystery: 533.09,
@@ -95,8 +95,8 @@ class _JackpotState extends State<JackpotPage> {
         megaMystery: 10876.23,
       ),
       Jackpot(
-        city: 'address_satovcha_city'.tr(),
-        address: 'address_satovcha_address'.tr(),
+        city: 'address_satovcha_city',
+        address: 'address_satovcha_address',
         imageUrl: 'assets/images/logo_magic_city5.png',
         isMysteryProgressive: true,
         miniMystery: 376.12,
