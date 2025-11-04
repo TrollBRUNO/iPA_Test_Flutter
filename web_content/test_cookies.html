@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+</head>
+<body>
+    <h1>Test Cookies</h1>
+    <script>
+        // Установка тестового cookie
+        Cookies.set('test_cookie', 'hello_world', { expires: 1, path: '/' });
+        
+        // Проверка
+        const testValue = Cookies.get('test_cookie');
+        const jwtValue = Cookies.get('jwt_token');
+        
+        document.body.innerHTML += `
+            <p>Test cookie: ${testValue}</p>
+            <p>JWT token: ${jwtValue ? 'PRESENT (' + jwtValue.length + ' chars)' : 'MISSING'}</p>
+        `;
+        
+        console.log('Cookies test:', { test: testValue, jwt: jwtValue });
+    </script>
+</body>
+</html>

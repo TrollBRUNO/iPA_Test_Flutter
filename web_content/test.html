@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jitsi Test</title>
+    <script src="https://meet.jit.si/libs/lib-jitsi-meet.min.js"></script>
+</head>
+<body>
+    <h1>Jitsi Load Test</h1>
+    <div id="status">Testing...</div>
+    
+    <script>
+        // Простая проверка что Jitsi загружается
+        try {
+            JitsiMeetJS.init({
+                disableThirdPartyRequests: true
+            }).then(() => {
+                document.getElementById('status').innerHTML = 
+                    '<span style="color: green;">✅ Jitsi loaded successfully!</span>';
+                console.log('Jitsi loaded OK');
+            }).catch(error => {
+                document.getElementById('status').innerHTML = 
+                    '<span style="color: red;">❌ Jitsi error: ' + error + '</span>';
+            });
+        } catch (e) {
+            document.getElementById('status').innerHTML = 
+                '<span style="color: red;">❌ Fatal error: ' + e + '</span>';
+        }
+    </script>
+</body>
+</html>
