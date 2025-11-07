@@ -188,7 +188,6 @@ class JackpotWidget extends StatelessWidget {
                             jackpot.isMysteryProgressive,
                           ),
                       child: Container(
-                        height: 100,
                         padding:
                             AdaptiveSizes.getJackpotContentWidgetSecondPadding(),
                         decoration: BoxDecoration(
@@ -210,11 +209,9 @@ class JackpotWidget extends StatelessWidget {
                               AdaptiveSizes.getJackpotWidgetBorderSecondRadius(),
                         ),
                         // Джекпоты
-                        child: Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: jackpotValues,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: jackpotValues,
                         ),
                       ),
                     ),
