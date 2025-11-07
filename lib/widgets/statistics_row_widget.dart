@@ -23,7 +23,7 @@ Widget buildStatisticsRow(BuildContext context, DateTime date, int prize) {
       break;
     case 40:
       labelColor = Colors.pink.shade700;
-      shadowColor = Colors.pinkAccent.shade700;
+      shadowColor = Colors.pinkAccent.shade100;
       break;
     case 50:
       labelColor = Colors.deepPurple.shade600; // малиновый
