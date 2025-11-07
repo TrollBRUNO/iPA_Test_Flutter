@@ -209,7 +209,7 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                                   ? AdaptiveSizes.getFontSettingsSize()
                                   : AdaptiveSizes.getFontLanguageSize(),
                               color: Colors.black,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),

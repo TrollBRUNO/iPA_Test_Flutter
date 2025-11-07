@@ -50,7 +50,7 @@ class _ProfileState extends State<ProfilePage> {
     });
   }
 
-  void showStatisticsDialog(String prize) {
+  void showStatisticsDialog() {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -64,7 +64,6 @@ class _ProfileState extends State<ProfilePage> {
           child: ScaleTransition(
             scale: curved,
             child: StatisticsDialogWidget(
-              prize: prize,
               onClaim: () {
                 Navigator.of(context).pop();
               },
@@ -121,15 +120,18 @@ class _ProfileState extends State<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: context.locale.languageCode == 'bg'
+                                ? AdaptiveSizes.h(0.01923)
+                                : AdaptiveSizes.h(0.01282),
+                          ),
                           child: Text(
                             'your_profile'.tr(),
                             style: GoogleFonts.daysOne(
-                              fontSize: context.locale.languageCode == 'bg'
-                                  ? AdaptiveSizes.getUniversalTitleSize() - 10
-                                  : context.locale.languageCode == 'ru'
-                                  ? AdaptiveSizes.getUniversalTitleSize() - 4
-                                  : AdaptiveSizes.getUniversalTitleSize(),
+                              fontSize: AdaptiveSizes.getProfileTitleSize(
+                                context.locale.languageCode,
+                              ),
                               fontWeight: FontWeight.normal,
                               fontStyle: FontStyle.normal,
                               color: Colors.orangeAccent[200],
@@ -144,19 +146,20 @@ class _ProfileState extends State<ProfilePage> {
                           ),
                         ),
 
-                        SizedBox(
+                        /* SizedBox(
                           height: context.locale.languageCode == 'bg'
                               ? AdaptiveSizes.h(0.01923)
                               : AdaptiveSizes.h(0.01282),
-                        ),
-
+                        ), */
                         Card(
                           color: Colors.orangeAccent[200],
                           elevation: 4,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(48),
                           ),
-                          margin: EdgeInsets.all(AdaptiveSizes.h(0.0153)),
+                          margin: EdgeInsets.all(
+                            AdaptiveSizes.getDividerProfileHeight(),
+                          ),
                           child: Padding(
                             padding: EdgeInsets.all(AdaptiveSizes.h(0.0179)),
                             child: Row(
@@ -239,9 +242,12 @@ class _ProfileState extends State<ProfilePage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(48),
                           ),
-                          margin: EdgeInsets.all(AdaptiveSizes.h(0.03076)),
+                          margin: EdgeInsets.symmetric(
+                            vertical: AdaptiveSizes.h(0.03076),
+                            horizontal: AdaptiveSizes.w(0.06667),
+                          ),
                           child: Padding(
-                            padding: AdaptiveSizes.getProfileSettinsPadding(),
+                            padding: AdaptiveSizes.getProfileSettingsPadding(),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
@@ -267,7 +273,8 @@ class _ProfileState extends State<ProfilePage> {
                                   },
                                 ),
                                 Divider(
-                                  height: AdaptiveSizes.h(0.0153),
+                                  height:
+                                      AdaptiveSizes.getDividerProfileHeight(),
                                   color: Colors.black38,
                                 ),
                                 ListTile(
@@ -288,11 +295,12 @@ class _ProfileState extends State<ProfilePage> {
                                     ),
                                   ),
                                   onTap: () {
-                                    showStatisticsDialog("1000");
+                                    showStatisticsDialog();
                                   },
                                 ),
                                 Divider(
-                                  height: AdaptiveSizes.h(0.0153),
+                                  height:
+                                      AdaptiveSizes.getDividerProfileHeight(),
                                   color: Colors.black38,
                                 ),
                                 ListTile(
@@ -317,7 +325,8 @@ class _ProfileState extends State<ProfilePage> {
                                   },
                                 ),
                                 Divider(
-                                  height: AdaptiveSizes.h(0.0153),
+                                  height:
+                                      AdaptiveSizes.getDividerProfileHeight(),
                                   color: Colors.black38,
                                 ),
                                 ListTile(
@@ -342,7 +351,8 @@ class _ProfileState extends State<ProfilePage> {
                                   },
                                 ),
                                 Divider(
-                                  height: AdaptiveSizes.h(0.0153),
+                                  height:
+                                      AdaptiveSizes.getDividerProfileHeight(),
                                   color: Colors.black38,
                                 ),
                                 ListTile(
@@ -370,7 +380,8 @@ class _ProfileState extends State<ProfilePage> {
                                   },
                                 ),
                                 Divider(
-                                  height: AdaptiveSizes.h(0.0153),
+                                  height:
+                                      AdaptiveSizes.getDividerProfileHeight(),
                                   color: Colors.black38,
                                 ),
                                 ListTile(
@@ -416,7 +427,7 @@ class _ProfileState extends State<ProfilePage> {
                           ),
                         ),
 
-                        const SizedBox(height: 10),
+                        SizedBox(height: AdaptiveSizes.h(0.06)),
 
                         SizedBox(
                           width: MediaQuery.of(context).size.width,

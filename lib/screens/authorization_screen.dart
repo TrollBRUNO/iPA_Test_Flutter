@@ -101,7 +101,11 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                 labelText: 'username'.tr(),
                                 labelStyle: AdaptiveSizes.getLabelStyle(),
 
-                                icon: Icon(Icons.person_4_sharp, size: 30),
+                                icon: Icon(
+                                  Icons.person_4_sharp,
+                                  size:
+                                      AdaptiveSizes.getIconAuthorizationSize(),
+                                ),
                                 errorText: serverError,
                               ),
                               validator: (val) {
@@ -119,7 +123,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                         Padding(
                           padding: AdaptiveSizes.getMainPadding(),
                           child: SizedBox(
-                            width: 450,
+                            width: AdaptiveSizes.getInputFieldWidth(),
                             child: TextFormField(
                               key: Key('password_controller'),
                               controller: _passwordController,
@@ -137,7 +141,11 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                 labelText: 'password'.tr(),
                                 labelStyle: AdaptiveSizes.getLabelStyle(),
 
-                                icon: Icon(Icons.lock, size: 30),
+                                icon: Icon(
+                                  Icons.lock,
+                                  size:
+                                      AdaptiveSizes.getIconAuthorizationSize(),
+                                ),
                                 errorText: serverError,
                               ),
                               validator: (val) {
@@ -168,13 +176,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 32,
-                                color: Colors.white,
-                                wordSpacing: 5.5,
-                                letterSpacing: 3.5,
-                              ),
+                              textStyle: AdaptiveSizes.getLabelStyleButton(),
                             ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
@@ -266,9 +268,9 @@ class _AuthorizationState extends State<AuthorizationPage> {
 
                         InkWell(
                           onTap: () {
-                            context.go(
+                            /* context.go(
                               '/registration',
-                            ); // Переход на экран регистрации
+                            ); */ // Переход на экран регистрации
                           },
                           child: Text(
                             'no_account'.tr(),

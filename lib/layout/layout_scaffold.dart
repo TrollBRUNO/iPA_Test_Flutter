@@ -69,38 +69,38 @@ class LayoutScaffold extends StatelessWidget {
               },
               items: [
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.photo_library, size: AdaptiveSizes.w(0.07)),
+                  icon: Icon(Icons.photo_library, size: AdaptiveSizes.w(0.075)),
                   label: 'Photo',
                   activeIcon: Icon(
                     Icons.photo_library_outlined,
-                    size: AdaptiveSizes.w(0.083),
+                    size: AdaptiveSizes.w(0.085),
                   ),
                 ),
 
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.local_atm, size: AdaptiveSizes.w(0.07)),
+                  icon: Icon(Icons.local_atm, size: AdaptiveSizes.w(0.075)),
                   label: 'Jackpot',
                   activeIcon: Icon(
                     Icons.local_atm,
-                    size: AdaptiveSizes.w(0.083),
+                    size: AdaptiveSizes.w(0.085),
                   ),
                 ),
 
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.casino, size: AdaptiveSizes.w(0.07)),
+                  icon: Icon(Icons.casino, size: AdaptiveSizes.w(0.075)),
                   label: 'Wheel',
                   activeIcon: Icon(
                     Icons.casino_outlined,
-                    size: AdaptiveSizes.w(0.083),
+                    size: AdaptiveSizes.w(0.085),
                   ),
                 ),
 
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.account_box, size: AdaptiveSizes.w(0.07)),
+                  icon: Icon(Icons.account_box, size: AdaptiveSizes.w(0.075)),
                   label: 'Profile',
                   activeIcon: Icon(
                     Icons.account_box_outlined,
-                    size: AdaptiveSizes.w(0.083),
+                    size: AdaptiveSizes.w(0.085),
                   ),
                 ),
               ],
