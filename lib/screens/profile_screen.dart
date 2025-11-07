@@ -261,7 +261,9 @@ class _ProfileState extends State<ProfilePage> {
                                     'settings'.tr(),
                                     style: GoogleFonts.openSans(
                                       fontSize:
-                                          AdaptiveSizes.getFontSettingsSize(),
+                                          AdaptiveSizes.getFontSettingsSize(
+                                            false,
+                                          ),
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(221, 22, 20, 20),
@@ -287,7 +289,9 @@ class _ProfileState extends State<ProfilePage> {
                                     'statistics'.tr(),
                                     style: GoogleFonts.openSans(
                                       fontSize:
-                                          AdaptiveSizes.getFontSettingsSize(),
+                                          AdaptiveSizes.getFontSettingsSize(
+                                            false,
+                                          ),
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(221, 22, 20, 20),
@@ -313,7 +317,9 @@ class _ProfileState extends State<ProfilePage> {
                                     'notice'.tr(),
                                     style: GoogleFonts.openSans(
                                       fontSize:
-                                          AdaptiveSizes.getFontSettingsSize(),
+                                          AdaptiveSizes.getFontSettingsSize(
+                                            false,
+                                          ),
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(221, 22, 20, 20),
@@ -339,7 +345,9 @@ class _ProfileState extends State<ProfilePage> {
                                     'support'.tr(),
                                     style: GoogleFonts.openSans(
                                       fontSize:
-                                          AdaptiveSizes.getFontSettingsSize(),
+                                          AdaptiveSizes.getFontSettingsSize(
+                                            false,
+                                          ),
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(221, 22, 20, 20),
@@ -366,9 +374,13 @@ class _ProfileState extends State<ProfilePage> {
                                     style: GoogleFonts.openSans(
                                       fontSize:
                                           context.locale.languageCode == 'ru'
-                                          ? AdaptiveSizes.getFontSettingsSize() -
+                                          ? AdaptiveSizes.getFontSettingsSize(
+                                                  false,
+                                                ) -
                                                 1
-                                          : AdaptiveSizes.getFontSettingsSize(),
+                                          : AdaptiveSizes.getFontSettingsSize(
+                                              false,
+                                            ),
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(221, 22, 20, 20),
@@ -407,7 +419,13 @@ class _ProfileState extends State<ProfilePage> {
                                     'logout'.tr(),
                                     style: GoogleFonts.openSans(
                                       fontSize:
-                                          AdaptiveSizes.getFontSettingsSize(),
+                                          context.locale.languageCode == 'bg'
+                                          ? AdaptiveSizes.getFontSettingsSize(
+                                              true,
+                                            )
+                                          : AdaptiveSizes.getFontSettingsSize(
+                                              false,
+                                            ),
                                       fontStyle: FontStyle.normal,
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(221, 22, 20, 20),

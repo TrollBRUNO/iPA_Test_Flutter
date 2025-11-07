@@ -75,9 +75,11 @@ class _WheelState extends State<WheelPage> {
 
                         SizedBox(
                           height: context.locale.languageCode == 'bg'
-                              ? AdaptiveSizes.h(0.09) - 42.5
+                              ? AdaptiveSizes.h(0.09) -
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
                               : context.locale.languageCode == 'ru'
-                              ? AdaptiveSizes.h(0.09) - 42.5
+                              ? AdaptiveSizes.h(0.09) -
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
                               : AdaptiveSizes.h(0.09),
                         ),
 
@@ -90,12 +92,12 @@ class _WheelState extends State<WheelPage> {
                         SizedBox(
                           height: context.locale.languageCode == 'bg'
                               ? AdaptiveSizes.h(0.08) +
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode2()
                               : context.locale.languageCode == 'ru'
                               ? AdaptiveSizes.h(0.08) +
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode2()
                               : AdaptiveSizes.h(0.08) +
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode(),
+                                    AdaptiveSizes.getWheelSizedBoxlanguageCode2(),
                         ),
                       ],
                     ),

@@ -206,7 +206,7 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                             'take_it'.tr(),
                             style: TextStyle(
                               fontSize: isBigWin
-                                  ? AdaptiveSizes.getFontSettingsSize()
+                                  ? AdaptiveSizes.getFontUniversalSize()
                                   : AdaptiveSizes.getFontLanguageSize(),
                               color: Colors.black,
                               fontWeight: FontWeight.w800,

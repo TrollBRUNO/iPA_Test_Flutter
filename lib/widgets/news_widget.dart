@@ -51,7 +51,7 @@ class NewsWidget extends StatelessWidget {
                 children: [
                   SmartMarquee(
                     text: news.title,
-                    style: AdaptiveSizes.getCityJackpotTextStyle(),
+                    style: AdaptiveSizes.getUniversalTextStyle(),
                   ),
 
                   SizedBox(height: AdaptiveSizes.h(0.00769)),
