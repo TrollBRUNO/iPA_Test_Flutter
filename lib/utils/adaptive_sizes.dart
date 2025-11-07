@@ -22,22 +22,31 @@ class AdaptiveSizes {
       return screenWidth * 0.11667;
     }
     if (screenWidth > 400) {
-      if (language == "bg") return screenWidth * 0.11111;
+      if (language == "bg") return screenWidth * 0.1;
       if (language == "ru") return screenWidth * 0.11574;
       return screenWidth * 0.125;
     }
+
+    if (screenHeight > 1000 && screenWidth < 450) {
+      if (language == "bg") return screenWidth * 0.1;
+      if (language == "ru") return screenWidth * 0.11574;
+      return screenWidth * 0.135;
+    }
+
     return screenWidth * 0.135;
   }
 
   static double getUniversalTitleSize() {
     if (screenWidth > 600) return screenWidth * 0.11667;
     if (screenWidth > 400) return screenWidth * 0.125;
-    return screenWidth * 0.135;
+    if (screenHeight > 1000 && screenWidth < 450) return screenWidth * 0.135;
+    return screenWidth * 0.125;
   }
 
   static double getWheelTitleSize() {
     if (screenWidth > 600) return screenWidth * 0.125;
     if (screenWidth > 400) return screenWidth * 0.11574;
+    if (screenHeight > 1000 && screenWidth < 450) return screenWidth * 0.125;
     return screenWidth * 0.11574;
   }
 
@@ -116,6 +125,7 @@ class AdaptiveSizes {
   static double getPrizeDialogMinHeight() {
     if (screenWidth > 600) return screenWidth * 0.44444;
     if (screenWidth > 400) return screenWidth * 0.5463;
+    if (screenHeight > 1000 && screenWidth < 450) return screenWidth * 0.59;
     return screenWidth * 0.5463;
   }
 
@@ -132,8 +142,8 @@ class AdaptiveSizes {
   }
 
   static double getVisibleTitleNewsHeight() {
-    if (screenWidth > 600) return screenHeight * 0.12821;
-    if (screenWidth > 400) return screenHeight * 0.15625;
+    if (screenHeight > 1200) return screenHeight * 0.12821;
+    if (screenHeight > 700) return screenHeight * 0.15625;
     return screenHeight * 0.15625;
   }
 
@@ -144,8 +154,8 @@ class AdaptiveSizes {
   }
 
   static double getNewsTabHeight() {
-    if (screenWidth > 600) return screenHeight * 0.11218;
-    if (screenWidth > 400) return screenHeight * 0.19631;
+    if (screenHeight > 1200) return screenHeight * 0.11218;
+    if (screenHeight > 700) return screenHeight * 0.19631;
     return screenHeight * 0.19631;
   }
 
@@ -333,6 +343,13 @@ class AdaptiveSizes {
     return screenHeight * 0.05208;
   }
 
+  static double getJackpotLogoFontSize2() {
+    if (screenWidth > 600) return screenWidth * 0.04444;
+    if (screenWidth > 400) return screenWidth * 0.05128;
+    if (screenHeight > 1000 && screenWidth < 450) return screenWidth * 0.04444;
+    return screenWidth * 0.05128;
+  }
+
   static double getJackpotLogoFontSize() {
     if (screenWidth > 600) return screenWidth * 0.04444;
     if (screenWidth > 400) return screenWidth * 0.05128;
@@ -426,8 +443,8 @@ class AdaptiveSizes {
   ///
   static double getFontNewsTitleSize() {
     if (screenWidth > 600) return 58;
-    if (screenWidth > 400) return 32;
-    return 32;
+    if (screenWidth > 400) return 34;
+    return 34;
   }
 
   static double getFontNewsTitleSecondSize() {

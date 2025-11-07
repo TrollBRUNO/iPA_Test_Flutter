@@ -192,9 +192,9 @@ class _JackpotState extends State<JackpotPage> {
                     (constraints.maxHeight - kToolbarHeight) /
                     (AdaptiveSizes.getJackpotPercentSize() - kToolbarHeight);
                 final double fontSize =
-                    AdaptiveSizes.getJackpotLogoFontSize() +
+                    AdaptiveSizes.getJackpotLogoFontSize2() +
                     (AdaptiveSizes.getJackpotLogoFontSecondSize() -
-                            AdaptiveSizes.getJackpotLogoFontSize()) *
+                            AdaptiveSizes.getJackpotLogoFontSize2()) *
                         percent;
 
                 return Stack(
