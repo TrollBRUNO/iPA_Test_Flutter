@@ -15,22 +15,36 @@ class AdaptiveSizes {
   static double w(double width) => width * screenWidth;
   static double h(double height) => height * screenHeight;
 
+  static double getProfileTitleSize(String language) {
+    if (screenWidth > 600) {
+      if (language == "bg") return screenWidth * 0.10556;
+      if (language == "ru") return screenWidth * 0.11111;
+      return screenWidth * 0.11667;
+    }
+    if (screenWidth > 400) {
+      if (language == "bg") return screenWidth * 0.11111;
+      if (language == "ru") return screenWidth * 0.11574;
+      return screenWidth * 0.125;
+    }
+    return screenWidth * 0.135;
+  }
+
   static double getUniversalTitleSize() {
-    if (screenWidth > 600) return 84;
-    if (screenWidth > 400) return 54;
-    return 42;
+    if (screenWidth > 600) return screenWidth * 0.11667;
+    if (screenWidth > 400) return screenWidth * 0.125;
+    return screenWidth * 0.135;
   }
 
   static double getWheelTitleSize() {
-    if (screenWidth > 600) return 90;
-    if (screenWidth > 400) return 50;
-    return 40;
+    if (screenWidth > 600) return screenWidth * 0.125;
+    if (screenWidth > 400) return screenWidth * 0.11574;
+    return screenWidth * 0.11574;
   }
 
   static double getLanguageMinusTitle() {
-    if (screenWidth > 600) return 2;
-    if (screenWidth > 400) return 4;
-    return 4;
+    if (screenWidth > 600) return screenWidth * 0.00278;
+    if (screenWidth > 400) return screenWidth * 0.009;
+    return screenWidth * 0.009;
   }
 
   static void printSizes() {
@@ -39,16 +53,22 @@ class AdaptiveSizes {
     logger.i('Screen Height: $screenHeight');
   }
 
+  static double getInputFieldHeight() {
+    if (screenWidth > 600) return 150;
+    if (screenWidth > 400) return 100;
+    return screenWidth * 0.1;
+  }
+
   static double getInputFieldWidth() {
-    if (screenWidth > 600) return 450;
+    if (screenWidth > 600) return 580;
     if (screenWidth > 400) return 400;
     return screenWidth * 0.85;
   }
 
   static double getCameraWidgetHeight() {
-    if (screenWidth > 600) return screenHeight * 0.24358;
-    if (screenWidth > 400) return screenHeight * 0.28846;
-    return screenHeight * 0.28846;
+    if (screenWidth > 600) return screenWidth * 0.52778;
+    if (screenWidth > 400) return screenWidth * 0.50926;
+    return screenWidth * 0.50926;
   }
 
   static double getStatisticsDialogMaxWidth() {
@@ -88,15 +108,15 @@ class AdaptiveSizes {
   }
 
   static double getPrizeDialogMaxHeight() {
-    if (screenWidth > 600) return screenHeight * 0.32051;
-    if (screenWidth > 400) return screenHeight * 0.42269;
-    return screenHeight * 0.42269;
+    if (screenWidth > 600) return screenWidth * 0.69444;
+    if (screenWidth > 400) return screenWidth * 0.75232;
+    return screenWidth * 0.75232;
   }
 
   static double getPrizeDialogMinHeight() {
-    if (screenWidth > 600) return screenHeight * 0.20513;
-    if (screenWidth > 400) return screenHeight * 0.3077;
-    return screenHeight * 0.3077;
+    if (screenWidth > 600) return screenWidth * 0.44444;
+    if (screenWidth > 400) return screenWidth * 0.5463;
+    return screenWidth * 0.5463;
   }
 
   static double getStatisticsDialogMinHeight() {
@@ -108,7 +128,7 @@ class AdaptiveSizes {
   static double getNewsTabSecondHeight() {
     if (screenWidth > 600) return screenHeight * 0.03077;
     if (screenWidth > 400) return screenHeight * 0.06254;
-    return screenWidth * 0.04616;
+    return screenHeight * 0.06254;
   }
 
   static double getVisibleTitleNewsHeight() {
@@ -120,31 +140,36 @@ class AdaptiveSizes {
   static double getNewsWidgetHeight() {
     if (screenWidth > 600) return screenHeight * 0.28013;
     if (screenWidth > 400) return screenHeight * 0.32552;
-    return screenWidth * 0.32552;
+    return screenHeight * 0.32552;
   }
 
   static double getNewsTabHeight() {
     if (screenWidth > 600) return screenHeight * 0.11218;
     if (screenWidth > 400) return screenHeight * 0.19631;
-    return screenWidth * 0.19631;
+    return screenHeight * 0.19631;
   }
 
   static double getNewsTabContainerHeight() {
     if (screenWidth > 600) return screenHeight * 0.0565;
     if (screenWidth > 400) return screenHeight * 0.07813;
-    return screenWidth * 0.07813;
+    return screenHeight * 0.07813;
   }
 
   static double getJackpotWidgetHeight() {
     if (screenWidth > 600) return screenHeight * 0.19872;
     if (screenWidth > 400) return screenHeight * 0.2782;
-    return screenWidth * 0.2782;
+    return screenHeight * 0.2782;
   }
 
   static double getStatisticsDialogMaxHeight() {
     if (screenWidth > 600) return 900;
     if (screenWidth > 400) return screenWidth * 1.25;
     return screenWidth * 1.25;
+  }
+
+  static double getDividerProfileHeight() {
+    if (screenHeight > 1000) return screenHeight * 0.0153;
+    return screenHeight * 0.01042;
   }
 
   static BorderRadius getJackpotWidgetBorderRadius() {
@@ -205,10 +230,12 @@ class AdaptiveSizes {
     return const EdgeInsets.all(16);
   }
 
-  static EdgeInsets getProfileSettinsPadding() {
-    if (screenWidth > 600) return const EdgeInsets.all(24);
-    if (screenWidth > 400) return const EdgeInsets.all(12);
-    return const EdgeInsets.all(12);
+  static EdgeInsets getProfileSettingsPadding() {
+    if (screenWidth > 600)
+      return const EdgeInsets.symmetric(vertical: 24, horizontal: 24);
+    if (screenWidth > 400)
+      return const EdgeInsets.symmetric(vertical: 8, horizontal: 8);
+    return const EdgeInsets.symmetric(vertical: 8, horizontal: 8);
   }
 
   static EdgeInsets getSettingsRowPadding() {
@@ -283,8 +310,8 @@ class AdaptiveSizes {
   }
 
   static double getButtonWidth() {
-    if (screenWidth > 600) return 350;
-    if (screenWidth > 400) return 250;
+    if (screenWidth > 600) return screenWidth * 0.41667;
+    if (screenWidth > 400) return screenWidth * 0.5;
     return screenWidth * 0.5;
   }
 
@@ -301,15 +328,15 @@ class AdaptiveSizes {
   }
 
   static double getWheelSizedBoxlanguageCode() {
-    if (screenWidth > 600) return 100;
-    if (screenWidth > 400) return 20;
-    return 10;
+    if (screenWidth > 600) return screenHeight * 0.06410;
+    if (screenWidth > 400) return screenHeight * 0.05208;
+    return screenHeight * 0.05208;
   }
 
   static double getJackpotLogoFontSize() {
-    if (screenWidth > 600) return 32;
-    if (screenWidth > 400) return screenWidth * 0.04444;
-    return screenWidth * 0.04444;
+    if (screenWidth > 600) return screenWidth * 0.04444;
+    if (screenWidth > 400) return screenWidth * 0.05128;
+    return screenWidth * 0.05128;
   }
 
   static double getIconProfileSize() {
@@ -336,10 +363,16 @@ class AdaptiveSizes {
     return 12;
   }
 
+  static double getIconAuthorizationSize() {
+    if (screenWidth > 600) return screenWidth * 0.06388;
+    if (screenWidth > 400) return screenWidth * 0.06944;
+    return screenWidth * 0.06944;
+  }
+
   static double getIconSettingsSize() {
-    if (screenWidth > 600) return 48;
-    if (screenWidth > 400) return 38;
-    return 38;
+    if (screenWidth > 600) return screenWidth * 0.06667;
+    if (screenWidth > 400) return screenWidth * 0.08333;
+    return screenWidth * 0.08333;
   }
 
   static double getFontSettingsSize() {
@@ -453,15 +486,15 @@ class AdaptiveSizes {
   }
 
   static double getSelectedFontSize() {
-    if (screenWidth > 600) return 20;
-    if (screenWidth > 400) return 16;
-    return screenWidth * 0.028;
+    if (screenWidth > 600) return screenWidth * 0.02777;
+    if (screenWidth > 400) return screenWidth * 0.03704;
+    return screenWidth * 0.03704;
   }
 
   static double getUnselectedFontSize() {
-    if (screenWidth > 600) return 18;
-    if (screenWidth > 400) return 14;
-    return screenWidth * 0.028;
+    if (screenWidth > 600) return screenWidth * 0.025;
+    if (screenWidth > 400) return screenWidth * 0.03241;
+    return screenWidth * 0.03241;
   }
 
   static double getRangeJackpotSize() {
@@ -478,12 +511,12 @@ class AdaptiveSizes {
 
   static TextStyle getInputTextStyle() {
     if (screenWidth > 600) {
-      return const TextStyle(fontSize: 24, color: Colors.white70);
+      return TextStyle(fontSize: screenWidth * 0.05, color: Colors.white70);
     }
     if (screenWidth > 400) {
-      return const TextStyle(fontSize: 20, color: Colors.white70);
+      return TextStyle(fontSize: screenWidth * 0.05092, color: Colors.white70);
     }
-    return const TextStyle(fontSize: 18, color: Colors.white70);
+    return TextStyle(fontSize: screenWidth * 0.05092, color: Colors.white70);
   }
 
   static TextStyle getCityJackpotTextStyle() {
@@ -530,50 +563,75 @@ class AdaptiveSizes {
     );
   }
 
+  static TextStyle getLabelStyleButton() {
+    if (screenWidth > 600) {
+      return TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: screenWidth * 0.05833,
+        color: Colors.white,
+        wordSpacing: 5.5,
+        letterSpacing: 3.5,
+      );
+    }
+    if (screenWidth > 400) {
+      return TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: screenWidth * 0.05833,
+        color: Colors.white,
+        wordSpacing: 5.5,
+        letterSpacing: 3.5,
+      );
+    }
+    return TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: screenWidth * 0.05833,
+      color: Colors.white,
+      wordSpacing: 5.5,
+      letterSpacing: 3.5,
+    );
+  }
+
   static TextStyle getLabelStyle() {
     if (screenWidth > 600) {
-      return const TextStyle(
-        fontSize: 20,
-        fontStyle: FontStyle.italic,
+      return TextStyle(
+        fontSize: screenWidth * 0.04167,
+        fontWeight: FontWeight.w300,
         color: Colors.white54,
       );
     }
     if (screenWidth > 400) {
-      return const TextStyle(
-        fontSize: 18,
-        fontStyle: FontStyle.italic,
+      return TextStyle(
+        fontSize: screenWidth * 0.04167,
+        fontWeight: FontWeight.w300,
         color: Colors.white54,
       );
     }
-    return const TextStyle(
-      fontSize: 16,
-      fontStyle: FontStyle.italic,
+    return TextStyle(
+      fontSize: screenWidth * 0.04167,
+      fontWeight: FontWeight.w300,
       color: Colors.white54,
     );
   }
 
   static TextStyle getLabelLinkStyle() {
     if (screenWidth > 600) {
-      return const TextStyle(
-        fontSize: 20,
-        fontStyle: FontStyle.italic,
+      return TextStyle(
+        fontSize: screenWidth * 0.041667,
         color: Colors.white54,
-        decoration: TextDecoration.underline,
+        decoration: TextDecoration.lineThrough,
       );
     }
     if (screenWidth > 400) {
-      return const TextStyle(
-        fontSize: 18,
-        fontStyle: FontStyle.italic,
+      return TextStyle(
+        fontSize: screenWidth * 0.041667,
         color: Colors.white54,
-        decoration: TextDecoration.underline,
+        decoration: TextDecoration.lineThrough,
       );
     }
-    return const TextStyle(
-      fontSize: 16,
-      fontStyle: FontStyle.italic,
+    return TextStyle(
+      fontSize: screenWidth * 0.041667,
       color: Colors.white54,
-      decoration: TextDecoration.underline,
+      decoration: TextDecoration.lineThrough,
     );
   }
 

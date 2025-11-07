@@ -7,10 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class StatisticsDialogWidget extends StatefulWidget {
-  final String prize;
   final VoidCallback onClaim;
 
-  const StatisticsDialogWidget({required this.prize, required this.onClaim});
+  const StatisticsDialogWidget({required this.onClaim});
 
   @override
   State<StatisticsDialogWidget> createState() => _StatisticsDialogState();
