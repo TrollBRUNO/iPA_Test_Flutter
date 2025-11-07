@@ -168,6 +168,7 @@ class AdaptiveSizes {
   static double getJackpotWidgetHeight() {
     if (screenWidth > 600) return screenHeight * 0.19872;
     if (screenWidth > 400) return screenHeight * 0.2782;
+    if (screenHeight > 1000 && screenWidth < 450) return screenHeight * 0.19872;
     return screenHeight * 0.2782;
   }
 
@@ -326,8 +327,9 @@ class AdaptiveSizes {
   }
 
   static double getJackpotPercentSize() {
-    if (screenWidth > 600) return 180;
+    if (screenWidth > 600) return screenWidth * 0.25;
     if (screenWidth > 400) return screenWidth * 0.27777;
+    if (screenHeight > 1000 && screenWidth < 450) return screenWidth * 0.25;
     return screenWidth * 0.27777;
   }
 
@@ -346,7 +348,7 @@ class AdaptiveSizes {
   static double getJackpotLogoFontSize2() {
     if (screenWidth > 600) return screenWidth * 0.04444;
     if (screenWidth > 400) return screenWidth * 0.05128;
-    if (screenHeight > 1000 && screenWidth < 450) return screenWidth * 0.04444;
+    if (screenHeight > 1000 && screenWidth < 450) return screenWidth * 0.0444;
     return screenWidth * 0.05128;
   }
 
