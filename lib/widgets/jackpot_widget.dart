@@ -188,6 +188,7 @@ class JackpotWidget extends StatelessWidget {
                             jackpot.isMysteryProgressive,
                           ),
                       child: Container(
+                        height: 100,
                         padding:
                             AdaptiveSizes.getJackpotContentWidgetSecondPadding(),
                         decoration: BoxDecoration(

@@ -43,7 +43,7 @@ class NewsWidget extends StatelessWidget {
                   bottomRight: Radius.circular(32),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(30, 50, 30, 30),
+              padding: EdgeInsets.fromLTRB(30, 50, 30, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
