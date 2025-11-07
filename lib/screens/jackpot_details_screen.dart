@@ -350,7 +350,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
           Icon(
             iconJackpot,
             color: labelColor,
-            size: AdaptiveSizes.getFontSettingsSize(),
+            size: AdaptiveSizes.getFontUniversalSize(),
             shadows: [
               Shadow(color: shadowColor, blurRadius: 10, offset: Offset(2, 2)),
             ],

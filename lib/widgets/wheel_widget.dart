@@ -369,8 +369,8 @@ class _WheelState extends State<WheelWidget> {
                     'bonus_balance',
                     currentBalance.toString(),
                   );
-                  showPrizeDialog(prize.formatted);
-                  //showPrizeDialog('100 BGN');
+                  //showPrizeDialog(prize.formatted);
+                  showPrizeDialog('100 BGN');
                 },
               ),
             ),

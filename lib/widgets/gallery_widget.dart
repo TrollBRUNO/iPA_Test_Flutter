@@ -49,7 +49,7 @@ class GalleryWidget extends StatelessWidget {
                 children: [
                   Text(
                     gallery.description,
-                    style: AdaptiveSizes.getCityJackpotTextStyle(),
+                    style: AdaptiveSizes.getUniversalTextStyle(),
                   ),
                 ],
               ),

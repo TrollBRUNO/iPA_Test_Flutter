@@ -153,12 +153,7 @@ class _NewsState extends State<NewsPage> {
                   child: Container(
                     height: AdaptiveSizes.getNewsTabContainerHeight(),
                     // Adaptive padding based on available space
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: AdaptiveSizes.h(
-                        0.01282,
-                      ), // Reduced vertical padding
-                    ),
+                    padding: AdaptiveSizes.getTabNewsPadding(),
                     child: Material(
                       shadowColor: const Color.fromARGB(122, 0, 0, 0),
                       color: const Color.fromARGB(255, 51, 51, 51),
