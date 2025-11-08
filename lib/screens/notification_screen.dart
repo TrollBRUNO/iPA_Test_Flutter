@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,11 +25,11 @@ class NotificationPage extends StatefulWidget {
 // Стили для заголовков
 Widget sectionTitle(String title) {
   return Padding(
-    padding: const EdgeInsets.only(left: 20.0, top: 20.0, bottom: 10.0),
+    padding: AdaptiveSizes.getNotificationPadding(),
     child: Text(
       title,
       style: GoogleFonts.raleway(
-        fontSize: 32,
+        fontSize: AdaptiveSizes.getFontBigPrizeSize(),
         fontWeight: FontWeight.bold,
         color: Colors.orangeAccent[200],
       ),
@@ -39,7 +40,7 @@ Widget sectionTitle(String title) {
 // Стили для подпунктов с переключателем
 Widget settingOption(String title, bool value, Function(bool) onChanged) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 6),
+    padding: AdaptiveSizes.getNotificationPadding2(),
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
@@ -54,14 +55,15 @@ Widget settingOption(String title, bool value, Function(bool) onChanged) {
             child: Text(
               title,
               style: GoogleFonts.raleway(
-                fontSize: 24,
+                fontSize: AdaptiveSizes.getFontInfoSize(),
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
+          SizedBox(width: 30),
           Transform.scale(
-            scale: 1.2,
+            scale: AdaptiveSizes.getNotificationSwitchSize(),
             child: Switch(
               value: value,
               onChanged: onChanged,
@@ -78,7 +80,7 @@ Widget settingOption(String title, bool value, Function(bool) onChanged) {
 }
 
 class _NotificationState extends State<NotificationPage> {
-  //final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   // Пример состояний переключателей
   bool notif1 = true;
@@ -90,81 +92,123 @@ class _NotificationState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
+    AdaptiveSizes.init(context);
+
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            const SizedBox(height: 100),
+      backgroundColor: const Color(0xFF121212),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 12,
+                          left: 8,
+                          right: 8,
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Кнопка "назад" — слева
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back_ios_new_rounded,
+                                  color: Colors.orangeAccent[200],
+                                  size: AdaptiveSizes.getIconBackSettingsSize(),
+                                ),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ),
 
-            Positioned(
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.orangeAccent[200],
-                  size: 32,
+                            Text(
+                              'notice'.tr(),
+                              style: GoogleFonts.daysOne(
+                                fontSize: AdaptiveSizes.getFontUsernameSize(),
+                                fontWeight: FontWeight.w100,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.orangeAccent[200],
+                                shadows: const [
+                                  Shadow(
+                                    color: Color.fromARGB(255, 51, 51, 51),
+                                    offset: Offset(3.5, 4.5),
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Весь список
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          sectionTitle("Колесо удачи"),
+                          settingOption(
+                            "Уведомление о новой возможности",
+                            notif1,
+                            (val) {
+                              setState(() => notif1 = val);
+                            },
+                          ),
+                          settingOption("Напоминание забрать бонус", notif2, (
+                            val,
+                          ) {
+                            setState(() => notif2 = val);
+                          }),
+
+                          sectionTitle("Подписаться на новости"),
+                          settingOption("Свежие новости и розыгрыши", notif3, (
+                            val,
+                          ) {
+                            setState(() => notif3 = val);
+                          }),
+                          settingOption(
+                            "Уведомление о больших выигрышах",
+                            notif4,
+                            (val) {
+                              setState(() => notif4 = val);
+                            },
+                          ),
+
+                          sectionTitle("Дополнительные"),
+                          settingOption(
+                            "Уведомление в рекламных целях",
+                            notif5,
+                            (val) {
+                              setState(() => notif5 = val);
+                            },
+                          ),
+                          settingOption(
+                            "Объявление о пиковом джекпоте",
+                            notif6,
+                            (val) {
+                              setState(() => notif6 = val);
+                            },
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
               ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'notice'.tr(),
-                style: GoogleFonts.daysOne(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w100,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.orangeAccent[200],
-                  shadows: const [
-                    Shadow(
-                      color: Color.fromARGB(255, 51, 51, 51),
-                      offset: Offset(3.5, 4.5),
-                      blurRadius: 3,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Весь список
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                sectionTitle("Колесо удачи"),
-                settingOption("Уведомление о новой возможности", notif1, (val) {
-                  setState(() => notif1 = val);
-                }),
-                settingOption("Напоминание забрать бонус", notif2, (val) {
-                  setState(() => notif2 = val);
-                }),
-
-                sectionTitle("Подписаться на новости"),
-                settingOption("Свежие новости и розыгрыши", notif3, (val) {
-                  setState(() => notif3 = val);
-                }),
-                settingOption("Уведомление о больших выигрышах", notif4, (val) {
-                  setState(() => notif4 = val);
-                }),
-
-                sectionTitle("Дополнительные"),
-                settingOption("Уведомление в рекламных целях", notif5, (val) {
-                  setState(() => notif5 = val);
-                }),
-                settingOption("Объявление о пиковом джекпоте", notif6, (val) {
-                  setState(() => notif6 = val);
-                }),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-          ],
+            );
+          },
         ),
       ),
     );

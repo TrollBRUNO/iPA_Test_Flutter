@@ -107,6 +107,7 @@ class _SettingsState extends State<SettingsPage> {
     AdaptiveSizes.init(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
