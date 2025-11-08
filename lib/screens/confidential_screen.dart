@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,19 +48,20 @@ class _ConfidentialState extends State<ConfidentialPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF121212),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 100),
+            SizedBox(height: AdaptiveSizes.h(0.05128)),
 
             Positioned(
               child: IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   color: Colors.orangeAccent[200],
-                  size: 32,
+                  size: AdaptiveSizes.getFontBigPrizeSize(),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -72,7 +74,7 @@ class _ConfidentialState extends State<ConfidentialPage> {
               child: Text(
                 'confidentiality_condition'.tr(),
                 style: GoogleFonts.daysOne(
-                  fontSize: 36,
+                  fontSize: AdaptiveSizes.getFontStatisticsIconSize(),
                   fontWeight: FontWeight.w100,
                   fontStyle: FontStyle.italic,
                   color: Colors.orangeAccent[200],
@@ -87,13 +89,13 @@ class _ConfidentialState extends State<ConfidentialPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: AdaptiveSizes.h(0.01282)),
 
             Expanded(
               child: Container(
                 width: double.infinity,
                 margin: const EdgeInsets.symmetric(horizontal: 12),
-                padding: const EdgeInsets.all(16),
+                padding: AdaptiveSizes.getConfidentialTextPadding(),
                 decoration: BoxDecoration(
                   color: Colors.orangeAccent[200],
                   borderRadius: BorderRadius.circular(12),
@@ -102,7 +104,7 @@ class _ConfidentialState extends State<ConfidentialPage> {
                   child: Text(
                     _fileContent,
                     style: GoogleFonts.roboto(
-                      fontSize: 24,
+                      fontSize: AdaptiveSizes.getFontPrizeSize(),
                       fontWeight: FontWeight.w700,
                       //height: 1.5,
                       color: Color.fromARGB(221, 22, 20, 20),
@@ -113,7 +115,7 @@ class _ConfidentialState extends State<ConfidentialPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: AdaptiveSizes.h(0.01282)),
           ],
         ),
       ),

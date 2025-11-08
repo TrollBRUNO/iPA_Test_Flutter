@@ -27,7 +27,7 @@
   "support": "Support",
   "welcome_support" : "Welcome to the Magic City support section! We are actively working on improving the app and really appreciate your feedback. Please describe your problem or idea — it will help us make Magic City even better!",
   "describe_problem" : "Describe your problem.",
-  "warning_describe_problem" : "Please enter a description of your problem.",
+  "warning_describe_problem" : "The description is empty.",
   "send" : "Send",
   "successful_send": "Dear user, your application has been sent to support. We will read it soon and solve the problem.",
   "confidentiality": "Confidentiality",

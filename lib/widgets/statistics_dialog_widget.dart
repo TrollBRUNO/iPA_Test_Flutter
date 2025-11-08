@@ -75,138 +75,134 @@ class _StatisticsDialogState extends State<StatisticsDialogWidget>
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Основной контейнер с тенью
-                        Container(
-                          width: AdaptiveSizes.getStatisticsDialogMaxWidth(),
-                          constraints: BoxConstraints(
-                            maxHeight:
-                                AdaptiveSizes.getStatisticsDialogMaxHeight(),
-                            minHeight:
-                                AdaptiveSizes.getStatisticsDialogMinHeight(),
-                          ),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.lightGreen.shade100,
-                                Colors.greenAccent.shade100,
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
-                            borderRadius: BorderRadius.circular(40),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.yellow.shade100,
-                                blurRadius: 20,
-                                spreadRadius: 4,
-                                offset: const Offset(0, 0),
-                              ),
-                              BoxShadow(
-                                color: Colors.yellow.shade200,
-                                blurRadius: 1,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 0),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            clipBehavior: Clip.none,
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ScaleTransition(
-                                    scale: _scaleAnim,
-                                    child: Icon(
-                                      Icons.insert_drive_file_outlined,
-                                      color: Colors.green[400],
-                                      size: AdaptiveSizes.getLogoSize(),
-                                    ),
-                                  ),
-                                  SizedBox(height: AdaptiveSizes.h(0.00769)),
-                                  Text(
-                                    "statistics".tr(),
-                                    style: TextStyle(
-                                      fontSize:
-                                          AdaptiveSizes.getFontUsernameSize(),
-                                      fontWeight: FontWeight.w600,
-                                      shadows: [
-                                        Shadow(
-                                          color: Colors.black26,
-                                          blurRadius: 4,
-                                          offset: Offset(1, 2),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: AdaptiveSizes.h(0.01538)),
-                                  Flexible(
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                      color: Colors.white.withOpacity(0.09),
-                                      constraints: BoxConstraints(
-                                        maxHeight:
-                                            AdaptiveSizes.getStatisticsDialogMaxWidth(),
-                                      ),
-                                      child: Scrollbar(
-                                        thumbVisibility: false,
-                                        radius: const Radius.circular(20),
-                                        thickness: 4,
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: galleryList
-                                                .map(
-                                                  (stat) => buildStatisticsRow(
-                                                    context,
-                                                    stat.publicationDate,
-                                                    stat.prizeCount,
-                                                  ),
-                                                )
-                                                .toList(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                top: -10,
-                                right: -10,
-                                child: IconButton(
-                                  icon: const Icon(Icons.close),
-                                  onPressed: widget.onClaim,
-                                ),
-                              ),
-                            ],
-                          ),
+    return SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: Material(
+                  color: Colors.transparent,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Основной контейнер с тенью
+                      Container(
+                        width: AdaptiveSizes.getStatisticsDialogMaxWidth(),
+                        constraints: BoxConstraints(
+                          maxHeight:
+                              AdaptiveSizes.getStatisticsDialogMaxHeight(),
+                          minHeight:
+                              AdaptiveSizes.getStatisticsDialogMinHeight(),
                         ),
-                      ],
-                    ),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.lightGreen.shade100,
+                              Colors.greenAccent.shade100,
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(40),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.yellow.shade100,
+                              blurRadius: 20,
+                              spreadRadius: 4,
+                              offset: const Offset(0, 0),
+                            ),
+                            BoxShadow(
+                              color: Colors.yellow.shade200,
+                              blurRadius: 1,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 0),
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          clipBehavior: Clip.none,
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ScaleTransition(
+                                  scale: _scaleAnim,
+                                  child: Icon(
+                                    Icons.insert_drive_file_outlined,
+                                    color: Colors.green[400],
+                                    size: AdaptiveSizes.getLogoSize(),
+                                  ),
+                                ),
+                                SizedBox(height: AdaptiveSizes.h(0.00769)),
+                                Text(
+                                  "statistics".tr(),
+                                  style: TextStyle(
+                                    fontSize:
+                                        AdaptiveSizes.getFontUsernameSize(),
+                                    fontWeight: FontWeight.w600,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                        offset: Offset(1, 2),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: AdaptiveSizes.h(0.01538)),
+                                Flexible(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    color: Colors.white.withOpacity(0.09),
+                                    constraints: BoxConstraints(
+                                      maxHeight:
+                                          AdaptiveSizes.getStatisticsDialogMaxWidth(),
+                                    ),
+                                    child: Scrollbar(
+                                      thumbVisibility: false,
+                                      radius: const Radius.circular(20),
+                                      thickness: 4,
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: galleryList
+                                              .map(
+                                                (stat) => buildStatisticsRow(
+                                                  context,
+                                                  stat.publicationDate,
+                                                  stat.prizeCount,
+                                                ),
+                                              )
+                                              .toList(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Positioned(
+                              top: -10,
+                              right: -10,
+                              child: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: widget.onClaim,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -14,7 +14,7 @@
 
     <application
         tools:replace="android:label"
-        android:label="first_app_flutter"
+        android:label="Magic City App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

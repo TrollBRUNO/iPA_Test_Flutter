@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,7 +49,7 @@ class _SupportState extends State<SupportPage> {
                     icon: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       color: Colors.orangeAccent[200],
-                      size: 30,
+                      size: AdaptiveSizes.getIconBackSettingsSize(),
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
@@ -60,7 +61,7 @@ class _SupportState extends State<SupportPage> {
             Expanded(
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: AdaptiveSizes.getSupportPadding(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,7 +69,7 @@ class _SupportState extends State<SupportPage> {
                       Text(
                         'support'.tr(),
                         style: GoogleFonts.daysOne(
-                          fontSize: 34,
+                          fontSize: AdaptiveSizes.getFontNewsTitleSize(),
                           fontWeight: FontWeight.w100,
                           fontStyle: FontStyle.italic,
                           color: Colors.orangeAccent[200],
@@ -82,14 +83,14 @@ class _SupportState extends State<SupportPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: AdaptiveSizes.h(0.01923)),
                       // Пояснительный текст
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
                           'welcome_support'.tr(),
                           style: GoogleFonts.openSans(
-                            fontSize: 18,
+                            fontSize: AdaptiveSizes.getSupportWelcomeTextSize(),
                             color: Colors.white70,
                             height: 1.5,
                           ),
@@ -97,7 +98,7 @@ class _SupportState extends State<SupportPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 50),
+                      SizedBox(height: AdaptiveSizes.h(0.03205)),
 
                       // Поле ввода
                       Form(
@@ -108,7 +109,7 @@ class _SupportState extends State<SupportPage> {
                             key: const Key('appeal_controller'),
                             controller: _appealController,
                             focusNode: _appealFocus,
-                            textInputAction: TextInputAction.newline,
+                            textInputAction: TextInputAction.done,
                             keyboardType: TextInputType.multiline,
                             minLines: 3,
                             maxLines: null,
@@ -117,8 +118,9 @@ class _SupportState extends State<SupportPage> {
                               LengthLimitingTextInputFormatter(1000),
                             ],
                             textAlignVertical: TextAlignVertical.top,
-                            style: const TextStyle(
-                              fontSize: 22,
+                            style: TextStyle(
+                              fontSize:
+                                  AdaptiveSizes.getSupportWelcomeTextSize(),
                               color: Colors.white70,
                             ),
                             decoration: InputDecoration(
@@ -141,22 +143,28 @@ class _SupportState extends State<SupportPage> {
                               alignLabelWithHint: true,
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.never,
-                              labelStyle: const TextStyle(
-                                fontSize: 18,
-                                fontStyle: FontStyle.italic,
+                              labelStyle: TextStyle(
+                                fontSize:
+                                    AdaptiveSizes.getSupportWelcomeTextSize(),
                                 color: Colors.white54,
                               ),
                               icon: Icon(
                                 Icons.help_outline_outlined,
-                                size: 30,
+                                size: AdaptiveSizes.getIconBackSettingsSize(),
                                 color: Colors.orangeAccent[200],
                               ),
                               errorText: serverError,
+                              errorStyle: TextStyle(
+                                fontSize:
+                                    AdaptiveSizes.getSupportMaxCountTextSize(),
+                                fontWeight: FontWeight.w600,
+                              ),
                               counterText:
                                   '${_appealController.text.length}/1000',
-                              counterStyle: const TextStyle(
+                              counterStyle: TextStyle(
                                 color: Colors.white38,
-                                fontSize: 14,
+                                fontSize:
+                                    AdaptiveSizes.getSupportMaxCountTextSize(),
                               ),
                             ),
                             onChanged: (_) => setState(() {}),
@@ -170,12 +178,12 @@ class _SupportState extends State<SupportPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 40),
+                      SizedBox(height: AdaptiveSizes.h(0.03077)),
 
                       // Кнопка отправки
                       SizedBox(
-                        width: 350,
-                        height: 60,
+                        width: AdaptiveSizes.getButtonSupportWidth(),
+                        height: AdaptiveSizes.getButtonSupportHeight(),
                         child: ElevatedButton(
                           key: const Key('appeal_button'),
                           style: ElevatedButton.styleFrom(
@@ -189,9 +197,10 @@ class _SupportState extends State<SupportPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            textStyle: const TextStyle(
+                            textStyle: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 28,
+                              fontSize:
+                                  AdaptiveSizes.getButtonSupportTextSize(),
                               letterSpacing: 2.5,
                             ),
                           ),
@@ -260,7 +269,7 @@ class _SupportState extends State<SupportPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 50),
+                      SizedBox(height: AdaptiveSizes.h(0.05487)),
                     ],
                   ),
                 ),

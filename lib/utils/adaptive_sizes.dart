@@ -75,6 +75,18 @@ class AdaptiveSizes {
     return screenWidth * 0.85;
   }
 
+  static double getButtonSupportHeight() {
+    if (screenWidth > 600) return screenWidth * 0.08333;
+    if (screenWidth > 400) return screenWidth * 0.1;
+    return screenWidth * 0.1;
+  }
+
+  static double getButtonSupportWidth() {
+    if (screenWidth > 600) return screenWidth * 0.48611;
+    if (screenWidth > 400) return screenWidth * 0.48611;
+    return screenWidth * 0.48611;
+  }
+
   static double getCameraWidgetHeight() {
     if (screenWidth > 600) return screenWidth * 0.52778;
     if (screenWidth > 400) return screenWidth * 0.50926;
@@ -156,16 +168,24 @@ class AdaptiveSizes {
     return screenHeight * 0.32552;
   }
 
+  static double getNewsTabHeight2() {
+    if (screenHeight > 1200) return screenHeight * 0.02564;
+    if (screenHeight > 700) return screenHeight * 0.02564;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.02;
+    return screenHeight * 0.02564;
+  }
+
   static double getNewsTabHeight() {
     if (screenHeight > 1200) return screenHeight * 0.11218;
     if (screenHeight > 700) return screenHeight * 0.19631;
-    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.13625;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.11625;
     return screenHeight * 0.19631;
   }
 
   static double getNewsTabContainerHeight() {
     if (screenWidth > 600) return screenHeight * 0.0565;
     if (screenWidth > 400) return screenHeight * 0.07813;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.0565;
     return screenHeight * 0.07813;
   }
 
@@ -256,6 +276,12 @@ class AdaptiveSizes {
     return EdgeInsets.only(top: (screenHeight * 0.27995), bottom: 40);
   }
 
+  static EdgeInsets getConfidentialTextPadding() {
+    if (screenWidth > 600) return const EdgeInsets.all(16);
+    if (screenWidth > 400) return const EdgeInsets.all(8);
+    return const EdgeInsets.all(8);
+  }
+
   static EdgeInsets getAdsPadding() {
     if (screenWidth > 600) return const EdgeInsets.all(28);
     if (screenWidth > 400) return const EdgeInsets.all(16);
@@ -276,6 +302,27 @@ class AdaptiveSizes {
     if (screenWidth > 400)
       const EdgeInsets.symmetric(vertical: 4, horizontal: 12);
     return const EdgeInsets.symmetric(vertical: 4, horizontal: 12);
+  }
+
+  static EdgeInsets getSupportPadding() {
+    if (screenWidth > 600) return const EdgeInsets.symmetric(horizontal: 24);
+    if (screenWidth > 400) const EdgeInsets.symmetric(horizontal: 12);
+    return const EdgeInsets.symmetric(horizontal: 12);
+  }
+
+  static EdgeInsets getNotificationPadding2() {
+    if (screenWidth > 600)
+      return const EdgeInsets.symmetric(horizontal: 32, vertical: 6);
+    if (screenWidth > 400)
+      const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+    return const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+  }
+
+  static EdgeInsets getNotificationPadding() {
+    if (screenWidth > 600)
+      return const EdgeInsets.only(left: 20, top: 20, bottom: 10);
+    if (screenWidth > 400) const EdgeInsets.only(left: 10, top: 10, bottom: 5);
+    return const EdgeInsets.only(left: 10, top: 10, bottom: 5);
   }
 
   static EdgeInsets getStatisticsRowPadding() {
@@ -341,6 +388,13 @@ class AdaptiveSizes {
     return screenHeight * 0.08463;
   }
 
+  static double getNotificationSwitchSize() {
+    if (screenWidth > 600) return screenHeight * 0.0008;
+    if (screenWidth > 400) return screenHeight * 0.0012;
+    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.0008;
+    return screenHeight * 0.0012;
+  }
+
   static double getButtonWidth() {
     if (screenWidth > 600) return screenWidth * 0.41667;
     if (screenWidth > 400) return screenWidth * 0.5;
@@ -376,7 +430,7 @@ class AdaptiveSizes {
   static double getJackpotLogoFontSize2() {
     if (screenWidth > 600) return screenWidth * 0.04444;
     if (screenWidth > 400) return screenWidth * 0.05128;
-    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.03999;
+    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.04111;
     return screenWidth * 0.05128;
   }
 
@@ -478,11 +532,28 @@ class AdaptiveSizes {
     return 18;
   }
 
-  ///
+  static double getSupportWelcomeTextSize() {
+    if (screenWidth > 600) return 22;
+    if (screenWidth > 400) return 16;
+    return 16;
+  }
+
+  static double getSupportMaxCountTextSize() {
+    if (screenWidth > 600) return 16;
+    if (screenWidth > 400) return 12;
+    return 12;
+  }
+
+  static double getButtonSupportTextSize() {
+    if (screenWidth > 600) return 28;
+    if (screenWidth > 400) return 18;
+    return 18;
+  }
+
   static double getFontNewsTitleSize() {
     if (screenWidth > 600) return 58;
     if (screenWidth > 400) return 34;
-    if (screenHeight > 700 && screenWidth < 400) return 38;
+    if (screenHeight > 700 && screenWidth < 400) return 35;
     return 34;
   }
 
@@ -492,7 +563,6 @@ class AdaptiveSizes {
     return 42;
   }
 
-  ///
   static double getFontProfileSize() {
     if (screenWidth > 600) return 28;
     if (screenWidth > 400) return 24;

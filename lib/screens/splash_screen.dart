@@ -1,6 +1,7 @@
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 
@@ -55,6 +56,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      body: Center(
+        child: Lottie.asset(
+          "assets/lottie/Poker_Chip_Shuffle.json",
+          width: 200,
+          height: 200,
+          repeat: true,
+        ),
+      ),
+    );
   }
 }
