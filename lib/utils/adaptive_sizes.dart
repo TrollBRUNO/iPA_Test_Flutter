@@ -96,6 +96,7 @@ class AdaptiveSizes {
   static double getStatisticsDialogMaxWidth() {
     if (screenWidth > 600) return 600;
     if (screenWidth > 400) return screenWidth * 0.85648;
+    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.87648;
     return screenWidth * 0.85648;
   }
 
@@ -158,7 +159,7 @@ class AdaptiveSizes {
   static double getVisibleTitleNewsHeight() {
     if (screenHeight > 1200) return screenHeight * 0.12821;
     if (screenHeight > 600) return screenHeight * 0.15625;
-    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.19625;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.21625;
     return screenHeight * 0.17625;
   }
 
@@ -178,14 +179,14 @@ class AdaptiveSizes {
   static double getNewsTabHeight() {
     if (screenHeight > 1200) return screenHeight * 0.11218;
     if (screenHeight > 700) return screenHeight * 0.19631;
-    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.11625;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.1;
     return screenHeight * 0.19631;
   }
 
   static double getNewsTabContainerHeight() {
     if (screenWidth > 600) return screenHeight * 0.0565;
     if (screenWidth > 400) return screenHeight * 0.07813;
-    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.0565;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.0665;
     return screenHeight * 0.07813;
   }
 
@@ -258,7 +259,7 @@ class AdaptiveSizes {
       );
     return EdgeInsets.symmetric(
       horizontal: screenWidth * 0.03703,
-      vertical: screenWidth * 0.02777,
+      vertical: screenWidth * 0.031,
     );
   }
 
@@ -329,7 +330,7 @@ class AdaptiveSizes {
     if (screenWidth > 600)
       return const EdgeInsets.symmetric(vertical: 4, horizontal: 24);
     if (screenWidth > 400) const EdgeInsets.symmetric(vertical: 4);
-    return const EdgeInsets.symmetric(vertical: 1);
+    return const EdgeInsets.symmetric(vertical: 0);
   }
 
   static EdgeInsets getJackpotWidgetRowPadding() {
@@ -385,13 +386,14 @@ class AdaptiveSizes {
   static double getTitleNewsHeight() {
     if (screenWidth > 600) return screenHeight * 0.05128;
     if (screenWidth > 400) return screenHeight * 0.08463;
+    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.07463;
     return screenHeight * 0.08463;
   }
 
   static double getNotificationSwitchSize() {
     if (screenWidth > 600) return screenHeight * 0.0008;
     if (screenWidth > 400) return screenHeight * 0.0012;
-    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.0008;
+    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.0012;
     return screenHeight * 0.0012;
   }
 
@@ -500,6 +502,19 @@ class AdaptiveSizes {
     if (screenWidth > 600) return 36;
     if (screenWidth > 400) return 26;
     return 26;
+  }
+
+  static double getJackpotRowSize() {
+    if (screenWidth > 600) return 36;
+    if (screenWidth > 400) return 26;
+    if (screenHeight > 700 && screenWidth < 400) return 24;
+    return 26;
+  }
+
+  static double getStatisticsDateTextSize() {
+    if (screenWidth > 600) return 30;
+    if (screenWidth > 400) return 20;
+    return 20;
   }
 
   static double getIconBackSettingsSize() {

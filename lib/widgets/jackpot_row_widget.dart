@@ -43,7 +43,7 @@ Widget buildJackpotRow(
     case 'major':
       labelColor = Colors.greenAccent;
       shadowColor = const Color.fromARGB(255, 15, 128, 0).withOpacity(0.5);
-      labelSize = AdaptiveSizes.getFontUsernameSize();
+      labelSize = AdaptiveSizes.getJackpotRowSize();
       countSize = AdaptiveSizes.getIconBackSettingsSize();
       iconJackpot = Icons.grade_outlined;
       rangeMystery = "(500 - 1500 BGN)";
@@ -51,7 +51,7 @@ Widget buildJackpotRow(
     case 'grand':
       labelColor = Colors.redAccent;
       shadowColor = const Color.fromARGB(255, 128, 0, 0).withOpacity(0.9);
-      labelSize = AdaptiveSizes.getFontUsernameSize();
+      labelSize = AdaptiveSizes.getJackpotRowSize();
       countSize = AdaptiveSizes.getIconBackSettingsSize();
       iconJackpot = Icons.auto_awesome_outlined;
       rangeMystery = "(8000 - 20000 BGN)";

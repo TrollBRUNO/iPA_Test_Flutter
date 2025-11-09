@@ -145,7 +145,9 @@ class _NewsState extends State<NewsPage> {
                   },
                 ),
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(52), // Reduced height
+                  preferredSize: Size.fromHeight(
+                    AdaptiveSizes.h(0.03333),
+                  ), // Reduced height
                   /* preferredSize: Size.fromHeight(
                     AdaptiveSizes.getNewsTabSecondHeight(),
                   ),  */
