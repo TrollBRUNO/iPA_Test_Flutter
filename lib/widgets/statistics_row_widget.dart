@@ -60,7 +60,9 @@ Widget buildStatisticsRow(BuildContext context, DateTime date, int prize) {
           '${DateFormat("d MMMM y", context.locale.languageCode).format(date)}:  ',
           style: TextStyle(
             fontWeight: FontWeight.w400,
-            fontSize: AdaptiveSizes.getIconBackSettingsSize(),
+            fontSize: AdaptiveSizes.getStatisticsDateTextSize(
+              context.locale.languageCode,
+            ),
           ),
         ),
 

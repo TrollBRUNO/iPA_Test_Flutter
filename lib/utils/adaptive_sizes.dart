@@ -179,7 +179,7 @@ class AdaptiveSizes {
   static double getNewsTabHeight() {
     if (screenHeight > 1200) return screenHeight * 0.11218;
     if (screenHeight > 700) return screenHeight * 0.19631;
-    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.085;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.07;
     return screenHeight * 0.19631;
   }
 
@@ -386,7 +386,7 @@ class AdaptiveSizes {
   static double getTitleNewsHeight() {
     if (screenWidth > 600) return screenHeight * 0.05128;
     if (screenWidth > 400) return screenHeight * 0.08463;
-    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.05128;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.062;
     return screenHeight * 0.08463;
   }
 
@@ -511,9 +511,10 @@ class AdaptiveSizes {
     return 26;
   }
 
-  static double getStatisticsDateTextSize() {
+  static double getStatisticsDateTextSize(String language) {
     if (screenWidth > 600) return 30;
     if (screenWidth > 400) return 20;
+    if (screenHeight > 700 && screenWidth < 400 && language == "bg") return 18;
     return 20;
   }
 
