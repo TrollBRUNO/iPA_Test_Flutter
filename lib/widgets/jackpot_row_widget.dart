@@ -19,7 +19,7 @@ Widget buildJackpotRow(
     case 'mini':
       labelColor = Colors.cyanAccent;
       shadowColor = const Color.fromARGB(255, 0, 124, 128).withOpacity(0.5);
-      labelSize = AdaptiveSizes.getIconBackSettingsSize();
+      labelSize = AdaptiveSizes.getIconBackSettingsSize2(false);
       countSize = AdaptiveSizes.getJackpotCountSize();
       iconJackpot = Icons.star_border_purple500_rounded;
       rangeMystery = "(300 - 800 BGN)";
@@ -27,7 +27,7 @@ Widget buildJackpotRow(
     case 'middle':
       labelColor = Colors.blueAccent;
       shadowColor = const Color.fromARGB(255, 0, 0, 128).withOpacity(0.6);
-      labelSize = AdaptiveSizes.getIconBackSettingsSize();
+      labelSize = AdaptiveSizes.getIconBackSettingsSize2(false);
       countSize = AdaptiveSizes.getJackpotCountSize();
       iconJackpot = Icons.grade_outlined;
       rangeMystery = "(1200 - 2500 BGN)";
@@ -35,7 +35,7 @@ Widget buildJackpotRow(
     case 'mega':
       labelColor = Colors.deepPurpleAccent;
       shadowColor = const Color.fromARGB(255, 92, 0, 128).withOpacity(0.9);
-      labelSize = AdaptiveSizes.getIconBackSettingsSize();
+      labelSize = AdaptiveSizes.getIconBackSettingsSize2(false);
       countSize = AdaptiveSizes.getJackpotCountSize();
       iconJackpot = Icons.auto_awesome_outlined;
       rangeMystery = "(7000 - 10000 BGN)";
@@ -44,7 +44,7 @@ Widget buildJackpotRow(
       labelColor = Colors.greenAccent;
       shadowColor = const Color.fromARGB(255, 15, 128, 0).withOpacity(0.5);
       labelSize = AdaptiveSizes.getJackpotRowSize();
-      countSize = AdaptiveSizes.getIconBackSettingsSize();
+      countSize = AdaptiveSizes.getIconBackSettingsSize2(true);
       iconJackpot = Icons.grade_outlined;
       rangeMystery = "(500 - 1500 BGN)";
       break;
@@ -52,7 +52,7 @@ Widget buildJackpotRow(
       labelColor = Colors.redAccent;
       shadowColor = const Color.fromARGB(255, 128, 0, 0).withOpacity(0.9);
       labelSize = AdaptiveSizes.getJackpotRowSize();
-      countSize = AdaptiveSizes.getIconBackSettingsSize();
+      countSize = AdaptiveSizes.getIconBackSettingsSize2(true);
       iconJackpot = Icons.auto_awesome_outlined;
       rangeMystery = "(8000 - 20000 BGN)";
       break;

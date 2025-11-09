@@ -322,8 +322,8 @@ class AdaptiveSizes {
   static EdgeInsets getNotificationPadding() {
     if (screenWidth > 600)
       return const EdgeInsets.only(left: 20, top: 20, bottom: 10);
-    if (screenWidth > 400) const EdgeInsets.only(left: 10, top: 10, bottom: 5);
-    return const EdgeInsets.only(left: 10, top: 10, bottom: 5);
+    if (screenWidth > 400) const EdgeInsets.only(left: 16, top: 10, bottom: 5);
+    return const EdgeInsets.only(left: 16, top: 10, bottom: 5);
   }
 
   static EdgeInsets getStatisticsRowPadding() {
@@ -386,15 +386,15 @@ class AdaptiveSizes {
   static double getTitleNewsHeight() {
     if (screenWidth > 600) return screenHeight * 0.05128;
     if (screenWidth > 400) return screenHeight * 0.08463;
-    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.07463;
+    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.084;
     return screenHeight * 0.08463;
   }
 
   static double getNotificationSwitchSize() {
     if (screenWidth > 600) return screenHeight * 0.0008;
     if (screenWidth > 400) return screenHeight * 0.0012;
-    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.0012;
-    return screenHeight * 0.0012;
+    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.0024;
+    return screenHeight * 0.0024;
   }
 
   static double getButtonWidth() {
@@ -514,6 +514,13 @@ class AdaptiveSizes {
   static double getStatisticsDateTextSize() {
     if (screenWidth > 600) return 30;
     if (screenWidth > 400) return 20;
+    return 20;
+  }
+
+  static double getIconBackSettingsSize2(bool countCheck) {
+    if (screenWidth > 600) return 30;
+    if (screenWidth > 400) return 20;
+    if (screenHeight > 700 && screenWidth < 400 && countCheck) return 18;
     return 20;
   }
 
