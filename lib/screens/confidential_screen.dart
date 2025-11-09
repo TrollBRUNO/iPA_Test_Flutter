@@ -23,7 +23,7 @@ class ConfidentialPage extends StatefulWidget {
 }
 
 class _ConfidentialState extends State<ConfidentialPage> {
-  //final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   String _fileContent = 'Загрузка...';
 
   @override
@@ -49,74 +49,83 @@ class _ConfidentialState extends State<ConfidentialPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: AdaptiveSizes.h(0.05128)),
-
-            Positioned(
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.orangeAccent[200],
-                  size: AdaptiveSizes.getFontBigPrizeSize(),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'confidentiality_condition'.tr(),
-                style: GoogleFonts.daysOne(
-                  fontSize: AdaptiveSizes.getFontStatisticsIconSize(),
-                  fontWeight: FontWeight.w100,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.orangeAccent[200],
-                  shadows: const [
-                    Shadow(
-                      color: Color.fromARGB(255, 51, 51, 51),
-                      offset: Offset(3.5, 4.5),
-                      blurRadius: 3,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Positioned(
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.orangeAccent[200],
+                          size: AdaptiveSizes.getFontBigPrizeSize(),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'confidentiality_condition'.tr(),
+                        style: GoogleFonts.daysOne(
+                          fontSize: AdaptiveSizes.getFontStatisticsIconSize(),
+                          fontWeight: FontWeight.w100,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.orangeAccent[200],
+                          shadows: const [
+                            Shadow(
+                              color: Color.fromARGB(255, 51, 51, 51),
+                              offset: Offset(3.5, 4.5),
+                              blurRadius: 3,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: AdaptiveSizes.h(0.01282)),
+
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: AdaptiveSizes.getConfidentialTextPadding(),
+                        decoration: BoxDecoration(
+                          color: Colors.orangeAccent[200],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Text(
+                            _fileContent,
+                            style: GoogleFonts.roboto(
+                              fontSize: AdaptiveSizes.getFontPrizeSize(),
+                              fontWeight: FontWeight.w700,
+                              //height: 1.5,
+                              color: Color.fromARGB(221, 22, 20, 20),
+                            ),
+                            textAlign:
+                                TextAlign.justify, // Выравнивание по ширине
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: AdaptiveSizes.h(0.01282)),
                   ],
                 ),
               ),
-            ),
-
-            SizedBox(height: AdaptiveSizes.h(0.01282)),
-
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 12),
-                padding: AdaptiveSizes.getConfidentialTextPadding(),
-                decoration: BoxDecoration(
-                  color: Colors.orangeAccent[200],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: SingleChildScrollView(
-                  child: Text(
-                    _fileContent,
-                    style: GoogleFonts.roboto(
-                      fontSize: AdaptiveSizes.getFontPrizeSize(),
-                      fontWeight: FontWeight.w700,
-                      //height: 1.5,
-                      color: Color.fromARGB(221, 22, 20, 20),
-                    ),
-                    textAlign: TextAlign.justify, // Выравнивание по ширине
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(height: AdaptiveSizes.h(0.01282)),
-          ],
+            );
+          },
         ),
       ),
     );
