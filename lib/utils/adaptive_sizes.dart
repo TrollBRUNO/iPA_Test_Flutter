@@ -179,7 +179,7 @@ class AdaptiveSizes {
   static double getNewsTabHeight() {
     if (screenHeight > 1200) return screenHeight * 0.11218;
     if (screenHeight > 700) return screenHeight * 0.19631;
-    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.1;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.085;
     return screenHeight * 0.19631;
   }
 
@@ -386,7 +386,7 @@ class AdaptiveSizes {
   static double getTitleNewsHeight() {
     if (screenWidth > 600) return screenHeight * 0.05128;
     if (screenWidth > 400) return screenHeight * 0.08463;
-    if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.084;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.05128;
     return screenHeight * 0.08463;
   }
 
@@ -507,7 +507,7 @@ class AdaptiveSizes {
   static double getJackpotRowSize() {
     if (screenWidth > 600) return 36;
     if (screenWidth > 400) return 26;
-    if (screenHeight > 700 && screenWidth < 400) return 24;
+    if (screenHeight > 700 && screenWidth < 400) return 22;
     return 26;
   }
 
