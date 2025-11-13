@@ -1,8 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -12,6 +17,8 @@ class NotificationScreen extends StatelessWidget {
     return NotificationPage(title: 'Notification');
   }
 }
+
+//DateTime scheduleTime = DateTime.now().add(const Duration(minutes: 1));
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key, required this.title});
@@ -81,14 +88,36 @@ Widget settingOption(String title, bool value, Function(bool) onChanged) {
 
 class _NotificationState extends State<NotificationPage> {
   final _formKey = GlobalKey<FormState>();
+  late Map<String, bool> _notificationStates;
 
-  // Пример состояний переключателей
-  bool notif1 = true;
-  bool notif2 = false;
-  bool notif3 = true;
-  bool notif4 = true;
-  bool notif5 = false;
-  bool notif6 = true;
+  Future<void> saveSwitchState(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+  }
+
+  Future<bool> loadSwitchState(String key, bool def) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key) ?? def;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAllNotifications();
+    NotificationService().initNotification();
+  }
+
+  Future<void> _loadAllNotifications() async {
+    _notificationStates = {};
+    for (var config in NotificationManager.notifications) {
+      final isEnabled = await NotificationManager.loadSwitchState(
+        config.prefKey,
+        true,
+      );
+      _notificationStates[config.prefKey] = isEnabled;
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,52 +186,23 @@ class _NotificationState extends State<NotificationPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           sectionTitle("Колесо удачи"),
-                          settingOption(
-                            "Уведомление о новой возможности",
-                            notif1,
-                            (val) {
-                              setState(() => notif1 = val);
-                            },
-                          ),
-                          settingOption("Напоминание забрать бонус", notif2, (
-                            val,
-                          ) {
-                            setState(() => notif2 = val);
-                          }),
-
+                          ..._buildNotificationSection([
+                            NotificationManager.notifications[0],
+                            NotificationManager.notifications[1],
+                          ]),
                           sectionTitle("Подписаться на новости"),
-                          settingOption("Свежие новости и розыгрыши", notif3, (
-                            val,
-                          ) {
-                            setState(() => notif3 = val);
-                          }),
-                          settingOption(
-                            "Уведомление о больших выигрышах",
-                            notif4,
-                            (val) {
-                              setState(() => notif4 = val);
-                            },
-                          ),
-
+                          ..._buildNotificationSection([
+                            NotificationManager.notifications[2],
+                            NotificationManager.notifications[3],
+                          ]),
                           sectionTitle("Дополнительные"),
-                          settingOption(
-                            "Уведомление в рекламных целях",
-                            notif5,
-                            (val) {
-                              setState(() => notif5 = val);
-                            },
-                          ),
-                          settingOption(
-                            "Объявление о пиковом джекпоте",
-                            notif6,
-                            (val) {
-                              setState(() => notif6 = val);
-                            },
-                          ),
+                          ..._buildNotificationSection([
+                            NotificationManager.notifications[4],
+                          ]),
+
+                          const SizedBox(height: 20),
                         ],
                       ),
-
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -212,5 +212,17 @@ class _NotificationState extends State<NotificationPage> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildNotificationSection(List<NotificationConfig> configs) {
+    return configs.map((config) {
+      final isEnabled = _notificationStates[config.prefKey] ?? true;
+      return settingOption(config.title, isEnabled, (val) async {
+        setState(() {
+          _notificationStates[config.prefKey] = val;
+        });
+        await NotificationManager.toggleNotification(config, val);
+      });
+    }).toList();
   }
 }

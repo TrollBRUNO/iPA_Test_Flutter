@@ -1,3 +1,5 @@
+import 'package:first_app_flutter/config/notification_config.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -23,6 +25,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     final user = prefs.getString('login');
     final password = prefs.getString('password');
+
+    await NotificationService().initNotification();
+    NotificationManager.initializeAllNotifications();
 
     // Предварительная проверка возможности спина
     await _preCheckSpinAvailability(prefs);
