@@ -3,6 +3,7 @@ import 'dart:async';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
 import 'package:first_app_flutter/class/prize.dart';
+import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
@@ -72,6 +73,8 @@ class _WheelState extends State<WheelWidget> {
     });
 
     await SpinTimeService.saveSpinDate(); // сохраняем дату после начала кручения
+
+    await NotificationManager.cancelRepeatSpinReminder(); // отключаем повторяющиеся уведомление
   }
 
   void showPrizeDialog(String prize) {

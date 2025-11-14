@@ -5,12 +5,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:first_app_flutter/services/background_worker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
   await NotificationService().initNotification();
+
+  // Инициализируем Workmanager
+  await Workmanager().initialize(
+    callbackDispatcher, // callbackDispatcher из background_worker.dart
+    isInDebugMode: false, // true — для отладки (показывает дополнительные логи)
+  );
+
+  // Регистрируем периодическую задачу (каждые 15 минут — минимально приемлемо)
+  await Workmanager().registerPeriodicTask(
+    "spinCheckUnique",
+    spinCheckTask,
+    frequency: const Duration(minutes: 15),
+    initialDelay: const Duration(minutes: 1),
+    existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+  );
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

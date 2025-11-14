@@ -37,33 +37,65 @@ class NotificationManager {
       id: 2,
       title: 'Напоминание забрать бонус',
       body: 'Не забудь забрать бонус!',
-      hour: 15,
-      minute: 31,
+      hour: 01,
+      minute: 00,
       prefKey: 'notif2',
     ),
     NotificationConfig(
       id: 3,
       title: 'Свежие новости и розыгрыши',
       body: 'Проверь колесо удачи!',
-      hour: 15,
-      minute: 32,
+      hour: 01,
+      minute: 00,
       prefKey: 'notif3',
     ),
     NotificationConfig(
       id: 4,
       title: 'Уведомление о больших выигрышах',
       body: 'Кто-то только что сорвал джекпот!',
-      hour: 15,
-      minute: 33,
+      hour: 01,
+      minute: 00,
       prefKey: 'notif4',
     ),
     NotificationConfig(
       id: 5,
       title: 'Объявление о пиковом джекпоте',
       body: 'Загляни, пока не поздно!',
-      hour: 15,
-      minute: 35,
+      hour: 01,
+      minute: 00,
+      prefKey: 'notif5',
+    ),
+    NotificationConfig(
+      id: 6,
+      title: 'Загляни, пока не поздно!',
+      body: 'Попробуй новые автоматы не выходя из дома',
+      hour: 01,
+      minute: 00,
       prefKey: 'notif6',
+    ),
+    NotificationConfig(
+      id: 7,
+      title: 'Загляни, пока не поздно!',
+      body: 'Попробуй новые автоматы не выходя из дома',
+      hour: 01,
+      minute: 00,
+      prefKey: 'notif7',
+    ),
+    NotificationConfig(
+      id: 8,
+      title: 'Загляни, пока не поздно!',
+      body: 'Попробуй новые автоматы не выходя из дома',
+      hour: 01,
+      minute: 00,
+      prefKey: 'notif8',
+    ),
+    NotificationConfig(
+      id: 9,
+      title: 'Загляни, пока не поздно!',
+      body: 'Попробуй новые автоматы не выходя из дома',
+      hour: 01,
+      minute: 00,
+      prefKey: 'notif9',
     ),
   ];
 
@@ -145,5 +177,40 @@ class NotificationManager {
     } catch (e) {
       print('Error initializing notifications: $e');
     }
+  }
+
+  static Future<void> sendSpinAvailableNow() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Тексты, которые ты указал:
+    const nowTitle = 'Колесо удачи снова готово! Проверь свою удачу 🎰';
+    const dailyBody =
+        'Не забудь использовать колесо удачи! Скорее узнай что тебе выпадет 🎁';
+
+    // Отправляем мгновенное (чтобы пользователь видел сразу)
+    await NotificationService().showInstantNotification(
+      id: 1,
+      title: nowTitle,
+      body: dailyBody,
+    );
+
+    // Затем планируем ежедневное напоминание (тот же id=1 — оно будет повторяться)
+    // В NotificationConfig.notifications у тебя есть объект с id:1 + hour/minute — используем их
+    final cfg = notifications.firstWhere((c) => c.id == 1);
+    await NotificationService().showDailyNotification(
+      id: cfg.id,
+      title:
+          cfg.title, // можешь оставить cfg.title или использовать другой текст
+      body: cfg.body,
+      hour: cfg.hour,
+      minute: cfg.minute,
+    );
+
+    await prefs.setBool('spin_daily_enabled', true);
+  }
+
+  static Future<void> cancelRepeatSpinReminder() async {
+    final prefs = await SharedPreferences.getInstance();
+    await NotificationService().cancelNotification(1);
+    await prefs.setBool('spin_daily_enabled', false);
   }
 }

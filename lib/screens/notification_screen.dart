@@ -188,9 +188,10 @@ class _NotificationState extends State<NotificationPage> {
                           sectionTitle("Колесо удачи"),
                           ..._buildNotificationSection([
                             NotificationManager.notifications[0],
-                            NotificationManager.notifications[1],
+                            //NotificationManager.notifications[1],
                           ]),
-                          sectionTitle("Подписаться на новости"),
+
+                          /* sectionTitle("Подписаться на новости"),
                           ..._buildNotificationSection([
                             NotificationManager.notifications[2],
                             NotificationManager.notifications[3],
@@ -198,8 +199,7 @@ class _NotificationState extends State<NotificationPage> {
                           sectionTitle("Дополнительные"),
                           ..._buildNotificationSection([
                             NotificationManager.notifications[4],
-                          ]),
-
+                          ]), */
                           const SizedBox(height: 20),
                         ],
                       ),

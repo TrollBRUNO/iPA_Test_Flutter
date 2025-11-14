@@ -43,14 +43,21 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _preCheckSpinAvailability(SharedPreferences prefs) async {
     try {
-      // Предварительно проверяем и сохраняем флаг возможности спина
+      // предварительно проверяем и сохраняем флаг возможности спина
       final canSpin = await SpinTimeService.canSpinToday();
       await prefs.setBool('can_spin_today', canSpin);
 
-      // чтобы ресетнуть колесо
-      await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
+      // если спин доступен и мы ещё не уведомили — отправляем и планируем ежедневное
+      final alreadyNotified = prefs.getBool('notified_spin_today') ?? false;
+      if (canSpin && !alreadyNotified) {
+        await NotificationManager.sendSpinAvailableNow();
+        await prefs.setBool('notified_spin_today', true);
+      }
+      // чтобы ресетнуть колесо и другое
+      //await prefs.setString('last_spin_date', '2025-10-19T00:51:39.050430Z');
+      //await prefs.setBool('can_spin_today', true);
+      await prefs.remove('scheduled_notifications');
 
-      await prefs.setBool('can_spin_today', true);
       //await prefs.remove('bonus_balance');
     } catch (e) {
       // В случае ошибки разрешаем спин
