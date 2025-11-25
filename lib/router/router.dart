@@ -1,4 +1,5 @@
 import 'package:first_app_flutter/screens/confidential_screen.dart';
+import 'package:first_app_flutter/screens/games_screen.dart';
 import 'package:first_app_flutter/screens/jackpot_screen.dart';
 import 'package:first_app_flutter/layout/layout_scaffold.dart';
 import 'package:first_app_flutter/screens/news_screen.dart';
@@ -57,6 +58,15 @@ final router = GoRouter(
             GoRoute(
               path: '/wheel',
               builder: (context, state) => const WheelPage(title: 'Wheel'),
+            ),
+          ],
+        ),
+
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/games',
+              builder: (context, state) => const GamesPage(title: 'Games'),
             ),
           ],
         ),

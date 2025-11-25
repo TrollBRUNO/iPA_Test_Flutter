@@ -740,6 +740,28 @@ class AdaptiveSizes {
     );
   }
 
+  static TextStyle getDemoTextStyle() {
+    if (screenWidth > 600) {
+      return const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+    }
+    if (screenWidth > 400) {
+      return const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+    }
+    return const TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    );
+  }
+
   static TextStyle getLabelStyleButton() {
     if (screenWidth > 600) {
       return TextStyle(
