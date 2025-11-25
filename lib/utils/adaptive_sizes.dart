@@ -204,7 +204,7 @@ class AdaptiveSizes {
   }
 
   static double getDividerProfileHeight() {
-    if (screenHeight > 1000) return screenHeight * 0.0153;
+    if (screenHeight > 1000) return screenHeight * 0.0103; // 0.0153
     return screenHeight * 0.01042;
   }
 
@@ -553,6 +553,12 @@ class AdaptiveSizes {
     if (screenWidth > 600) return 28;
     if (screenWidth > 400) return 18;
     return 18;
+  }
+
+  static double getFontCreditBalanceSize() {
+    if (screenWidth > 600) return 24;
+    if (screenWidth > 400) return 14;
+    return 14;
   }
 
   static double getSupportWelcomeTextSize() {

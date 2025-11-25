@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SpinTimeService {
+class TimeService {
   static var logger = Logger();
   static const String _apiUrl =
       'https://timeapi.io/api/Time/current/zone?timeZone=Europe/Sofia';
@@ -25,7 +25,7 @@ class SpinTimeService {
               throw Exception('⏱ Таймаут при обращении к API');
             },
           );
-      if (response.statusCode == 200) {
+      /* if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         logger.i('Используем глобальное время: ${data['dateTime']}');
         return DateTime.parse(data['dateTime']).toUtc();
@@ -33,7 +33,9 @@ class SpinTimeService {
         // fallback — если API не отвечает, всё же используем локальное время
         logger.w('Используем локальное время');
         return DateTime.now().toUtc();
-      }
+      } */
+      logger.w('Используем локальное время');
+      return DateTime.now().toUtc();
     } catch (e) {
       logger.w('Server time fetch error: $e');
       // fallback на локальное время
@@ -60,10 +62,31 @@ class SpinTimeService {
     return todayUtc.isAfter(lastDayUtc);
   }
 
+  static Future<bool> canTakeCredit() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastTakeString = prefs.getString('last_credit_take_date');
+    final now = await getServerTime();
+
+    if (lastTakeString == null) return true;
+
+    final lastTake = DateTime.parse(lastTakeString);
+
+    final difference = now.difference(lastTake);
+
+    return difference.inHours >= 24;
+  }
+
   static Future<void> saveSpinDate() async {
     final prefs = await SharedPreferences.getInstance();
     final now = await getServerTime();
     await prefs.setString('last_spin_date', now.toIso8601String());
+    logger.i('Я записал!');
+  }
+
+  static Future<void> saveCreditTake() async {
+    final prefs = await SharedPreferences.getInstance();
+    final now = await getServerTime();
+    await prefs.setString('last_credit_take_date', now.toIso8601String());
     logger.i('Я записал!');
   }
 }

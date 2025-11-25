@@ -194,7 +194,35 @@ class NotificationService {
     );
   }
 
+  Future<void> showOneTimeNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime dateTime,
+  }) async {
+    final tzDateTime = tz.TZDateTime.from(dateTime, tz.local);
+    await notificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      tzDateTime,
+      await notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+  }
+
   Future<void> cancelNotification(int id) async {
     await notificationsPlugin.cancel(id);
+  }
+
+  /// Отменяет все запланированные уведомления
+  /// Это также удалит файл scheduled_notifications.xml на Android
+  Future<void> cancelAllNotifications() async {
+    await notificationsPlugin.cancelAll();
+  }
+
+  /// Получает список всех запланированных уведомлений
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    return await notificationsPlugin.pendingNotificationRequests();
   }
 }

@@ -24,7 +24,7 @@ void main() async {
   await Workmanager().registerPeriodicTask(
     "spinCheckUnique",
     spinCheckTask,
-    frequency: const Duration(minutes: 15),
+    frequency: const Duration(minutes: 5),
     initialDelay: const Duration(minutes: 1),
     existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
   );

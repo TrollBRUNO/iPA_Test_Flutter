@@ -36,6 +36,8 @@
   "version": "Version 1.0.0",
   "balance": "Balance:",
   "bonus": "bonus",
+  "chips": "Chips:",
+  "credits": "credits",
   "news": "News",
   "gallery": "Gallery",
   "year": "year",

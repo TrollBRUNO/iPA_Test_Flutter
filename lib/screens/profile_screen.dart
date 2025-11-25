@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/statistics_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/web.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -35,19 +37,52 @@ class _ProfileState extends State<ProfilePage> {
   static const String _login = 'login';
   static const String _password = 'password';
 
+  String? username = "";
   String? balanceCount = "0";
   String? bonusBalanceCount = "0";
+  String? balanceCreditCount = "0";
+
+  bool canShowCreditButton = false;
+  bool isLoading = true;
 
   Timer? _balanceTimer;
 
   @override
   void initState() {
     super.initState();
-    _loadBalance();
+    _loadAll();
 
     _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) _loadBalance();
     });
+    /* _loadBalance();
+
+    _loadUsername();
+
+    _loadButtonState();
+
+    _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) _loadBalance();
+    }); */
+  }
+
+  Future<void> _loadAll() async {
+    final results = await Future.wait([
+      _loadBalance(),
+      _loadUsername(),
+      _loadButtonState(),
+    ]);
+
+    if (!mounted) return;
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> _loadButtonState() async {
+    canShowCreditButton = await TimeService.canTakeCredit();
+    setState(() {});
   }
 
   void showStatisticsDialog() {
@@ -93,6 +128,7 @@ class _ProfileState extends State<ProfilePage> {
       setState(() {
         balanceCount = balance;
         bonusBalanceCount = prefs.getString('bonus_balance') ?? "0";
+        balanceCreditCount = prefs.getString('credit_balance') ?? "0";
       });
 
       //logger.i("BALANCE: $balanceCount BONUS: $bonusBalanceCount");
@@ -101,9 +137,41 @@ class _ProfileState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _loadUsername() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var _username = prefs.getString(_login);
+
+      if (!mounted) return;
+      setState(() {
+        username = _username;
+      });
+
+      //logger.i("BALANCE: $balanceCount BONUS: $bonusBalanceCount");
+    } catch (e, st) {
+      logger.w('Error loading username: $e\n$st');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
+
+    if (isLoading) {
+      /* return Center(
+        child: CircularProgressIndicator(color: Colors.orangeAccent[200]),
+      ); */
+      return Scaffold(
+        body: Center(
+          child: Lottie.asset(
+            "assets/lottie/8_bit_coin.json",
+            width: 200,
+            height: 200,
+            repeat: true,
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -183,7 +251,7 @@ class _ProfileState extends State<ProfilePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Йордан Атанасов',
+                                      '$username',
                                       style: GoogleFonts.roboto(
                                         fontSize:
                                             AdaptiveSizes.getFontUsernameSize(),
@@ -227,6 +295,35 @@ class _ProfileState extends State<ProfilePage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                    SizedBox(height: AdaptiveSizes.h(0.0064)),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.hotel_class_outlined,
+                                          //color: Colors.blue[700],
+                                          color: Colors.deepPurple[700],
+                                          size:
+                                              AdaptiveSizes.getFontBalanceSize(),
+                                        ),
+                                        SizedBox(
+                                          width: AdaptiveSizes.w(0.01111),
+                                        ),
+                                        Text(
+                                          '${'chips'.tr()} $balanceCreditCount ${'credits'.tr()}',
+                                          style: GoogleFonts.manrope(
+                                            fontSize:
+                                                AdaptiveSizes.getFontCreditBalanceSize(),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: AdaptiveSizes.w(0.011111),
+                                        ),
+
+                                        if (canShowCreditButton)
+                                          _buildCreditButton(),
                                       ],
                                     ),
                                   ],
@@ -445,7 +542,8 @@ class _ProfileState extends State<ProfilePage> {
                           ),
                         ),
 
-                        SizedBox(height: AdaptiveSizes.h(0.06)),
+                        //SizedBox(height: AdaptiveSizes.h(0.06)),
+                        SizedBox(height: AdaptiveSizes.h(0.16)),
 
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
@@ -483,6 +581,56 @@ class _ProfileState extends State<ProfilePage> {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCreditButton() {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurpleAccent.withOpacity(0.6),
+            spreadRadius: 0.2,
+            blurRadius: 4,
+            offset: Offset(0, 0),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: SizedBox(
+        width: AdaptiveSizes.getButtonWidth() / 2.6,
+        height: AdaptiveSizes.getButtonHeight() / 1.6,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepPurple[700],
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          onPressed: () async {
+            setState(() => canShowCreditButton = false);
+
+            // Добавляем 1000 кредитов
+            final prefs = await SharedPreferences.getInstance();
+
+            final creditBalance = prefs.getString('credit_balance') ?? "0";
+
+            final creditBalanceToDouble = int.tryParse(creditBalance) ?? 0.0;
+
+            final currentCreditBalance = creditBalanceToDouble + 1000;
+
+            await prefs.setString(
+              'credit_balance',
+              currentCreditBalance.toString(),
+            );
+
+            await TimeService.saveCreditTake();
+          },
+          child: Text('+1000'),
         ),
       ),
     );

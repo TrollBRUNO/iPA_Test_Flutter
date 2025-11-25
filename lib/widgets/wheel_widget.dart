@@ -4,13 +4,17 @@ import 'dart:async';
 
 import 'package:first_app_flutter/class/prize.dart';
 import 'package:first_app_flutter/config/notification_config.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
+import 'package:first_app_flutter/web/teleslot_webview.dart';
 import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -48,6 +52,27 @@ class _WheelState extends State<WheelWidget> {
     });
   }
 
+  void openTeleslotAutoLogin(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString('login');
+    final password = prefs.getString('password');
+
+    if (username == null || password == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Нет сохранённых данных для входа")),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            TeleslotLoginWebView(username: username, password: password),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     selected.close();
@@ -68,13 +93,20 @@ class _WheelState extends State<WheelWidget> {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('can_spin_today', false);
+    await prefs.setBool('notified_spin_today', true);
+    await prefs.setBool('spin_followup_active', false);
     setState(() {
       _canSpinToday = false;
     });
 
-    await SpinTimeService.saveSpinDate(); // сохраняем дату после начала кручения
+    await TimeService.saveSpinDate(); // сохраняем дату после начала кручения
 
-    await NotificationManager.cancelRepeatSpinReminder(); // отключаем повторяющиеся уведомление
+    await NotificationService().cancelNotification(11);
+
+    await NotificationManager.sendSpinAvailableNow();
+    //await NotificationService().cancelNotification(1);
+    //await NotificationManager.cancelRepeatSpinReminder(); // отключаем уведомление id=1
+    //await NotificationManager.scheduleFollowUpSpinReminder(); // включаем напоминание id=11
   }
 
   void showPrizeDialog(String prize) {
@@ -123,10 +155,10 @@ class _WheelState extends State<WheelWidget> {
           child: ScaleTransition(
             scale: curved,
             child: AdsDialogWidget(
-              onTry: () async {
+              /* onTry: () async {
                 Navigator.of(context).pop();
 
-                const url = 'https://live.teleslot.net/login';
+                const url = 'https://live.teleslot.net/';
 
                 final uri = Uri.parse(url);
 
@@ -141,6 +173,21 @@ class _WheelState extends State<WheelWidget> {
                   }
                 } catch (e) {
                   debugPrint('Ошибка при открытии ссылки: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Не удалось открыть сайт'),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                }
+              }, */
+              onTry: () async {
+                Navigator.of(context).pop();
+
+                try {
+                  openTeleslotAutoLogin(context);
+                } catch (e) {
+                  debugPrint("Ошибка перехода: $e");
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Не удалось открыть сайт'),
@@ -237,7 +284,7 @@ class _WheelState extends State<WheelWidget> {
               child: FortuneWheel(
                 rotationCount: 30,
                 curve: Curves.easeOutCirc,
-                duration: Duration(milliseconds: 20000),
+                duration: Duration(milliseconds: 2000),
                 animateFirst: false,
                 hapticImpact: HapticImpact.medium,
                 selected: selected.stream,

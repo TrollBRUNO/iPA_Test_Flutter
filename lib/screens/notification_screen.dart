@@ -188,7 +188,7 @@ class _NotificationState extends State<NotificationPage> {
                           sectionTitle("Колесо удачи"),
                           ..._buildNotificationSection([
                             NotificationManager.notifications[0],
-                            //NotificationManager.notifications[1],
+                            NotificationManager.notifications[1],
                           ]),
 
                           /* sectionTitle("Подписаться на новости"),

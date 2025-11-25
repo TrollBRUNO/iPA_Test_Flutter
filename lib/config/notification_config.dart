@@ -28,17 +28,17 @@ class NotificationManager {
     NotificationConfig(
       id: 1,
       title: 'Уведомление о новой возможности',
-      body: 'Зайди и проверь новую возможность выиграть!',
-      hour: 15,
-      minute: 30,
+      body: 'Колесо удачи снова готово! Проверь свою удачу 🎰',
+      hour: 00,
+      minute: 01,
       prefKey: 'notif1',
     ),
     NotificationConfig(
       id: 2,
       title: 'Напоминание забрать бонус',
       body: 'Не забудь забрать бонус!',
-      hour: 01,
-      minute: 00,
+      hour: 17,
+      minute: 55,
       prefKey: 'notif2',
     ),
     NotificationConfig(
@@ -97,6 +97,16 @@ class NotificationManager {
       minute: 00,
       prefKey: 'notif9',
     ),
+
+    NotificationConfig(
+      id: 11,
+      title: 'Уведомление о новой возможности',
+      body:
+          'Не забудь использовать колесо удачи! Скорее узнай что тебе выпадет 🎁',
+      hour: 14,
+      minute: 55,
+      prefKey: 'notif11',
+    ),
   ];
 
   /* static List<NotificationConfig> get notifications {
@@ -146,6 +156,11 @@ class NotificationManager {
     await saveSwitchState(config.prefKey, enabled);
 
     if (enabled) {
+      final canSchedule = await _shouldScheduleNotification(config);
+      if (!canSchedule) {
+        await NotificationService().cancelNotification(config.id);
+        return;
+      }
       await NotificationService().showDailyNotification(
         id: config.id,
         title: config.title,
@@ -159,11 +174,16 @@ class NotificationManager {
     }
   }
 
+  static NotificationConfig _configById(int id) {
+    return notifications.firstWhere((c) => c.id == id);
+  }
+
   static Future<void> initializeAllNotifications() async {
     try {
       for (var config in notifications) {
-        final isEnabled = await loadSwitchState(config.prefKey, true);
-        if (isEnabled) {
+        final defaultEnabled = config.id == 11 ? false : true;
+        final isEnabled = await loadSwitchState(config.prefKey, defaultEnabled);
+        if (isEnabled && await _shouldScheduleNotification(config)) {
           await NotificationService().showDailyNotification(
             id: config.id,
             title: config.title,
@@ -172,6 +192,8 @@ class NotificationManager {
             hour: config.hour,
             minute: config.minute,
           );
+        } else {
+          await NotificationService().cancelNotification(config.id);
         }
       }
     } catch (e) {
@@ -180,37 +202,87 @@ class NotificationManager {
   }
 
   static Future<void> sendSpinAvailableNow() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Тексты, которые ты указал:
-    const nowTitle = 'Колесо удачи снова готово! Проверь свою удачу 🎰';
-    const dailyBody =
-        'Не забудь использовать колесо удачи! Скорее узнай что тебе выпадет 🎁';
+    final cfg = _configById(1);
 
-    // Отправляем мгновенное (чтобы пользователь видел сразу)
-    await NotificationService().showInstantNotification(
-      id: 1,
-      title: nowTitle,
-      body: dailyBody,
+    final now = DateTime.now();
+    final nextTime =
+        DateTime(
+          now.year,
+          now.month,
+          now.day,
+          cfg.hour,
+          cfg.minute,
+        ).isAfter(now)
+        ? DateTime(now.year, now.month, now.day, cfg.hour, cfg.minute)
+        : DateTime(now.year, now.month, now.day + 1, cfg.hour, cfg.minute);
+
+    await NotificationService().showOneTimeNotification(
+      id: cfg.id,
+      title: cfg.title,
+      body: cfg.body,
+      dateTime: nextTime,
     );
 
-    // Затем планируем ежедневное напоминание (тот же id=1 — оно будет повторяться)
-    // В NotificationConfig.notifications у тебя есть объект с id:1 + hour/minute — используем их
-    final cfg = notifications.firstWhere((c) => c.id == 1);
+    //await prefs.setBool('spin_daily_enabled', true);
+
+    await (await SharedPreferences.getInstance()).setBool(
+      'notified_spin_today',
+      false,
+    );
+
+    await NotificationManager.scheduleFollowUpSpinReminder();
+    await NotificationService().cancelNotification(1);
+  }
+
+  static Future<void> cancelRepeatSpinReminder() async {
+    await NotificationService().cancelNotification(1);
+  }
+
+  /// Деактивирует все уведомления и отменяет их
+  /// Это удалит файл scheduled_notifications.xml на Android
+  static Future<void> deactivateAllNotifications() async {
+    final notificationService = NotificationService();
+
+    // Отменяем все запланированные уведомления
+    await notificationService.cancelAllNotifications();
+
+    // Деактивируем все переключатели уведомлений
+    for (var config in notifications) {
+      await saveSwitchState(config.prefKey, false);
+    }
+
+    // Также отменяем уведомление о спине, если оно активно
+  }
+
+  static Future<void> scheduleFollowUpSpinReminder() async {
+    final cfg = _configById(11);
     await NotificationService().showDailyNotification(
       id: cfg.id,
-      title:
-          cfg.title, // можешь оставить cfg.title или использовать другой текст
+      title: cfg.title,
       body: cfg.body,
       hour: cfg.hour,
       minute: cfg.minute,
     );
-
-    await prefs.setBool('spin_daily_enabled', true);
   }
 
-  static Future<void> cancelRepeatSpinReminder() async {
-    final prefs = await SharedPreferences.getInstance();
-    await NotificationService().cancelNotification(1);
-    await prefs.setBool('spin_daily_enabled', false);
+  static Future<void> cancelFollowUpSpinReminder() async {
+    await NotificationService().cancelNotification(11);
+  }
+
+  static Future<bool> _shouldScheduleNotification(
+    NotificationConfig config,
+  ) async {
+    if (config.id == 2) {
+      final bonusBalanceCount =
+          int.tryParse(
+            (await SharedPreferences.getInstance()).getString(
+                  'bonus_balance',
+                ) ??
+                "0",
+          ) ??
+          0;
+      return bonusBalanceCount > 0;
+    }
+    return true;
   }
 }
