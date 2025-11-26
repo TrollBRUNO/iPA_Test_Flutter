@@ -52,9 +52,24 @@ Widget settingOption(String title, bool value, Function(bool) onChanged) {
     padding: AdaptiveSizes.getNotificationPadding2(),
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      decoration: BoxDecoration(
+      /* decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(12),
+      ), */
+      decoration: BoxDecoration(
+        color: const Color(
+          0xFF1E1E1E,
+        ), //const Color.fromARGB(255,0,0,0,).withOpacity(0.9),
+        borderRadius: AdaptiveSizes.getJackpotWidgetBorderRadius(),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.6),
+            //Color.fromARGB(255, 46, 178, 255)
+            spreadRadius: 0.2,
+            blurRadius: 1,
+            offset: const Offset(0, 0),
+          ),
+        ],
       ),
       height: 70,
       child: Row(

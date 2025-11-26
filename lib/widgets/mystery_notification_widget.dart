@@ -51,7 +51,7 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
     required Function(double) onChange,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(top: 30, bottom: 5),
+      padding: const EdgeInsets.only(top: 30, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -194,8 +194,22 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
-          borderRadius: BorderRadius.circular(22),
+          color: const Color.fromARGB(
+            255,
+            0,
+            0,
+            0,
+          ).withOpacity(0.9), //const Color(0xFF1E1E1E)
+          borderRadius: AdaptiveSizes.getJackpotWidgetBorderRadius(),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.6),
+              //Color.fromARGB(255, 46, 178, 255)
+              spreadRadius: 0.2,
+              blurRadius: 1,
+              offset: const Offset(0, 0),
+            ),
+          ],
         ),
         child: Column(
           children: [
