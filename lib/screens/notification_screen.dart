@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/config/mystery_notification_config.dart';
 import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
+import 'package:first_app_flutter/widgets/mystery_notification_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -191,15 +193,16 @@ class _NotificationState extends State<NotificationPage> {
                             NotificationManager.notifications[1],
                           ]),
 
-                          /* sectionTitle("Подписаться на новости"),
+                          sectionTitle("Подписаться на новости"),
                           ..._buildNotificationSection([
                             NotificationManager.notifications[2],
                             NotificationManager.notifications[3],
                           ]),
                           sectionTitle("Дополнительные"),
-                          ..._buildNotificationSection([
-                            NotificationManager.notifications[4],
-                          ]), */
+                          MysteryNotificationTile(
+                            config: MysteryNotificationManager.mysteryConfig,
+                          ),
+
                           const SizedBox(height: 20),
                         ],
                       ),
