@@ -46,6 +46,10 @@ class NotificationService {
     );
 
     //Разрешения на уведомления
+    if (kIsWeb) {
+      print("Notifications are disabled on Web");
+      return;
+    }
 
     if (Platform.isAndroid) {
       await Permission.notification.request();

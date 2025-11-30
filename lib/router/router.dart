@@ -1,3 +1,4 @@
+import 'package:first_app_flutter/screens/admin_screen.dart';
 import 'package:first_app_flutter/screens/confidential_screen.dart';
 import 'package:first_app_flutter/screens/games_screen.dart';
 import 'package:first_app_flutter/screens/jackpot_screen.dart';
@@ -29,6 +30,7 @@ final router = GoRouter(
       path: '/authorization',
       builder: (context, state) => const AuthorizationScreen(),
     ),
+    GoRoute(path: '/admin', builder: (context, state) => const AdminScreen()),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => LayoutScaffold(
         navigationShell: navigationShell,

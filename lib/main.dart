@@ -1,6 +1,7 @@
 import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/router/router.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,19 +16,22 @@ void main() async {
   await NotificationService().initNotification();
 
   // Инициализируем Workmanager
-  await Workmanager().initialize(
-    callbackDispatcher, // callbackDispatcher из background_worker.dart
-    isInDebugMode: false, // true — для отладки (показывает дополнительные логи)
-  );
+  if (!kIsWeb) {
+    await Workmanager().initialize(
+      callbackDispatcher, // callbackDispatcher из background_worker.dart
+      isInDebugMode:
+          false, // true — для отладки (показывает дополнительные логи)
+    );
 
-  // Регистрируем периодическую задачу (каждые 15 минут — минимально приемлемо)
-  await Workmanager().registerPeriodicTask(
-    "spinCheckUnique",
-    spinCheckTask,
-    frequency: const Duration(minutes: 5),
-    initialDelay: const Duration(minutes: 1),
-    existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
-  );
+    // Регистрируем периодическую задачу (каждые 15 минут — минимально приемлемо)
+    await Workmanager().registerPeriodicTask(
+      "spinCheckUnique",
+      spinCheckTask,
+      frequency: const Duration(minutes: 5),
+      initialDelay: const Duration(minutes: 1),
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+    );
+  }
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

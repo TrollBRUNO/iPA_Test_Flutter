@@ -9,8 +9,6 @@ class AuthService {
   static const String _loginUrl = 'https://live.teleslot.net/login';
   static const String _balanceUrl =
       'https://live.teleslot.net/teleslot_player_api/get_my_balance';
-  //static const String _username = 'cvetan';
-  //static const String _password = '123qweXX';
   static const String _jwtKey = 'jwt_token';
 
   static const String _login = 'login';
