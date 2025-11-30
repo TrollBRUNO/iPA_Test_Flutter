@@ -1,6 +1,6 @@
 import 'package:first_app_flutter/class/gallery.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
-import 'package:first_app_flutter/widgets/Gallery_widget.dart';
+import 'package:first_app_flutter/widgets/gallery_widget.dart';
 import 'package:flutter/material.dart';
 
 final List<Gallery> galleryList = [

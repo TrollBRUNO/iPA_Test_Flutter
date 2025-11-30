@@ -1,4 +1,5 @@
 import 'package:first_app_flutter/class/jackpot.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/web.dart';
@@ -37,6 +38,9 @@ class AdaptiveSizes {
   }
 
   static double getUniversalTitleSize() {
+    if (kIsWeb) {
+      return 28;
+    }
     if (screenWidth > 600) return screenWidth * 0.11667;
     if (screenWidth > 400) return screenWidth * 0.125;
     if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.135;
@@ -763,6 +767,9 @@ class AdaptiveSizes {
   }
 
   static TextStyle getLabelStyleButton() {
+    if (kIsWeb) {
+      return const TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+    }
     if (screenWidth > 600) {
       return TextStyle(
         fontWeight: FontWeight.bold,

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
-import 'package:first_app_flutter/widgets/wheel_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AdminScreen extends StatelessWidget {
@@ -9,13 +9,12 @@ class AdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AdminPage(title: 'Admin');
+    return const AdminPage(title: 'Admin');
   }
 }
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key, required this.title});
-
   final String title;
 
   @override
@@ -25,87 +24,163 @@ class AdminPage extends StatefulWidget {
 class _AdminState extends State<AdminPage> {
   final _formKey = GlobalKey<FormState>();
 
+  // ------------------------------
+  //      ФУНКЦИЯ АДАПТИВНОЙ КНОПКИ
+  // ------------------------------
+  Widget createAdaptiveButton({
+    required BuildContext context,
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orangeAccent[200],
+          foregroundColor: const Color.fromARGB(221, 22, 20, 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          padding: const EdgeInsets.all(18),
+          textStyle: AdaptiveSizes.getLabelStyleButton(),
+        ),
+        onPressed: onPressed,
+        child: Text(text, textAlign: TextAlign.center),
+      ),
+    );
+  }
+
+  // ------------------------------
+  //     ФУНКЦИЯ БЛОКА (ЗАГОЛОВОК + КНОПКА)
+  // ------------------------------
+  Widget buildSection(
+    BuildContext context, {
+    required String title,
+    required String buttonText,
+    required double width,
+  }) {
+    return SizedBox(
+      width: width,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.daysOne(
+              fontSize: AdaptiveSizes.getUniversalTitleSize(),
+              color: Colors.orangeAccent[200],
+            ),
+          ),
+          const SizedBox(height: 12),
+          createAdaptiveButton(
+            context: context,
+            text: buttonText,
+            onPressed: () => context.go('/wheel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ------------------------------
+  //     АДАПТИВНАЯ СЕТКА (1 / 2 / 3 КОЛОНКИ)
+  // ------------------------------
+  Widget buildAdminButtons(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    int columns;
+    if (screenWidth > 1400) {
+      columns = 3;
+    } else if (screenWidth > 900) {
+      columns = 2;
+    } else {
+      columns = 1;
+    }
+
+    double itemWidth = (screenWidth / columns) - 60;
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 30,
+        runSpacing: 40,
+        children: [
+          buildSection(
+            context,
+            title: "Новости",
+            width: itemWidth,
+            buttonText:
+                "Добавление / Удаление / Редактирование данных Новостей",
+          ),
+          buildSection(
+            context,
+            title: "Галерея",
+            width: itemWidth,
+            buttonText: "Добавление / Удаление / Редактирование данных Галереи",
+          ),
+          buildSection(
+            context,
+            title: "Приложение",
+            width: itemWidth,
+            buttonText:
+                "Редактирование значений в приложении (значения и цвета в колесе, цвет виджетов и заднего плана)",
+          ),
+          buildSection(
+            context,
+            title: "Джекпоты",
+            width: itemWidth,
+            buttonText:
+                "Добавление / Удаление / Редактирование адреса Казино + возможность изменять джекпот каждого адреса",
+          ),
+          buildSection(
+            context,
+            title: "Служба поддержки",
+            width: itemWidth,
+            buttonText:
+                "Добавление / Удаление / Редактирование сообщений в поддержку",
+          ),
+          buildSection(
+            context,
+            title: "Статистика игроков",
+            width: itemWidth,
+            buttonText:
+                "Просмотр статистики каждого игрока (Время последней крутки, Баланс, Бонусный баланс, Фантиковый баланс)",
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
     return Scaffold(
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Text(
-                            'daily_bonus'.tr(),
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.daysOne(
-                              fontSize: context.locale.languageCode == 'bg'
-                                  ? AdaptiveSizes.getWheelTitleSize() -
-                                        AdaptiveSizes.getLanguageMinusTitle()
-                                  : context.locale.languageCode == 'ru'
-                                  ? AdaptiveSizes.getWheelTitleSize() -
-                                        AdaptiveSizes.getLanguageMinusTitle()
-                                  : AdaptiveSizes.getWheelTitleSize(),
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.normal,
-                              color: Colors.orangeAccent[200],
-                              shadows: [
-                                Shadow(
-                                  color: Color.fromARGB(255, 244, 105, 179),
-                                  offset: Offset(3.5, 4.5),
-                                  blurRadius: 3,
-                                ),
-                                Shadow(
-                                  color: Color.fromARGB(255, 224, 67, 146),
-                                  offset: Offset(5.5, 6.5),
-                                  blurRadius: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(
-                          height: context.locale.languageCode == 'bg'
-                              ? AdaptiveSizes.h(0.09) -
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
-                              : context.locale.languageCode == 'ru'
-                              ? AdaptiveSizes.h(0.09) -
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
-                              : AdaptiveSizes.h(0.09),
-                        ),
-
-                        SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.95,
-                          width: MediaQuery.of(context).size.width * 0.95,
-                          child: const WheelWidget(),
-                        ),
-
-                        SizedBox(
-                          height: context.locale.languageCode == 'bg'
-                              ? AdaptiveSizes.h(0.08) +
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode2()
-                              : context.locale.languageCode == 'ru'
-                              ? AdaptiveSizes.h(0.08) +
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode2()
-                              : AdaptiveSizes.h(0.08) +
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode2(),
-                        ),
-                      ],
+        child: SingleChildScrollView(
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  Text(
+                    "Интерфейс для администратора",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.daysOne(
+                      fontSize: AdaptiveSizes.getUniversalTitleSize() * 1.2,
+                      color: Colors.orangeAccent[200],
                     ),
                   ),
-                ),
+                  const SizedBox(height: 40),
+                  buildAdminButtons(context),
+                  const SizedBox(height: 60),
+                ],
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
