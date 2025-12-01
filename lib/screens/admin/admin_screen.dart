@@ -57,6 +57,7 @@ class _AdminState extends State<AdminPage> {
     BuildContext context, {
     required String title,
     required String buttonText,
+    required String path,
     required double width,
   }) {
     return SizedBox(
@@ -76,7 +77,7 @@ class _AdminState extends State<AdminPage> {
           createAdaptiveButton(
             context: context,
             text: buttonText,
-            onPressed: () => context.go('/wheel'),
+            onPressed: () => context.go(path),
           ),
         ],
       ),
@@ -113,12 +114,14 @@ class _AdminState extends State<AdminPage> {
             width: itemWidth,
             buttonText:
                 "Добавление / Удаление / Редактирование данных Новостей",
+            path: '/admin/edit_news',
           ),
           buildSection(
             context,
             title: "Галерея",
             width: itemWidth,
             buttonText: "Добавление / Удаление / Редактирование данных Галереи",
+            path: '/admin/edit_gallery',
           ),
           buildSection(
             context,
@@ -126,6 +129,7 @@ class _AdminState extends State<AdminPage> {
             width: itemWidth,
             buttonText:
                 "Редактирование значений в приложении (значения и цвета в колесе, цвет виджетов и заднего плана)",
+            path: '/admin/edit_app',
           ),
           buildSection(
             context,
@@ -133,6 +137,7 @@ class _AdminState extends State<AdminPage> {
             width: itemWidth,
             buttonText:
                 "Добавление / Удаление / Редактирование адреса Казино + возможность изменять джекпот каждого адреса",
+            path: '/admin/edit_jackpot',
           ),
           buildSection(
             context,
@@ -140,6 +145,7 @@ class _AdminState extends State<AdminPage> {
             width: itemWidth,
             buttonText:
                 "Добавление / Удаление / Редактирование сообщений в поддержку",
+            path: '/admin/edit_reports',
           ),
           buildSection(
             context,
@@ -147,6 +153,7 @@ class _AdminState extends State<AdminPage> {
             width: itemWidth,
             buttonText:
                 "Просмотр статистики каждого игрока (Время последней крутки, Баланс, Бонусный баланс, Фантиковый баланс)",
+            path: '/admin/view_statistics',
           ),
         ],
       ),
