@@ -164,6 +164,84 @@ class _AdminState extends State<AdminPage> {
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
+    void _showLanguageDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF2C2C2C),
+            title: Text(
+              'select_language'.tr(),
+              style: TextStyle(color: Colors.white),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: Text(
+                    'english'.tr(),
+                    style: GoogleFonts.raleway(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onTap: () async {
+                    await context.setLocale(const Locale('en', 'US'));
+                    Navigator.of(context).pop();
+                    setState(() {}); // Обновить текущий язык на кнопке
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'bulgarian'.tr(),
+                    style: GoogleFonts.raleway(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onTap: () async {
+                    await context.setLocale(const Locale('bg', 'BG'));
+                    Navigator.of(context).pop();
+                    setState(() {}); // Обновить текущий язык на кнопке
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'russian'.tr(),
+                    style: GoogleFonts.raleway(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onTap: () async {
+                    await context.setLocale(const Locale('ru', 'RU'));
+                    Navigator.of(context).pop();
+                    setState(() {}); // Обновить текущий язык на кнопке
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    String _getCurrentLanguageText(BuildContext context) {
+      switch (context.locale.languageCode) {
+        case 'ru':
+          return 'assets/images/russia.png';
+        case 'en':
+          return 'assets/images/england.png';
+        case 'bg':
+          return 'assets/images/bulgaria.png';
+        default:
+          return 'assets/images/england.png';
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -172,14 +250,39 @@ class _AdminState extends State<AdminPage> {
               key: _formKey,
               child: Column(
                 children: [
-                  const SizedBox(height: 30),
-                  Text(
-                    "Интерфейс для администратора",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.daysOne(
-                      fontSize: AdaptiveSizes.getUniversalTitleSize() * 1.2,
-                      color: Colors.orangeAccent[200],
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _showLanguageDialog(context);
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.orangeAccent[200],
+                          radius: AdaptiveSizes.getIconProfileSize() / 4,
+                          child: ClipOval(
+                            child: Image.asset(
+                              _getCurrentLanguageText(context),
+                              fit: BoxFit.cover,
+                              width: AdaptiveSizes.getIconProfileSize() / 2.2,
+                              height: AdaptiveSizes.getIconProfileSize() / 2.2,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Text(
+                          "admin_title".tr(),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.daysOne(
+                            fontSize:
+                                AdaptiveSizes.getUniversalTitleSize() * 1.2,
+                            color: Colors.orangeAccent[200],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 40),
                   buildAdminButtons(context),
