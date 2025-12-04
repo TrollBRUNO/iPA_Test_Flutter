@@ -155,6 +155,14 @@ class _AdminState extends State<AdminPage> {
                 "Просмотр статистики каждого игрока (Время последней крутки, Баланс, Бонусный баланс, Фантиковый баланс)",
             path: '/admin/view_statistics',
           ),
+
+          buildSection(
+            context,
+            title: "Приложение",
+            width: itemWidth,
+            buttonText: "Переход в само приложение для просмотра изменений",
+            path: '/wheel',
+          ),
         ],
       ),
     );

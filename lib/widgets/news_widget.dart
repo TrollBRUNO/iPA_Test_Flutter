@@ -70,11 +70,13 @@ class NewsWidget extends StatelessWidget {
               topLeft: Radius.circular(32),
               topRight: Radius.circular(32),
             ),
-            child: Image.asset(
-              news.imageUrl,
+            child: Image.network(
+              "http://localhost:3000${news.imageUrl}",
               fit: BoxFit.cover,
               width: double.infinity,
               height: AdaptiveSizes.getNewsWidgetHeight(),
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.broken_image, color: Colors.white),
             ),
           ),
 
