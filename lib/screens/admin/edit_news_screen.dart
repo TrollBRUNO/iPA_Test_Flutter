@@ -1,20 +1,19 @@
+import 'dart:convert';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:http/http.dart' as http;
 
 class EditNewsScreen extends StatelessWidget {
   const EditNewsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return EditNewsPage(title: 'Edit News');
+    return const EditNewsPage(title: 'Edit News');
   }
 }
 
 class EditNewsPage extends StatefulWidget {
   const EditNewsPage({super.key, required this.title});
-
   final String title;
 
   @override
@@ -22,84 +21,120 @@ class EditNewsPage extends StatefulWidget {
 }
 
 class _EditNewsState extends State<EditNewsPage> {
-  final _formKey = GlobalKey<FormState>();
+  List<dynamic> news = [];
+  bool isLoading = false;
 
-  void _showLanguageDialog(BuildContext context) {
-    showDialog(
+  @override
+  void initState() {
+    super.initState();
+    loadNews();
+  }
+
+  Future<void> loadNews() async {
+    setState(() => isLoading = true);
+    final res = await http.get(Uri.parse("http://localhost:3000/news"));
+    if (res.statusCode == 200) {
+      news = jsonDecode(res.body);
+    }
+    setState(() => isLoading = false);
+  }
+
+  Future<void> deleteNews(String id) async {
+    await http.delete(Uri.parse("http://localhost:3000/news/$id"));
+    await loadNews();
+  }
+
+  Future<void> editOrCreateNews({Map? item}) async {
+    final titleController = TextEditingController(text: item?["title"] ?? "");
+    final descController = TextEditingController(
+      text: item?["description"] ?? "",
+    );
+    final imgController = TextEditingController(
+      text: item?["image_url"] != null
+          ? item!["image_url"].toString().split('/').last
+          : "",
+    );
+
+    await showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF2C2C2C),
+          backgroundColor: const Color(0xFF1E1E1E),
           title: Text(
-            'select_language'.tr(),
-            style: TextStyle(color: Colors.white),
+            item == null ? "Add News" : "Edit News",
+            style: const TextStyle(color: Colors.white),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(
-                  'english'.tr(),
-                  style: GoogleFonts.raleway(
-                    fontSize: 24,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+          content: SizedBox(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: "Title",
+                    labelStyle: TextStyle(color: Colors.white70),
                   ),
                 ),
-                onTap: () async {
-                  await context.setLocale(const Locale('en', 'US'));
-                  Navigator.of(context).pop();
-                  setState(() {}); // Обновить текущий язык на кнопке
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'bulgarian'.tr(),
-                  style: GoogleFonts.raleway(
-                    fontSize: 24,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+                TextField(
+                  controller: descController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: "Description",
+                    labelStyle: TextStyle(color: Colors.white70),
                   ),
                 ),
-                onTap: () async {
-                  await context.setLocale(const Locale('bg', 'BG'));
-                  Navigator.of(context).pop();
-                  setState(() {}); // Обновить текущий язык на кнопке
-                },
-              ),
-              ListTile(
-                title: Text(
-                  'russian'.tr(),
-                  style: GoogleFonts.raleway(
-                    fontSize: 24,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+                TextField(
+                  controller: imgController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: "Image filename",
+                    labelStyle: TextStyle(color: Colors.white70),
                   ),
                 ),
-                onTap: () async {
-                  await context.setLocale(const Locale('ru', 'RU'));
-                  Navigator.of(context).pop();
-                  setState(() {}); // Обновить текущий язык на кнопке
-                },
-              ),
-            ],
+              ],
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final body = jsonEncode({
+                  "title": titleController.text,
+                  "description": descController.text,
+                  "image_url": imgController.text,
+                });
+
+                if (item == null) {
+                  await http.post(
+                    Uri.parse("http://localhost:3000/news/json"),
+                    headers: {"Content-Type": "application/json"},
+                    body: body,
+                  );
+                } else {
+                  await http.put(
+                    Uri.parse("http://localhost:3000/news/${item["_id"]}"),
+                    headers: {"Content-Type": "application/json"},
+                    body: body,
+                  );
+                }
+
+                Navigator.pop(context);
+                await loadNews();
+              },
+              child: const Text("Save"),
+            ),
+          ],
         );
       },
     );
-  }
-
-  String _getCurrentLanguageText(BuildContext context) {
-    switch (context.locale.languageCode) {
-      case 'ru':
-        return 'Русский';
-      case 'en':
-        return 'English';
-      case 'bg':
-        return 'Български';
-      default:
-        return 'Язык';
-    }
   }
 
   @override
@@ -108,126 +143,80 @@ class _EditNewsState extends State<EditNewsPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 12,
-                          left: 8,
-                          right: 8,
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Кнопка "назад" — слева
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.arrow_back_ios_new_rounded,
-                                  color: Colors.orangeAccent[200],
-                                  size: AdaptiveSizes.getIconBackSettingsSize(),
-                                ),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                            ),
-
-                            // Заголовок — по центру
-                            Text(
-                              'settings'.tr(),
-                              style: GoogleFonts.daysOne(
-                                fontSize: AdaptiveSizes.getFontUsernameSize(),
-                                fontWeight: FontWeight.w100,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.orangeAccent[200],
-                                shadows: const [
-                                  Shadow(
-                                    color: Color.fromARGB(255, 51, 51, 51),
-                                    offset: Offset(3.5, 4.5),
-                                    blurRadius: 3,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text(widget.title),
+        actions: [
+          TextButton(
+            onPressed: () => editOrCreateNews(),
+            child: const Text(
+              "Add New",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                headingTextStyle: const TextStyle(color: Colors.white),
+                dataTextStyle: const TextStyle(color: Colors.white70),
+                columns: const [
+                  DataColumn(label: Text("Image")),
+                  DataColumn(label: Text("Title")),
+                  DataColumn(label: Text("Description")),
+                  DataColumn(label: Text("Actions")),
+                ],
+                rows: [
+                  for (var item in news)
+                    DataRow(
+                      cells: [
+                        // ==== IMAGE PREVIEW ====
+                        DataCell(
+                          item["image_url"] != null
+                              ? Image.network(
+                                  "http://localhost:3000${item["image_url"]}",
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                    Icons.broken_image,
+                                    color: Colors.white,
                                   ),
-                                ],
-                              ),
-                            ),
-                          ],
+                                )
+                              : const Icon(Icons.image, color: Colors.white),
                         ),
-                      ),
 
-                      const SizedBox(height: 20),
+                        DataCell(Text(item["title"] ?? "")),
+                        DataCell(Text(item["description"] ?? "")),
 
-                      Padding(
-                        padding: AdaptiveSizes.getSettingsRowPadding(),
-                        child: Container(
-                          height: AdaptiveSizes.getSettingsLanguageHeight(),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1E1E1E),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        DataCell(
+                          Row(
                             children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: AdaptiveSizes.w(0.03472),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'app_language'.tr(),
-                                      style: GoogleFonts.raleway(
-                                        fontSize:
-                                            AdaptiveSizes.getFontLanguageSize(),
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                onPressed: () => editOrCreateNews(item: item),
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  // Открыть выбор языка
-                                  _showLanguageDialog(context);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 20.0),
-                                  child: Text(
-                                    _getCurrentLanguageText(context),
-                                    style: GoogleFonts.raleway(
-                                      fontSize:
-                                          AdaptiveSizes.getFontLanguageSize(),
-                                      color: Colors.orangeAccent[200],
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
                                 ),
+                                onPressed: () => deleteNews(item["_id"]),
                               ),
                             ],
                           ),
                         ),
-                      ),
-
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                ],
               ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }
