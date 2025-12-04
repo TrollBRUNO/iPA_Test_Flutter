@@ -142,16 +142,19 @@ class _EditNewsState extends State<EditNewsPage> {
     AdaptiveSizes.init(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text(widget.title),
+        backgroundColor: Color(0xFF121212),
+        foregroundColor: Colors.orangeAccent[200],
         actions: [
           TextButton(
             onPressed: () => editOrCreateNews(),
-            child: const Text(
+            child: Text(
               "Add New",
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(
+                color: Colors.orangeAccent[200],
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
