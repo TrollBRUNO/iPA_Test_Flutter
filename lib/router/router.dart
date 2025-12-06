@@ -1,4 +1,5 @@
 import 'package:first_app_flutter/screens/admin/admin_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_gallery_screen.dart';
 import 'package:first_app_flutter/screens/admin/edit_news_screen.dart';
 import 'package:first_app_flutter/screens/confidential_screen.dart';
 import 'package:first_app_flutter/screens/games_screen.dart';
@@ -43,7 +44,7 @@ final router = GoRouter(
         ),
         GoRoute(
           path: '/edit_gallery',
-          builder: (context, state) => const EditNewsPage(title: 'Edit'),
+          builder: (context, state) => const EditGalleryPage(title: 'Edit'),
         ),
         GoRoute(
           path: '/edit_app',
