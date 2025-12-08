@@ -125,19 +125,19 @@ class _AdminState extends State<AdminPage> {
           ),
           buildSection(
             context,
+            title: "Казино",
+            width: itemWidth,
+            buttonText:
+                "Добавление / Удаление / Редактирование адреса Казино + возможность изменять джекпот каждого адреса",
+            path: '/admin/edit_casino',
+          ),
+          buildSection(
+            context,
             title: "Приложение",
             width: itemWidth,
             buttonText:
                 "Редактирование значений в приложении (значения и цвета в колесе, цвет виджетов и заднего плана)",
             path: '/admin/edit_app',
-          ),
-          buildSection(
-            context,
-            title: "Джекпоты",
-            width: itemWidth,
-            buttonText:
-                "Добавление / Удаление / Редактирование адреса Казино + возможность изменять джекпот каждого адреса",
-            path: '/admin/edit_jackpot',
           ),
           buildSection(
             context,
