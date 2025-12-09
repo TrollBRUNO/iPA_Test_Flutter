@@ -176,6 +176,9 @@ class _JackpotState extends State<JackpotPage> {
             imageUrl: c["image_url"],
             isMysteryProgressive: c["mystery_progressive"] == true,
             jackpotUrl: c["jackpot_url"] ?? "",
+            uuIdList: (c["uu_id_list"] != null && c["uu_id_list"] is List)
+                ? List<String>.from(c["uu_id_list"])
+                : [],
             miniMystery: 0,
             middleMystery: 0,
             megaMystery: 0,

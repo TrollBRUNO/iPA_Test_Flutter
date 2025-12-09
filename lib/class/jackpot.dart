@@ -5,6 +5,8 @@ class Jackpot {
   bool isMysteryProgressive; //= true;
   String jackpotUrl; //= 'https://example.com/jackpot';
 
+  List<String> uuIdList; //= [];
+
   //для MysteryProgressive
   double miniMystery; //= 99.99;
   double middleMystery; //= 555.55;
@@ -27,6 +29,7 @@ class Jackpot {
     this.imageUrl = "assets/images/logo.png",
     this.isMysteryProgressive = false,
     this.jackpotUrl = "",
+    this.uuIdList = const [],
     this.miniMystery = 0,
     this.middleMystery = 0,
     this.megaMystery = 0,
@@ -46,6 +49,7 @@ class Jackpot {
       imageUrl: jackpot.imageUrl,
       isMysteryProgressive: jackpot.isMysteryProgressive,
       jackpotUrl: jackpot.jackpotUrl,
+      uuIdList: jackpot.uuIdList,
       miniMystery: jackpot.miniMystery,
       middleMystery: jackpot.middleMystery,
       megaMystery: jackpot.megaMystery,
@@ -65,6 +69,7 @@ class Jackpot {
     String? imageUrl,
     bool? isMysteryProgressive,
     String? jackpotUrl,
+    List<String>? uuIdList,
     double? miniMystery,
     double? middleMystery,
     double? megaMystery,
@@ -82,6 +87,7 @@ class Jackpot {
       imageUrl: imageUrl ?? this.imageUrl,
       isMysteryProgressive: isMysteryProgressive ?? this.isMysteryProgressive,
       jackpotUrl: jackpotUrl ?? this.jackpotUrl,
+      uuIdList: uuIdList ?? this.uuIdList,
       miniMystery: miniMystery ?? this.miniMystery,
       middleMystery: middleMystery ?? this.middleMystery,
       megaMystery: megaMystery ?? this.megaMystery,

@@ -252,14 +252,19 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
 
                           // ВСТРОЕННАЯ КАМЕРА ВМЕСТО КНОПКИ
                           CameraWidget(
-                            cameraIds: [
+                            /* cameraIds: [
                               '82dee2d3-0893-4a4d-b9bc-129179b692c2',
                               'a1360da3-09ea-4dde-b0e7-1f23bcc592e1',
                             ],
                             cameraNames: [
                               '${'camera'.tr()} 1',
                               '${'camera'.tr()} 2',
-                            ],
+                            ], */
+                            cameraIds: _current.uuIdList,
+                            cameraNames: List.generate(
+                              _current.uuIdList.length,
+                              (i) => '${"camera".tr()} ${i + 1}',
+                            ),
                           ),
                         ],
                       ),

@@ -60,6 +60,12 @@ class _EditCasinoState extends State<EditCasinoPage> {
     );
     bool mysteryProgressive = item?["mystery_progressive"] ?? true;
 
+    final uuIdListController = TextEditingController(
+      text: item?["uu_id_list"] != null
+          ? (item!["uu_id_list"] as List).join(", ")
+          : "",
+    );
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -122,6 +128,14 @@ class _EditCasinoState extends State<EditCasinoPage> {
                     ),
                   ],
                 ),
+                TextField(
+                  controller: uuIdListController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: "Camera IDs",
+                    labelStyle: TextStyle(color: Colors.white70),
+                  ),
+                ),
               ],
             ),
           ),
@@ -141,6 +155,11 @@ class _EditCasinoState extends State<EditCasinoPage> {
                   "mystery_progressive": mysteryProgressive,
                   "jackpot_url": jackpotController.text,
                   "image_url": imgController.text,
+                  "uu_id_list": uuIdListController.text
+                      .split(",")
+                      .map((e) => e.trim())
+                      .where((e) => e.isNotEmpty)
+                      .toList(),
                 });
 
                 if (item == null) {
@@ -205,6 +224,7 @@ class _EditCasinoState extends State<EditCasinoPage> {
                   DataColumn(label: Text("Address")),
                   DataColumn(label: Text("Jackpot URL")),
                   DataColumn(label: Text("Mystery Progressive")),
+                  DataColumn(label: Text("Camera ID's")),
                   DataColumn(label: Text("Actions")),
                 ],
                 rows: [
@@ -235,6 +255,14 @@ class _EditCasinoState extends State<EditCasinoPage> {
                                 : "No",
                           ),
                         ),
+                        DataCell(
+                          Text(
+                            item["uu_id_list"] != null
+                                ? (item["uu_id_list"] as List).join(", ")
+                                : "",
+                          ),
+                        ),
+
                         DataCell(
                           Row(
                             children: [
