@@ -32,7 +32,7 @@ class _EditGalleryState extends State<EditGalleryPage> {
 
   Future<void> loadGallery() async {
     setState(() => isLoading = true);
-    final res = await http.get(Uri.parse("http://localhost:3000/gallery"));
+    final res = await http.get(Uri.parse("http://192.168.33.187:3000/gallery"));
     if (res.statusCode == 200) {
       gallery = jsonDecode(res.body);
     }
@@ -40,7 +40,7 @@ class _EditGalleryState extends State<EditGalleryPage> {
   }
 
   Future<void> deleteGallery(String id) async {
-    await http.delete(Uri.parse("http://localhost:3000/gallery/$id"));
+    await http.delete(Uri.parse("http://192.168.33.187:3000/gallery/$id"));
     await loadGallery();
   }
 
@@ -104,13 +104,15 @@ class _EditGalleryState extends State<EditGalleryPage> {
 
                 if (item == null) {
                   await http.post(
-                    Uri.parse("http://localhost:3000/gallery/json"),
+                    Uri.parse("http://192.168.33.187:3000/gallery/json"),
                     headers: {"Content-Type": "application/json"},
                     body: body,
                   );
                 } else {
                   await http.put(
-                    Uri.parse("http://localhost:3000/gallery/${item["_id"]}"),
+                    Uri.parse(
+                      "http://192.168.33.187:3000/gallery/${item["_id"]}",
+                    ),
                     headers: {"Content-Type": "application/json"},
                     body: body,
                   );
@@ -169,7 +171,7 @@ class _EditGalleryState extends State<EditGalleryPage> {
                         DataCell(
                           item["image_url"] != null
                               ? Image.network(
-                                  "http://localhost:3000${item["image_url"]}",
+                                  "http://192.168.33.187:3000${item["image_url"]}",
                                   width: 70,
                                   height: 70,
                                   fit: BoxFit.cover,

@@ -71,7 +71,7 @@ class NewsWidget extends StatelessWidget {
               topRight: Radius.circular(32),
             ),
             child: Image.network(
-              "http://localhost:3000${news.imageUrl}",
+              "http://192.168.33.187:3000${news.imageUrl}",
               fit: BoxFit.cover,
               width: double.infinity,
               height: AdaptiveSizes.getNewsWidgetHeight(),

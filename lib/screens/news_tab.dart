@@ -40,7 +40,7 @@ class _NewsTabState extends State<NewsTab> {
 
   Future<void> loadNews() async {
     try {
-      final res = await http.get(Uri.parse("http://localhost:3000/news"));
+      final res = await http.get(Uri.parse("http://192.168.33.187:3000/news"));
       if (res.statusCode == 200) {
         final decoded = jsonDecode(res.body);
 

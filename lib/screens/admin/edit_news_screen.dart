@@ -32,7 +32,7 @@ class _EditNewsState extends State<EditNewsPage> {
 
   Future<void> loadNews() async {
     setState(() => isLoading = true);
-    final res = await http.get(Uri.parse("http://localhost:3000/news"));
+    final res = await http.get(Uri.parse("http://192.168.33.187:3000/news"));
     if (res.statusCode == 200) {
       news = jsonDecode(res.body);
     }
@@ -40,7 +40,7 @@ class _EditNewsState extends State<EditNewsPage> {
   }
 
   Future<void> deleteNews(String id) async {
-    await http.delete(Uri.parse("http://localhost:3000/news/$id"));
+    await http.delete(Uri.parse("http://192.168.33.187:3000/news/$id"));
     await loadNews();
   }
 
@@ -114,13 +114,13 @@ class _EditNewsState extends State<EditNewsPage> {
 
                 if (item == null) {
                   await http.post(
-                    Uri.parse("http://localhost:3000/news/json"),
+                    Uri.parse("http://192.168.33.187:3000/news/json"),
                     headers: {"Content-Type": "application/json"},
                     body: body,
                   );
                 } else {
                   await http.put(
-                    Uri.parse("http://localhost:3000/news/${item["_id"]}"),
+                    Uri.parse("http://192.168.33.187:3000/news/${item["_id"]}"),
                     headers: {"Content-Type": "application/json"},
                     body: body,
                   );
@@ -180,7 +180,7 @@ class _EditNewsState extends State<EditNewsPage> {
                         DataCell(
                           item["image_url"] != null
                               ? Image.network(
-                                  "http://localhost:3000${item["image_url"]}",
+                                  "http://192.168.33.187:3000${item["image_url"]}",
                                   width: 70,
                                   height: 70,
                                   fit: BoxFit.cover,

@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 
 Widget buildJackpotRow(
   String label,
-  double value, {
+  double value,
+  String range, {
   Widget Function(double value)? valueBuilder,
+  Widget Function(String range)? rangeBuilder,
 }) {
   // Цвет в зависимости от типа джекпота
   Color labelColor;
@@ -103,19 +105,29 @@ Widget buildJackpotRow(
         valueBuilder != null
             ? valueBuilder(value)
             : Text(
-                '${value.toStringAsFixed(2)} BGN',
+                '${value.toStringAsFixed(2)} EUR',
                 style: TextStyle(color: Colors.white, fontSize: countSize),
               ),
 
         SizedBox(width: AdaptiveSizes.w(0.01388)),
 
-        Text(
+        rangeBuilder != null
+            ? rangeBuilder(range)
+            : Text(
+                '${range}',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: AdaptiveSizes.getRangeJackpotSize(),
+                ),
+              ),
+
+        /* Text(
           rangeMystery,
           style: TextStyle(
             color: Colors.white70,
             fontSize: AdaptiveSizes.getRangeJackpotSize(),
           ),
-        ),
+        ), */
       ],
     ),
   );

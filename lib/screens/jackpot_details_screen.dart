@@ -383,7 +383,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
             curve: Curves.easeOut,
             builder: (context, animatedValue, child) {
               return Text(
-                '${animatedValue.toStringAsFixed(2)} BGN',
+                '${animatedValue.toStringAsFixed(2)} EUR',
                 style: GoogleFonts.tourney(
                   fontSize: AdaptiveSizes.getJackpotLogoFontSize(),
                   color: Colors.white,
