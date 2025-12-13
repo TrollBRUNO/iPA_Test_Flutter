@@ -270,7 +270,8 @@ class _ProfileState extends State<ProfilePage> {
                                         SizedBox(
                                           width: AdaptiveSizes.w(0.01111),
                                         ),
-                                        Text(
+                                        // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+                                        /* Text(
                                           '${'balance'.tr()} $balanceCount',
                                           style: GoogleFonts.manrope(
                                             fontSize:
@@ -292,6 +293,16 @@ class _ProfileState extends State<ProfilePage> {
                                               71,
                                               71,
                                             ),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ), */
+
+                                        // --------- ДОБАВИЛ ВРЕМЕННУЮ РЕАЛИЗАЦИЮ ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+                                        Text(
+                                          '${'balance'.tr()} $balanceCount',
+                                          style: GoogleFonts.manrope(
+                                            fontSize:
+                                                AdaptiveSizes.getFontBalanceSize(),
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -609,7 +620,10 @@ class _ProfileState extends State<ProfilePage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
-            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            textStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: AdaptiveSizes.getFontCreditBalanceSize2(),
+            ),
           ),
           onPressed: () async {
             setState(() => canShowCreditButton = false);

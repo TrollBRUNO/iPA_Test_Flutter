@@ -47,7 +47,7 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
 
   @override
   Widget build(BuildContext context) {
-    final isBigWin = widget.prize == '100 BGN';
+    final isBigWin = widget.prize == '100 EUR';
 
     return Center(
       child: Material(

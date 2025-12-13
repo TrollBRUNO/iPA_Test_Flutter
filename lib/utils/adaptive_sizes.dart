@@ -565,6 +565,12 @@ class AdaptiveSizes {
     return 14;
   }
 
+  static double getFontCreditBalanceSize2() {
+    if (screenWidth > 600) return 20;
+    if (screenWidth > 400) return 12;
+    return 12;
+  }
+
   static double getSupportWelcomeTextSize() {
     if (screenWidth > 600) return 22;
     if (screenWidth > 400) return 16;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
@@ -15,6 +16,8 @@ import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,11 +32,29 @@ class _WheelState extends State<WheelWidget> {
   StreamController<int> selected = StreamController<int>();
   int? lastSelectedIndex;
   bool _canSpinToday = true;
+  List<Prize> prizeList = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _loadSpinAvailability();
+    loadWheel();
+  }
+
+  Future<void> loadWheel() async {
+    try {
+      final res = await http.get(Uri.parse("http://192.168.33.187:3000/wheel"));
+      if (res.statusCode == 200) {
+        final decoded = jsonDecode(res.body);
+
+        prizeList = decoded.map<Prize>((item) => Prize(item['value'])).toList();
+      }
+    } catch (e) {
+      print("Ошибка загрузки: $e");
+    }
+
+    setState(() => isLoading = false);
   }
 
   @override
@@ -49,6 +70,7 @@ class _WheelState extends State<WheelWidget> {
 
     setState(() {
       _canSpinToday = canSpin;
+      isLoading = false;
     });
   }
 
@@ -129,7 +151,9 @@ class _WheelState extends State<WheelWidget> {
               prize: prize,
               onClaim: () {
                 Navigator.of(context).pop();
-                showAdsDialog();
+
+                // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+                //showAdsDialog();
               },
             ),
           ),
@@ -234,7 +258,7 @@ class _WheelState extends State<WheelWidget> {
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
-    final prizeList = <Prize>[
+    /* final prizeList = <Prize>[
       const Prize(20),
       const Prize(10),
       const Prize(50),
@@ -271,7 +295,23 @@ class _WheelState extends State<WheelWidget> {
       const Prize(20),
       const Prize(10),
       const Prize(40),
-    ];
+    ]; */
+
+    if (isLoading) {
+      /* return Center(
+        child: CircularProgressIndicator(color: Colors.orangeAccent[200]),
+      ); */
+      return Scaffold(
+        body: Center(
+          child: Lottie.asset(
+            "assets/lottie/8_bit_coin.json",
+            width: 200,
+            height: 200,
+            repeat: true,
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -420,7 +460,7 @@ class _WheelState extends State<WheelWidget> {
                     currentBalance.toString(),
                   );
                   showPrizeDialog(prize.formatted);
-                  //showPrizeDialog('100 BGN');
+                  //showPrizeDialog('100 EUR');
                 },
               ),
             ),

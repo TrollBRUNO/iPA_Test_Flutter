@@ -3,7 +3,7 @@ class Prize {
 
   const Prize(this.value);
 
-  String get formatted => '$value BGN';
+  String get formatted => '$value EUR';
 
   // Для удобства сравнения призов
   @override

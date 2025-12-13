@@ -133,6 +133,14 @@ class _AdminState extends State<AdminPage> {
           ),
           buildSection(
             context,
+            title: "Колесо",
+            width: itemWidth,
+            buttonText:
+                "Добавление / Удаление / Редактирование значение полей в Колесе",
+            path: '/admin/edit_wheel',
+          ),
+          buildSection(
+            context,
             title: "Приложение",
             width: itemWidth,
             buttonText:
