@@ -299,7 +299,7 @@ class _ProfileState extends State<ProfilePage> {
 
                                         // --------- ДОБАВИЛ ВРЕМЕННУЮ РЕАЛИЗАЦИЮ ЧТОБЫ БЫЛО ПРОЩЕ ----------------
                                         Text(
-                                          '${'balance'.tr()} $balanceCount',
+                                          '${'bonus_balance'.tr()} $balanceCount',
                                           style: GoogleFonts.manrope(
                                             fontSize:
                                                 AdaptiveSizes.getFontBalanceSize(),

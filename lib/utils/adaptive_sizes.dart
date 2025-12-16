@@ -401,6 +401,12 @@ class AdaptiveSizes {
     return screenHeight * 0.0024;
   }
 
+  static double getButtonWidth2() {
+    if (screenWidth > 600) return screenWidth * 0.41667 * 1.5;
+    if (screenWidth > 400) return screenWidth * 0.5 * 1.5;
+    return screenWidth * 0.5 * 1.5;
+  }
+
   static double getButtonWidth() {
     if (screenWidth > 600) return screenWidth * 0.41667;
     if (screenWidth > 400) return screenWidth * 0.5;
@@ -830,20 +836,20 @@ class AdaptiveSizes {
       return TextStyle(
         fontSize: screenWidth * 0.041667,
         color: Colors.white54,
-        decoration: TextDecoration.lineThrough,
+        //decoration: TextDecoration.lineThrough,
       );
     }
     if (screenWidth > 400) {
       return TextStyle(
         fontSize: screenWidth * 0.041667,
         color: Colors.white54,
-        decoration: TextDecoration.lineThrough,
+        //decoration: TextDecoration.lineThrough,
       );
     }
     return TextStyle(
       fontSize: screenWidth * 0.041667,
       color: Colors.white54,
-      decoration: TextDecoration.lineThrough,
+      //decoration: TextDecoration.lineThrough,
     );
   }
 

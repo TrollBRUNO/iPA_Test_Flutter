@@ -74,7 +74,8 @@ class _WheelState extends State<WheelWidget> {
     });
   }
 
-  void openTeleslotAutoLogin(BuildContext context) async {
+  // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+  /* void openTeleslotAutoLogin(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('login');
     final password = prefs.getString('password');
@@ -93,7 +94,7 @@ class _WheelState extends State<WheelWidget> {
             TeleslotLoginWebView(username: username, password: password),
       ),
     );
-  }
+  } */
 
   @override
   void dispose() {
@@ -162,7 +163,8 @@ class _WheelState extends State<WheelWidget> {
     );
   }
 
-  void showAdsDialog() {
+  // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+  /* void showAdsDialog() {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -229,7 +231,7 @@ class _WheelState extends State<WheelWidget> {
         );
       },
     );
-  }
+  } */
 
   void showInfoDialog() {
     showGeneralDialog(

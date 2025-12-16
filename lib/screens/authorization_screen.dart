@@ -45,7 +45,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
-    AdaptiveSizes.printSizes();
+    //AdaptiveSizes.printSizes();
 
     return Scaffold(
       body: SafeArea(
@@ -114,6 +114,11 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                 }
                                 return null;
                               },
+                              onChanged: (_) {
+                                if (serverError != null) {
+                                  setState(() => serverError = null);
+                                }
+                              },
                             ),
                           ),
                         ),
@@ -156,6 +161,11 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                   return 'only_number_password'.tr();
                                 }
                                 return null;
+                              },
+                              onChanged: (_) {
+                                if (serverError != null) {
+                                  setState(() => serverError = null);
+                                }
                               },
                               obscureText: true,
                             ),
@@ -273,9 +283,9 @@ class _AuthorizationState extends State<AuthorizationPage> {
 
                         InkWell(
                           onTap: () {
-                            /* context.go(
+                            context.go(
                               '/registration',
-                            ); */ // Переход на экран регистрации
+                            ); // Переход на экран регистрации
                           },
                           child: Text(
                             'no_account'.tr(),
