@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/background_worker.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
@@ -37,6 +38,12 @@ class _RegistrationState extends State<RegistrationPage> {
   final _realNameFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _passwordAgainFocus = FocusNode();
+
+  String? username = "";
+  String? balanceCount = "0";
+  String? bonusBalanceCount = "0";
+  String? balanceCreditCount = "0";
+  String? image_url = "";
 
   String? serverError;
 
@@ -428,13 +435,14 @@ class _RegistrationState extends State<RegistrationPage> {
 
                               final cardData = await askForCard(context);
 
-                              final errorCode = await AuthService.register(
-                                login: login,
-                                password: password,
-                                realname: realname,
-                                cardId: cardData?['card_id'],
-                                city: cardData?['city'],
-                              );
+                              final errorCode =
+                                  await AuthService.registerAndLogin(
+                                    login: login,
+                                    password: password,
+                                    realname: realname,
+                                    cardId: cardData?['card_id'],
+                                    city: cardData?['city'],
+                                  );
 
                               if (errorCode != null) {
                                 setState(() => serverError = errorCode);
@@ -451,7 +459,7 @@ class _RegistrationState extends State<RegistrationPage> {
                                 return;
                               }
 
-                              setState(() => serverError = null);
+                              await AuthService.loadProfile();
 
                               Flushbar(
                                 messageText: Row(

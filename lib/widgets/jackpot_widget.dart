@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 
 class JackpotWidget extends StatelessWidget {
   final Jackpot jackpot;
-  final MqttJackpotService? mqttService;
+  //final MqttJackpotService? mqttService;
   final Widget Function(double value)? miniBuilder;
   final Widget Function(double value)? middleBuilder;
   final Widget Function(double value)? megaBuilder;
@@ -30,7 +30,7 @@ class JackpotWidget extends StatelessWidget {
   const JackpotWidget({
     super.key,
     required this.jackpot,
-    this.mqttService,
+    //this.mqttService,
     this.miniBuilder,
     this.middleBuilder,
     this.megaBuilder,
@@ -118,7 +118,7 @@ class JackpotWidget extends StatelessWidget {
             pageBuilder: (context, animation, secondaryAnimation) =>
                 JackpotDetailsScreen(
                   jackpot: jackpot,
-                  mqttService: mqttService,
+                  //mqttService: mqttService,
                 ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {

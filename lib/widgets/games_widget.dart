@@ -13,24 +13,8 @@ import 'package:flutter/material.dart';
 
 class GamesWidget extends StatelessWidget {
   final Games games;
-  final MqttJackpotService? mqttService;
-  final Widget Function(double value)? miniBuilder;
-  final Widget Function(double value)? middleBuilder;
-  final Widget Function(double value)? megaBuilder;
 
-  final Widget Function(double value)? majorBuilder;
-  final Widget Function(double value)? grandBuilder;
-
-  const GamesWidget({
-    super.key,
-    required this.games,
-    this.mqttService,
-    this.miniBuilder,
-    this.middleBuilder,
-    this.megaBuilder,
-    this.majorBuilder,
-    this.grandBuilder,
-  });
+  const GamesWidget({super.key, required this.games});
 
   @override
   Widget build(BuildContext context) {

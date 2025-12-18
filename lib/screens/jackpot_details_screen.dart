@@ -17,12 +17,12 @@ import '../class/jackpot.dart';
 
 class JackpotDetailsScreen extends StatefulWidget {
   final Jackpot jackpot;
-  final MqttJackpotService? mqttService;
+  //final MqttJackpotService? mqttService;
 
   const JackpotDetailsScreen({
     super.key,
     required this.jackpot,
-    this.mqttService,
+    //this.mqttService,
   });
 
   @override
@@ -49,7 +49,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
     _prevValues['Grand'] = _current.grandBellLink;
 
     // Подписываемся на обновления и обновляем только нужные поля
-    if (widget.mqttService != null) {
+    /* if (widget.mqttService != null) {
       _sub = widget.mqttService!.jackpotStream.listen((json) {
         final jackpots = json['jackpots'] as List<dynamic>;
         bool changed = false;
@@ -98,7 +98,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
         }
         if (changed && mounted) setState(() {});
       });
-    }
+    } */
   }
 
   @override
@@ -307,44 +307,44 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
   Widget _buildRow(String label, double value) {
     Color labelColor;
     Color shadowColor;
-    String rangeMystery;
+    //String rangeMystery;
     IconData iconJackpot;
     switch (label.toLowerCase()) {
       case 'mini':
         labelColor = Colors.cyanAccent;
         shadowColor = const Color.fromARGB(255, 0, 124, 128).withOpacity(0.5);
         iconJackpot = Icons.star_border_purple500_rounded;
-        rangeMystery = "(300 - 800 BGN)";
+        //rangeMystery = "(300 - 800 BGN)";
         break;
       case 'middle':
         labelColor = Colors.blueAccent;
         shadowColor = const Color.fromARGB(255, 0, 0, 128).withOpacity(0.6);
         iconJackpot = Icons.grade_outlined;
-        rangeMystery = "(1200 - 2500 BGN)";
+        //rangeMystery = "(1200 - 2500 BGN)";
         break;
       case 'mega':
         labelColor = Colors.deepPurpleAccent;
         shadowColor = const Color.fromARGB(255, 92, 0, 128).withOpacity(0.9);
         iconJackpot = Icons.auto_awesome_outlined;
-        rangeMystery = "(7000 - 10000 BGN)";
+        //rangeMystery = "(7000 - 10000 BGN)";
         break;
       case 'major':
         labelColor = Colors.greenAccent;
         shadowColor = const Color.fromARGB(255, 15, 128, 0).withOpacity(0.5);
         iconJackpot = Icons.grade_outlined;
-        rangeMystery = "(500 - 1500 BGN)";
+        //rangeMystery = "(500 - 1500 BGN)";
         break;
       case 'grand':
         labelColor = Colors.redAccent;
         shadowColor = const Color.fromARGB(255, 128, 0, 0).withOpacity(0.9);
         iconJackpot = Icons.auto_awesome_outlined;
-        rangeMystery = "(8000 - 20000 BGN)";
+        //rangeMystery = "(8000 - 20000 BGN)";
         break;
       default:
         labelColor = Colors.white;
         shadowColor = Colors.white;
         iconJackpot = Icons.abc;
-        rangeMystery = "10000-20000";
+      //rangeMystery = "10000-20000";
     }
     final prev = _prevValues[label] ?? value;
     return Padding(

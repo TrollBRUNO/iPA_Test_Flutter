@@ -3,6 +3,8 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:first_app_flutter/class/user_session.dart';
+import 'package:first_app_flutter/services/token_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,10 +16,12 @@ class AuthService {
       'https://live.teleslot.net/teleslot_player_api/get_my_balance';
   static const String _jwtKey = 'jwt_token';
 
-  static const String _login = 'login';
-  static const String _password = 'password';
+  /* static const String _login = 'login';
+  static const String _password = 'password'; */
 
   static const String _baseUrl = 'http://192.168.33.187:3000';
+
+  static final Dio dio = Dio();
 
   static Future<List<String>> loadCities() async {
     final response = await http.get(Uri.parse('$_baseUrl/casino/cities'));
@@ -28,13 +32,156 @@ class AuthService {
     return data.map((e) => e.toString()).toList();
   }
 
-  static Future<String?> loginAndSaveJwt() async {
+  static Future<bool> login(String login, String password) async {
+    try {
+      final response = await dio.post(
+        '$_baseUrl/auth/login',
+        data: jsonEncode({"login": login, "password": password}),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        await TokenService.saveAccessToken(data['access_token']);
+        await TokenService.saveRefreshToken(data['refresh_token']);
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+
+    return false;
+  }
+
+  static Future<bool> refreshToken() async {
+    final refreshToken = await TokenService.getRefreshToken();
+    if (refreshToken == null) return false;
+
+    try {
+      final response = await dio.post(
+        '$_baseUrl/auth/refresh',
+        data: {'refresh_token': refreshToken},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final data = response.data;
+      await TokenService.saveAccessToken(data['access_token']);
+      await TokenService.saveRefreshToken(data['refresh_token']);
+      return true;
+    } catch (e) {
+      await TokenService.clearTokens();
+      return false;
+    }
+  }
+
+  static Future<void> logout(String refreshToken) async {
+    final refreshToken = await TokenService.getRefreshToken();
+    if (refreshToken != null) {
+      await dio.post(
+        '$_baseUrl/auth/logout',
+        data: {'refresh_token': refreshToken},
+      );
+    }
+    await TokenService.clearTokens();
+  }
+
+  static Future<String?> registerAndLogin({
+    required String login,
+    required String password,
+    required String realname,
+    String? cardId,
+    String? city,
+  }) async {
+    try {
+      final body = {
+        "login": login,
+        "password": password,
+        "realname": realname,
+        if (cardId != null && city != null)
+          "cards": [
+            {"card_id": cardId, "city": city, "active": true},
+          ],
+      };
+
+      logger.i('Registration body: $body');
+
+      /* final response = await http.post(
+      Uri.parse('$_baseUrl/account/register'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(body),
+    ); */
+
+      final response = await dio.post(
+        '$_baseUrl/account/register',
+        data: jsonEncode(body),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        try {
+          final data = jsonDecode(response.data);
+
+          final message = data['message'] ?? 'registration_failed';
+
+          if (message == 'USERNAME_TAKEN') return 'username_taken';
+          if (message == 'CARD_ALREADY_USED') return 'card_already_used';
+          if (message == 'MISSING_FIELDS') return 'missing_fields';
+
+          return message.toString().toLowerCase();
+        } catch (_) {}
+
+        return 'registration_failed';
+      }
+
+      final success = await AuthService.login(login, password);
+      if (!success) return 'login_failed';
+
+      return null; // Всё успешно
+    } catch (e, st) {
+      logger.w('Registration error: $e\n$st');
+      return 'registration_failed';
+    }
+  }
+
+  static Future<String?> checkCard(String cardId) async {
+    final res = await http.post(
+      Uri.parse('$_baseUrl/account/check-card'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'card_id': cardId}),
+    );
+
+    if (res.statusCode == 200) return null;
+
+    final data = jsonDecode(res.body);
+    return data['message']?.toString().toLowerCase();
+  }
+
+  static Future<void> loadProfile() async {
+    try {
+      final response = await dio.get('$_baseUrl/account/me');
+      final data = response.data;
+
+      UserSession.username = data['login']?.toString() ?? '';
+      UserSession.balance = data['balance']?.toString() ?? '0';
+      UserSession.bonusBalance = data['bonus_balance']?.toString() ?? '0';
+      UserSession.creditBalance = data['credit_balance']?.toString() ?? '0';
+      UserSession.imageUrl = data['image_url']?.toString() ?? '';
+    } catch (e, st) {
+      logger.w('Error loading profile: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<String?> loginAndSaveJwtForCamera() async {
     try {
       final dio = Dio();
       final prefs = await SharedPreferences.getInstance();
 
-      var username = prefs.getString(_login);
-      var password = prefs.getString(_password);
+      /* var username = prefs.getString(_login);
+      var password = prefs.getString(_password); */
+
+      var username = "cvetan";
+      var password = "123qweXX";
 
       final response = await dio.post(
         _loginUrl,
@@ -67,7 +214,18 @@ class AuthService {
     }
   }
 
-  static Future<String?> getBalance(String jwt) async {
+  static Future<String?> getJwtForCamera() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_jwtKey);
+      return prefs.getString(_jwtKey);
+    } catch (e) {
+      logger.w('Error getting JWT from storage: $e');
+      return null;
+    }
+  }
+
+  /* static Future<String?> getBalance(String jwt) async {
     try {
       final dio = Dio();
 
@@ -87,70 +245,5 @@ class AuthService {
       logger.w('Error getting JWT from storage: $e');
       return null;
     }
-  }
-
-  static Future<String?> getJwt() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_jwtKey);
-      return prefs.getString(_jwtKey);
-    } catch (e) {
-      logger.w('Error getting JWT from storage: $e');
-      return null;
-    }
-  }
-
-  static Future<String?> register({
-    required String login,
-    required String password,
-    required String realname,
-    String? cardId,
-    String? city,
-  }) async {
-    final body = {
-      "login": login,
-      "password": password,
-      "realname": realname,
-      if (cardId != null && city != null)
-        "cards": [
-          {"card_id": cardId, "city": city, "active": true},
-        ],
-    };
-
-    logger.i('Registration body: $body');
-
-    final response = await http.post(
-      Uri.parse('$_baseUrl/account/register'),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return null;
-    }
-
-    try {
-      final data = jsonDecode(response.body);
-      final message = data['message'] ?? '';
-
-      if (message == 'USERNAME_TAKEN') return 'username_taken';
-      if (message == 'CARD_ALREADY_USED') return 'card_already_used';
-      if (message == 'MISSING_FIELDS') return 'missing_fields';
-    } catch (_) {}
-
-    return 'registration_failed';
-  }
-
-  static Future<String?> checkCard(String cardId) async {
-    final res = await http.post(
-      Uri.parse('$_baseUrl/account/check-card'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'card_id': cardId}),
-    );
-
-    if (res.statusCode == 200) return null;
-
-    final data = jsonDecode(res.body);
-    return data['message']?.toString().toLowerCase();
-  }
+  } */
 }

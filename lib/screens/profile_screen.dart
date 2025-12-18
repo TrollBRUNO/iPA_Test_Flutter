@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
+import 'package:first_app_flutter/services/token_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/statistics_dialog_widget.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +43,7 @@ class _ProfileState extends State<ProfilePage> {
   String? balanceCount = "0";
   String? bonusBalanceCount = "0";
   String? balanceCreditCount = "0";
+  String? image_url = "";
 
   bool canShowCreditButton = false;
   bool isLoading = true;
@@ -68,8 +71,9 @@ class _ProfileState extends State<ProfilePage> {
 
   Future<void> _loadAll() async {
     final results = await Future.wait([
-      _loadBalance(),
-      _loadUsername(),
+      _loadBalance(), //старое
+      _loadUsername(), //старое
+      _loadProfile(), //новое
       _loadButtonState(),
     ]);
 
@@ -111,22 +115,22 @@ class _ProfileState extends State<ProfilePage> {
 
   Future<void> _loadBalance() async {
     // Получаем JWT токен
-    String? jwtToken = await AuthService.getJwt();
+    /* String? jwtToken = await AuthService.getJwt();
     if (jwtToken == null) {
       jwtToken = await AuthService.loginAndSaveJwt();
       if (jwtToken == null) {
         throw Exception('Не удалось получить JWT токен');
       }
-    }
+    } */
 
     try {
-      final balance = await AuthService.getBalance(jwtToken);
+      //final balance = await AuthService.getBalance(jwtToken);
 
       final prefs = await SharedPreferences.getInstance();
 
       if (!mounted) return;
       setState(() {
-        balanceCount = balance;
+        //balanceCount = balance;
         bonusBalanceCount = prefs.getString('bonus_balance') ?? "0";
         balanceCreditCount = prefs.getString('credit_balance') ?? "0";
       });
@@ -150,6 +154,23 @@ class _ProfileState extends State<ProfilePage> {
       //logger.i("BALANCE: $balanceCount BONUS: $bonusBalanceCount");
     } catch (e, st) {
       logger.w('Error loading username: $e\n$st');
+    }
+  }
+
+  Future<void> _loadProfile() async {
+    try {
+      await AuthService.loadProfile();
+      if (!mounted) return;
+
+      setState(() {
+        username = UserSession.username;
+        balanceCount = UserSession.balance;
+        bonusBalanceCount = UserSession.bonusBalance;
+        balanceCreditCount = UserSession.creditBalance;
+        image_url = UserSession.imageUrl;
+      });
+    } catch (e, st) {
+      logger.w('Error loading profile: $e\n$st');
     }
   }
 
@@ -299,7 +320,7 @@ class _ProfileState extends State<ProfilePage> {
 
                                         // --------- ДОБАВИЛ ВРЕМЕННУЮ РЕАЛИЗАЦИЮ ЧТОБЫ БЫЛО ПРОЩЕ ----------------
                                         Text(
-                                          '${'bonus_balance'.tr()} $balanceCount',
+                                          '${'bonus_balance'.tr()} $bonusBalanceCount',
                                           style: GoogleFonts.manrope(
                                             fontSize:
                                                 AdaptiveSizes.getFontBalanceSize(),
@@ -541,11 +562,29 @@ class _ProfileState extends State<ProfilePage> {
                                     ),
                                   ),
                                   onTap: () async {
-                                    final prefs =
+                                    /* final prefs =
                                         await SharedPreferences.getInstance();
                                     await prefs.remove(_login);
                                     await prefs.remove(_password);
-                                    context.go('/authorization');
+                                    context.go('/authorization'); */
+                                    try {
+                                      // Берём refresh_token из secure storage
+                                      final refreshToken =
+                                          await TokenService.getRefreshToken();
+
+                                      if (refreshToken != null) {
+                                        await AuthService.logout(refreshToken);
+                                      }
+
+                                      // Очищаем токены
+                                      await TokenService.clearTokens();
+
+                                      // Переходим на экран авторизации
+                                      context.go('/authorization');
+                                    } catch (e, st) {
+                                      logger.w('Logout error: $e\n$st');
+                                      // Можно показывать Flushbar с ошибкой
+                                    }
                                   },
                                 ),
                               ],

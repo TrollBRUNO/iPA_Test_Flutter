@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as dio;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -190,21 +192,21 @@ class _AuthorizationState extends State<AuthorizationPage> {
                             ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                final user = _loginController.text;
+                                final user = _loginController.text.trim();
                                 final password = _passwordController.text;
 
                                 logger.i('Email: $user, Password: $password');
 
-                                final prefs =
+                                /* final prefs =
                                     await SharedPreferences.getInstance();
                                 await prefs.setString(_login, user);
-                                await prefs.setString(_password, password);
+                                await prefs.setString(_password, password); */
 
                                 if (user == "admin321" &&
                                     password == "admin123") {
                                   context.go('/admin');
-                                } else {
-                                  String? jwtToken = await AuthService.getJwt();
+                                }
+                                /* String? jwtToken = await AuthService.getJwt();
                                   if (jwtToken == null) {
                                     jwtToken =
                                         await AuthService.loginAndSaveJwt();
@@ -217,12 +219,29 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                       logger.w('Такого аккаунта нет');
                                       return;
                                     }
-                                  }
+                                  } */
+
+                                final success = await AuthService.login(
+                                  user,
+                                  password,
+                                );
+                                if (!success) {
+                                  setState(() {
+                                    serverError = 'wrong'.tr();
+                                  });
+                                  logger.w('Invalid credentials for $user');
+                                  return;
                                 }
 
-                                setState(() {
-                                  serverError = null;
-                                });
+                                try {
+                                  await AuthService.dio.get(
+                                    'http://192.168.33.187:3000/some-protected-route',
+                                  );
+                                } catch (e) {
+                                  logger.w('Error during test request: $e');
+                                }
+
+                                await AuthService.loadProfile();
 
                                 Flushbar(
                                   messageText: Row(

@@ -36,7 +36,6 @@ class GamesPage extends StatefulWidget {
 
 class _JackpotState extends State<GamesPage> {
   Logger logger = Logger();
-  final MqttJackpotService mqttService = MqttJackpotService();
 
   List<Games> _games = [];
 

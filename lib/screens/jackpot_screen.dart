@@ -36,7 +36,7 @@ class JackpotPage extends StatefulWidget {
 
 class _JackpotState extends State<JackpotPage> {
   Logger logger = Logger();
-  final MqttJackpotService mqttService = MqttJackpotService();
+  //final MqttJackpotService mqttService = MqttJackpotService();
 
   List<Jackpot> _jackpots = [];
 
@@ -376,7 +376,7 @@ class _JackpotState extends State<JackpotPage> {
               final jackpot = _jackpots[index];
               return JackpotWidget(
                 jackpot: jackpot,
-                mqttService: mqttService,
+                //mqttService: mqttService,
                 miniBuilder: (value) => TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: value, end: jackpot.miniMystery),
                   duration: const Duration(milliseconds: 800),
