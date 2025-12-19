@@ -16,7 +16,7 @@ void callbackDispatcher() {
 
       if (task == spinCheckTask) {
         final prefs = await SharedPreferences.getInstance();
-        final canSpin = await TimeService.canSpinToday();
+        final canSpin = await AccountTimeService.canSpin();
 
         await prefs.setBool('can_spin_today', canSpin);
 

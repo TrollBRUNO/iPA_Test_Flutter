@@ -42,13 +42,14 @@ class _ProfileState extends State<ProfilePage> {
   String? username = "";
   String? balanceCount = "0";
   String? bonusBalanceCount = "0";
-  String? balanceCreditCount = "0";
+  String? fakeBalanceCount = "0";
   String? image_url = "";
 
   bool canShowCreditButton = false;
   bool isLoading = true;
 
   Timer? _balanceTimer;
+  DateTime? _nextCreditTake;
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _ProfileState extends State<ProfilePage> {
     _loadAll();
 
     _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) _loadBalance();
+      if (mounted) _loadAll();
     });
     /* _loadBalance();
 
@@ -71,8 +72,8 @@ class _ProfileState extends State<ProfilePage> {
 
   Future<void> _loadAll() async {
     final results = await Future.wait([
-      _loadBalance(), //старое
-      _loadUsername(), //старое
+      /* _loadBalance(), //старое
+      _loadUsername(), //старое */
       _loadProfile(), //новое
       _loadButtonState(),
     ]);
@@ -85,8 +86,17 @@ class _ProfileState extends State<ProfilePage> {
   }
 
   Future<void> _loadButtonState() async {
-    canShowCreditButton = await TimeService.canTakeCredit();
-    setState(() {});
+    try {
+      final res = await AccountTimeService.canTakeCredit();
+      canShowCreditButton = res['canTake'] == true;
+
+      // Сохраняем время следующего возможного кредита (пока не отображаем)
+      _nextCreditTake = res['nextTake'] as DateTime?;
+      setState(() {});
+    } catch (e) {
+      canShowCreditButton = false;
+      setState(() {});
+    }
   }
 
   void showStatisticsDialog() {
@@ -113,7 +123,7 @@ class _ProfileState extends State<ProfilePage> {
     );
   }
 
-  Future<void> _loadBalance() async {
+  /* Future<void> _loadBalance() async {
     // Получаем JWT токен
     /* String? jwtToken = await AuthService.getJwt();
     if (jwtToken == null) {
@@ -132,7 +142,7 @@ class _ProfileState extends State<ProfilePage> {
       setState(() {
         //balanceCount = balance;
         bonusBalanceCount = prefs.getString('bonus_balance') ?? "0";
-        balanceCreditCount = prefs.getString('credit_balance') ?? "0";
+        fakeBalanceCount = prefs.getString('fake_balance') ?? "0";
       });
 
       //logger.i("BALANCE: $balanceCount BONUS: $bonusBalanceCount");
@@ -155,7 +165,7 @@ class _ProfileState extends State<ProfilePage> {
     } catch (e, st) {
       logger.w('Error loading username: $e\n$st');
     }
-  }
+  } */
 
   Future<void> _loadProfile() async {
     try {
@@ -166,7 +176,7 @@ class _ProfileState extends State<ProfilePage> {
         username = UserSession.username;
         balanceCount = UserSession.balance;
         bonusBalanceCount = UserSession.bonusBalance;
-        balanceCreditCount = UserSession.creditBalance;
+        fakeBalanceCount = UserSession.fakeBalance;
         image_url = UserSession.imageUrl;
       });
     } catch (e, st) {
@@ -343,7 +353,7 @@ class _ProfileState extends State<ProfilePage> {
                                           width: AdaptiveSizes.w(0.01111),
                                         ),
                                         Text(
-                                          '${'chips'.tr()} $balanceCreditCount ${'credits'.tr()}',
+                                          '${'chips'.tr()} $fakeBalanceCount ${'credits'.tr()}',
                                           style: GoogleFonts.manrope(
                                             fontSize:
                                                 AdaptiveSizes.getFontCreditBalanceSize(),
@@ -573,7 +583,7 @@ class _ProfileState extends State<ProfilePage> {
                                           await TokenService.getRefreshToken();
 
                                       if (refreshToken != null) {
-                                        await AuthService.logout(refreshToken);
+                                        await AuthService.logout();
                                       }
 
                                       // Очищаем токены
@@ -670,18 +680,18 @@ class _ProfileState extends State<ProfilePage> {
             // Добавляем 1000 кредитов
             final prefs = await SharedPreferences.getInstance();
 
-            final creditBalance = prefs.getString('credit_balance') ?? "0";
+            final creditBalance = prefs.getString('fake_balance') ?? "0";
 
             final creditBalanceToDouble = int.tryParse(creditBalance) ?? 0.0;
 
             final currentCreditBalance = creditBalanceToDouble + 1000;
 
             await prefs.setString(
-              'credit_balance',
+              'fake_balance',
               currentCreditBalance.toString(),
             );
 
-            await TimeService.saveCreditTake();
+            await AccountTimeService.saveCreditTake();
           },
           child: Text('+1000'),
         ),

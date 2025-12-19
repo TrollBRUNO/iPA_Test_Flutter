@@ -42,7 +42,7 @@ class _RegistrationState extends State<RegistrationPage> {
   String? username = "";
   String? balanceCount = "0";
   String? bonusBalanceCount = "0";
-  String? balanceCreditCount = "0";
+  String? fakeBalanceCount = "0";
   String? image_url = "";
 
   String? serverError;

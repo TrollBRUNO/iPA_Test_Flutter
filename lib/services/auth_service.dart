@@ -36,17 +36,22 @@ class AuthService {
     try {
       final response = await dio.post(
         '$_baseUrl/auth/login',
+        //"http://10.0.2.2:3000/auth/login",
         data: jsonEncode({"login": login, "password": password}),
+        //data: jsonEncode({"login": "test123", "password": "test123"}),
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
         await TokenService.saveAccessToken(data['access_token']);
         await TokenService.saveRefreshToken(data['refresh_token']);
         return true;
+      } else {
+        logger.w('Auth error');
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      logger.w('DioError: ${e.response?.statusCode} ${e.response?.data}');
       return false;
     }
 
@@ -74,7 +79,7 @@ class AuthService {
     }
   }
 
-  static Future<void> logout(String refreshToken) async {
+  static Future<void> logout() async {
     final refreshToken = await TokenService.getRefreshToken();
     if (refreshToken != null) {
       await dio.post(
@@ -137,8 +142,16 @@ class AuthService {
       if (!success) return 'login_failed';
 
       return null; // Всё успешно
-    } catch (e, st) {
-      logger.w('Registration error: $e\n$st');
+    } on DioException catch (e, st) {
+      final status = e.response?.statusCode;
+      final data = e.response?.data;
+
+      logger.w('Registration error [$status]: $data\n$st');
+
+      if (data is Map && data['message'] != null) {
+        return data['message'].toString().toLowerCase();
+      }
+
       return 'registration_failed';
     }
   }
@@ -164,7 +177,7 @@ class AuthService {
       UserSession.username = data['login']?.toString() ?? '';
       UserSession.balance = data['balance']?.toString() ?? '0';
       UserSession.bonusBalance = data['bonus_balance']?.toString() ?? '0';
-      UserSession.creditBalance = data['credit_balance']?.toString() ?? '0';
+      UserSession.fakeBalance = data['fake_balance']?.toString() ?? '0';
       UserSession.imageUrl = data['image_url']?.toString() ?? '';
     } catch (e, st) {
       logger.w('Error loading profile: $e\n$st');

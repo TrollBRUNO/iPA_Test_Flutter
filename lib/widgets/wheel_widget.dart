@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:first_app_flutter/class/prize.dart';
 import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/background_worker.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
@@ -31,9 +32,10 @@ class WheelWidget extends StatefulWidget {
 class _WheelState extends State<WheelWidget> {
   StreamController<int> selected = StreamController<int>();
   int? lastSelectedIndex;
-  bool _canSpinToday = true;
+  bool canSpin = true;
   List<Prize> prizeList = [];
   bool isLoading = true;
+  bool isSpinning = false;
 
   @override
   void initState() {
@@ -57,23 +59,42 @@ class _WheelState extends State<WheelWidget> {
     setState(() => isLoading = false);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Обновляем статус при каждом возвращении на экран
-    _loadSpinAvailability();
-  }
-
   Future<void> _loadSpinAvailability() async {
-    final prefs = await SharedPreferences.getInstance();
+    /* final prefs = await SharedPreferences.getInstance();
     final canSpin = prefs.getBool('can_spin_today') ?? true;
 
     setState(() {
       _canSpinToday = canSpin;
       isLoading = false;
-    });
+    }); */
+    setState(() => isLoading = true);
+
+    try {
+      final res = await AccountTimeService.canSpin();
+
+      setState(() {
+        canSpin = res;
+        /* canSpin = res.canSpin;
+         nextSpinDate = res.nextSpin != null
+            ? DateTime.parse(res.nextSpin)
+            : null; */
+      });
+    } catch (e) {
+      canSpin = false;
+      //nextSpinDate = null;
+      logger.w("Ошибка при загрузке статуса спина: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 
+  void trySpin() {
+    if (!canSpin) {
+      showInfoDialog();
+      return;
+    }
+    startSpin();
+  }
   // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
   /* void openTeleslotAutoLogin(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -102,7 +123,7 @@ class _WheelState extends State<WheelWidget> {
     super.dispose();
   }
 
-  void startSpin(int length) async {
+  /* void startSpin(int length) async {
     if (!_canSpinToday) {
       showInfoDialog();
       return;
@@ -122,7 +143,7 @@ class _WheelState extends State<WheelWidget> {
       _canSpinToday = false;
     });
 
-    await TimeService.saveSpinDate(); // сохраняем дату после начала кручения
+    await AccountTimeService.saveSpinDate(); // сохраняем дату после начала кручения
 
     await NotificationService().cancelNotification(11);
 
@@ -130,6 +151,49 @@ class _WheelState extends State<WheelWidget> {
     //await NotificationService().cancelNotification(1);
     //await NotificationManager.cancelRepeatSpinReminder(); // отключаем уведомление id=1
     //await NotificationManager.scheduleFollowUpSpinReminder(); // включаем напоминание id=11
+  } */
+
+  /* Future<void> startSpin() async {
+    if (isSpinning) return;
+
+    setState(() => isSpinning = true);
+
+    try {
+      final canSpin = await AccountTimeService.canSpin();
+      if (!canSpin) {
+        showInfoDialog();
+        return;
+      }
+
+      final result = await AccountTimeService.spin(
+        prizeList.map((e) => e.value).toList(),
+      );
+
+      lastSelectedIndex = result.index;
+      selected.add(result.index);
+    } catch (e) {
+      showInfoDialog();
+    } finally {
+      setState(() => isSpinning = false);
+    }
+  } */
+
+  Future<void> startSpin() async {
+    if (isSpinning) return;
+    setState(() => isSpinning = true);
+
+    try {
+      final result = await AccountTimeService.spin(
+        prizeList.map((e) => e.value).toList(),
+      );
+
+      lastSelectedIndex = result.index;
+      selected.add(result.index);
+    } catch (e) {
+      showInfoDialog();
+    } finally {
+      setState(() => isSpinning = false);
+    }
   }
 
   void showPrizeDialog(String prize) {
@@ -319,7 +383,7 @@ class _WheelState extends State<WheelWidget> {
       backgroundColor: Colors.transparent,
       extendBody: true,
       body: GestureDetector(
-        onTap: () => startSpin(prizeList.length),
+        onTap: () => trySpin(),
         child: Column(
           children: [
             Expanded(
@@ -445,11 +509,11 @@ class _WheelState extends State<WheelWidget> {
                   );
                 }),
 
-                onFling: () => startSpin(prizeList.length),
+                onFling: () => trySpin(),
 
                 onAnimationEnd: () async {
-                  final prefs = await SharedPreferences.getInstance();
                   final prize = prizeList[lastSelectedIndex ?? 0];
+                  /* final prefs = await SharedPreferences.getInstance();
 
                   final bonusBalance = prefs.getString('bonus_balance') ?? "0";
                   final bonusBalanceToDouble =
@@ -460,7 +524,7 @@ class _WheelState extends State<WheelWidget> {
                   await prefs.setString(
                     'bonus_balance',
                     currentBalance.toString(),
-                  );
+                  ); */
                   showPrizeDialog(prize.formatted);
                   //showPrizeDialog('100 EUR');
                 },

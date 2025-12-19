@@ -1,6 +1,6 @@
 import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/router/router.dart';
-import 'package:first_app_flutter/screens/interceptor/auth_interceptor.dart';
+import 'package:first_app_flutter/interceptor/auth_interceptor.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

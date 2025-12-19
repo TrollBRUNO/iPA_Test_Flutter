@@ -1,18 +1,21 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:ui';
 //import 'package:first_app_flutter/screens/camera_live_screen.dart';
 //import 'package:first_utter/trash/camera_viewer_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/background_worker.dart';
 import 'package:first_app_flutter/services/mqtt_jackpot_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/camera_widget.dart';
 import 'package:first_app_flutter/widgets/jackpot_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import '../class/jackpot.dart';
 
 class JackpotDetailsScreen extends StatefulWidget {
@@ -31,7 +34,10 @@ class JackpotDetailsScreen extends StatefulWidget {
 
 class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
   late Jackpot _current;
-  StreamSubscription? _sub;
+  //StreamSubscription? _sub;
+  Timer? _detailRefreshTimer;
+
+  List<Jackpot> _jackpots = [];
 
   final Map<String, double> _prevValues = {};
 
@@ -44,12 +50,18 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
 
     _prevValues['Mini'] = _current.miniMystery;
     _prevValues['Middle'] = _current.middleMystery;
-    _prevValues['sadf'] = _current.megaMystery;
+    _prevValues['Mega'] = _current.megaMystery;
     _prevValues['Major'] = _current.majorBellLink;
     _prevValues['Grand'] = _current.grandBellLink;
 
+    /* _prevValues['Mini'] = _current.miniMystery;
+    _prevValues['Middle'] = _current.middleMystery;
+    _prevValues['sadf'] = _current.megaMystery;
+    _prevValues['Major'] = _current.majorBellLink;
+    _prevValues['Grand'] = _current.grandBellLink; */
+
     // Подписываемся на обновления и обновляем только нужные поля
-    /* if (widget.mqttService != null) {
+    /*if (widget.mqttService != null) {
       _sub = widget.mqttService!.jackpotStream.listen((json) {
         final jackpots = json['jackpots'] as List<dynamic>;
         bool changed = false;
@@ -99,11 +111,99 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
         if (changed && mounted) setState(() {});
       });
     } */
+
+    _detailRefreshTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _updateJackpotDetail(),
+    );
+  }
+
+  Future<void> _updateJackpotDetail() async {
+    final j = _current; // обновляем текущий джекпот напрямую
+    if (j.jackpotUrl.isEmpty) return;
+
+    try {
+      final res = await http.get(Uri.parse(j.jackpotUrl));
+      if (res.statusCode == 200) {
+        final jsonData = jsonDecode(res.body);
+        logger.i("Обновление джекпота для ${j.city}: $jsonData");
+
+        final jackpotsList = jsonData["jackpots"] as List<dynamic>?;
+
+        if (jackpotsList != null) {
+          bool changed = false;
+
+          for (var jackpotItem in jackpotsList) {
+            final name = jackpotItem["name"] ?? "";
+            final value = (jackpotItem["value"] is num)
+                ? (jackpotItem["value"] as num).toDouble()
+                : double.tryParse('${jackpotItem["value"]}') ?? 0.0;
+
+            final range = (jackpotItem["range"] is String)
+                ? jackpotItem["range"].toString()
+                : "(0 - 0) EUR";
+
+            if (j.isMysteryProgressive) {
+              switch (name) {
+                case "Mini":
+                  if (j.miniMystery != value) {
+                    _prevValues['Mini'] = j.miniMystery;
+                    j.miniMystery = value;
+                    j.miniRange = "($range)";
+                    changed = true;
+                  }
+                  break;
+                case "Middle":
+                  if (j.middleMystery != value) {
+                    _prevValues['Middle'] = j.middleMystery;
+                    j.middleMystery = value;
+                    j.middleRange = "($range)";
+                    changed = true;
+                  }
+                  break;
+                case "Super":
+                  if (j.megaMystery != value) {
+                    _prevValues['Mega'] = j.megaMystery;
+                    j.megaMystery = value;
+                    j.megaRange = "($range)";
+                    changed = true;
+                  }
+                  break;
+              }
+            } else {
+              switch (name) {
+                case "Major":
+                  if (j.majorBellLink != value) {
+                    _prevValues['Major'] = j.majorBellLink;
+                    j.majorBellLink = value;
+                    j.majorBellLinkRange = "($range)";
+                    changed = true;
+                  }
+                  break;
+                case "Grand":
+                  if (j.grandBellLink != value) {
+                    _prevValues['Grand'] = j.grandBellLink;
+                    j.grandBellLink = value;
+                    j.grandBellLinkRange = "($range)";
+                    changed = true;
+                  }
+                  break;
+              }
+            }
+          }
+
+          if (changed && mounted) setState(() {});
+        }
+      }
+    } catch (err) {
+      logger.w("Ошибка обновления джекпота: $err");
+    }
   }
 
   @override
   void dispose() {
-    _sub?.cancel();
+    //_sub?.cancel();
+    _detailRefreshTimer?.cancel();
     super.dispose();
   }
 
@@ -114,7 +214,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Hero(
-        tag: jackpot.city,
+        tag: '${jackpot.city}_${jackpot.address}',
         child: Stack(
           children: [
             // Фоновое изображение + blur

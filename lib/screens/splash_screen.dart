@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   String? username = "";
   String? balanceCount = "0";
   String? bonusBalanceCount = "0";
-  String? balanceCreditCount = "0";
+  String? fakeBalanceCount = "0";
   String? image_url = "";
 
   @override
@@ -53,7 +53,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _initializeApp() async {
     await NotificationService().initNotification();
     NotificationManager.initializeAllNotifications();
-    await TokenService.loadAccessToken();
+    //await TokenService.loadAccessToken();
+    TokenService.accessToken = null;
 
     // Предварительная проверка возможности спина
     await _preCheckSpinAvailability();
@@ -67,7 +68,6 @@ class _SplashScreenState extends State<SplashScreen> {
       // Пробуем обновить access_token
       final success = await AuthService.refreshToken();
       if (success) {
-        await AuthService.refreshToken();
         await AuthService.loadProfile();
         context.go('/wheel');
         return;
@@ -128,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _preCheckSpinAvailability() async {
     try {
       // предварительно проверяем и сохраняем флаг возможности спина
-      final canSpin = await TimeService.canSpinToday();
+      final canSpin = await AccountTimeService.canSpin();
 
       // В новых реалиях можно хранить флаги в памяти или локально через secure storage,
       // но для совместимости пока оставим SharedPreferences только для таких флагов

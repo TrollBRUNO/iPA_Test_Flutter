@@ -1,92 +1,83 @@
-//import 'dart:developer';
-
 import 'dart:convert';
-
-import 'package:easy_localization/easy_localization.dart';
+import 'package:dio/dio.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TimeService {
-  static var logger = Logger();
-  static const String _apiUrl =
-      'https://timeapi.io/api/Time/current/zone?timeZone=Europe/Sofia';
+class AccountTimeService {
+  static const String _baseUrl = 'http://192.168.33.187:3000';
 
-  static Future<DateTime> getServerTime() async {
-    try {
-      final response = await http
-          .get(Uri.parse(_apiUrl))
-          .timeout(
-            const Duration(seconds: 1),
-            onTimeout: () {
-              logger.i(
-                'Время сервера превысило лимит ожидания, используем локальное время',
-              );
-              throw Exception('⏱ Таймаут при обращении к API');
-            },
-          );
-      /* if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        logger.i('Используем глобальное время: ${data['dateTime']}');
-        return DateTime.parse(data['dateTime']).toUtc();
-      } else {
-        // fallback — если API не отвечает, всё же используем локальное время
-        logger.w('Используем локальное время');
-        return DateTime.now().toUtc();
-      } */
-      logger.w('Используем локальное время');
-      return DateTime.now().toUtc();
-    } catch (e) {
-      logger.w('Server time fetch error: $e');
-      // fallback на локальное время
-      return DateTime.now().toUtc();
-    }
-  }
+  static Dio get _dio => AuthService.dio;
 
-  static Future<bool> canSpinToday() async {
-    final prefs = await SharedPreferences.getInstance();
-    final lastSpinString = prefs.getString('last_spin_date');
-    final now = await getServerTime();
+  // ---------- CAN SPIN ----------
+  /* static Future<SpinAvailability> canSpin() async {
+    final res = await _dio.get('http://192.168.33.187:3000/account/can-spin');
 
-    if (lastSpinString == null) return true;
-
-    final lastSpin = DateTime.parse(lastSpinString);
-
-    // Сравниваем только календарные даты в UTC — если сегодня позже даты последнего спина, разрешаем
-    final todayUtc = DateTime.utc(now.year, now.month, now.day);
-    final lastDayUtc = DateTime.utc(
-      lastSpin.year,
-      lastSpin.month,
-      lastSpin.day,
+    return SpinAvailability(
+      canSpin: res.data['canSpin'] == true,
+      nextSpin: res.data['nextSpin'] != null
+          ? DateTime.parse(res.data['nextSpin'])
+          : null,
     );
-    return todayUtc.isAfter(lastDayUtc);
+  } */
+
+  // ---------- CAN SPIN ----------
+  static Future<bool> canSpin() async {
+    final res = await _dio.get('$_baseUrl/account/can-spin');
+    return res.data['canSpin'] == true;
   }
 
-  static Future<bool> canTakeCredit() async {
-    final prefs = await SharedPreferences.getInstance();
-    final lastTakeString = prefs.getString('last_credit_take_date');
-    final now = await getServerTime();
+  // ---------- NEXT SPIN ----------
+  static Future<DateTime?> nextSpin() async {
+    final res = await _dio.get('$_baseUrl/account/can-spin');
 
-    if (lastTakeString == null) return true;
-
-    final lastTake = DateTime.parse(lastTakeString);
-
-    final difference = now.difference(lastTake);
-
-    return difference.inHours >= 24;
+    if (res.data['canSpin'] == true) return null;
+    return DateTime.parse(res.data['nextSpin']);
   }
 
-  static Future<void> saveSpinDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final now = await getServerTime();
-    await prefs.setString('last_spin_date', now.toIso8601String());
-    logger.i('Я записал!');
+  // ---------- SPIN ----------
+  static Future<SpinResult> spin(List<int> wheel) async {
+    final res = await _dio.post('$_baseUrl/wheel', data: {'wheel': wheel});
+
+    return SpinResult.fromJson(res.data);
   }
 
-  static Future<void> saveCreditTake() async {
-    final prefs = await SharedPreferences.getInstance();
-    final now = await getServerTime();
-    await prefs.setString('last_credit_take_date', now.toIso8601String());
-    logger.i('Я записал!');
+  // ---------- ПРОВЕРКА возможности взять кредит ----------
+  static Future<Map<String, dynamic>> canTakeCredit() async {
+    final res = await _dio.get('$_baseUrl/account/can-take');
+    return {
+      'canTake': res.data['canTake'] == true,
+      'nextTake': res.data['nextTake'] != null
+          ? DateTime.parse(res.data['nextTake'])
+          : null,
+    };
   }
+
+  // ---------- Фактическое начисление fake_balance ----------
+  static Future<int> saveCreditTake({int amount = 1000}) async {
+    final res = await _dio.post(
+      '$_baseUrl/account/take-credit',
+      data: {'amount': amount},
+    );
+    // возвращаем новый fake_balance
+    return res.data['fake_balance'] as int;
+  }
+}
+
+class SpinResult {
+  final int index;
+  final int prize;
+
+  SpinResult({required this.index, required this.prize});
+
+  factory SpinResult.fromJson(Map<String, dynamic> json) {
+    return SpinResult(index: json['index'], prize: json['prize']);
+  }
+}
+
+class SpinAvailability {
+  final bool canSpin;
+  final DateTime? nextSpin;
+
+  SpinAvailability({required this.canSpin, this.nextSpin});
 }

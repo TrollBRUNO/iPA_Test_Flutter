@@ -104,15 +104,15 @@ final router = GoRouter(
           ],
         ),
 
-        StatefulShellBranch(
+        // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+        /* StatefulShellBranch(
           routes: [
             GoRoute(
               path: '/games',
               builder: (context, state) => const GamesPage(title: 'Games'),
             ),
           ],
-        ),
-
+        ), */
         StatefulShellBranch(
           routes: [
             GoRoute(

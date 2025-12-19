@@ -233,13 +233,13 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                   return;
                                 }
 
-                                try {
+                                /* try {
                                   await AuthService.dio.get(
                                     'http://192.168.33.187:3000/some-protected-route',
                                   );
                                 } catch (e) {
                                   logger.w('Error during test request: $e');
-                                }
+                                } */
 
                                 await AuthService.loadProfile();
 
