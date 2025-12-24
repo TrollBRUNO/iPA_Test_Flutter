@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:first_app_flutter/class/statistics.dart';
 import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/services/token_service.dart';
 import 'package:http/http.dart' as http;
@@ -173,14 +174,28 @@ class AuthService {
     try {
       final response = await dio.get('$_baseUrl/account/me');
       final data = response.data;
+      final dateStr = data['last_credit_take_date'] as String?;
 
       UserSession.username = data['login']?.toString() ?? '';
       UserSession.balance = data['balance']?.toString() ?? '0';
       UserSession.bonusBalance = data['bonus_balance']?.toString() ?? '0';
       UserSession.fakeBalance = data['fake_balance']?.toString() ?? '0';
       UserSession.imageUrl = data['image_url']?.toString() ?? '';
+      UserSession.lastCreditTake = DateTime.tryParse(dateStr ?? '');
     } catch (e, st) {
       logger.w('Error loading profile: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<List<Statistics>> loadStatistics() async {
+    try {
+      final response = await dio.get('$_baseUrl/statistics/get-profile-stats');
+      final List list = response.data['history'];
+
+      return list.map((e) => Statistics.fromJson(e)).toList();
+    } catch (e, st) {
+      logger.w('Error loading statistics: $e\n$st');
       rethrow;
     }
   }

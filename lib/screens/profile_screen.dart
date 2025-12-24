@@ -43,13 +43,14 @@ class _ProfileState extends State<ProfilePage> {
   String? balanceCount = "0";
   String? bonusBalanceCount = "0";
   String? fakeBalanceCount = "0";
+  DateTime? lastCreditTake = DateTime.now();
   String? image_url = "";
 
   bool canShowCreditButton = false;
   bool isLoading = true;
 
   Timer? _balanceTimer;
-  DateTime? _nextCreditTake;
+  //DateTime? _nextCreditTake;
 
   @override
   void initState() {
@@ -88,10 +89,11 @@ class _ProfileState extends State<ProfilePage> {
   Future<void> _loadButtonState() async {
     try {
       final res = await AccountTimeService.canTakeCredit();
-      canShowCreditButton = res['canTake'] == true;
+      canShowCreditButton = res;
+      //canShowCreditButton = res['canTake'] == true;
 
       // Сохраняем время следующего возможного кредита (пока не отображаем)
-      _nextCreditTake = res['nextTake'] as DateTime?;
+      //_nextCreditTake = res['nextTake'] as DateTime?;
       setState(() {});
     } catch (e) {
       canShowCreditButton = false;
@@ -177,6 +179,9 @@ class _ProfileState extends State<ProfilePage> {
         balanceCount = UserSession.balance;
         bonusBalanceCount = UserSession.bonusBalance;
         fakeBalanceCount = UserSession.fakeBalance;
+        lastCreditTake = UserSession.lastCreditTake?.add(
+          const Duration(days: 1),
+        );
         image_url = UserSession.imageUrl;
       });
     } catch (e, st) {
@@ -368,6 +373,7 @@ class _ProfileState extends State<ProfilePage> {
                                           _buildCreditButton(),
                                       ],
                                     ),
+                                    if (!canShowCreditButton) _buildResetText(),
                                   ],
                                 ),
                               ],
@@ -674,28 +680,48 @@ class _ProfileState extends State<ProfilePage> {
               fontSize: AdaptiveSizes.getFontCreditBalanceSize2(),
             ),
           ),
-          onPressed: () async {
-            setState(() => canShowCreditButton = false);
+          onPressed: canShowCreditButton
+              ? () async {
+                  try {
+                    setState(() => canShowCreditButton = false);
 
-            // Добавляем 1000 кредитов
-            final prefs = await SharedPreferences.getInstance();
+                    await AccountTimeService.saveCreditTake();
 
-            final creditBalance = prefs.getString('fake_balance') ?? "0";
-
-            final creditBalanceToDouble = int.tryParse(creditBalance) ?? 0.0;
-
-            final currentCreditBalance = creditBalanceToDouble + 1000;
-
-            await prefs.setString(
-              'fake_balance',
-              currentCreditBalance.toString(),
-            );
-
-            await AccountTimeService.saveCreditTake();
-          },
+                    // после успешного начисления — перезагружаем профиль
+                    await _loadProfile();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Пока нельзя получить бонус'),
+                      ),
+                    );
+                    setState(() => canShowCreditButton = true);
+                  }
+                }
+              : null,
           child: Text('+1000'),
         ),
       ),
+    );
+  }
+
+  Widget _buildResetText() {
+    return Row(
+      children: [
+        Icon(
+          Icons.timer,
+          color: Colors.deepPurple[600],
+          size: AdaptiveSizes.getFontBalanceSize(),
+        ),
+        SizedBox(width: AdaptiveSizes.w(0.01111)),
+        Text(
+          'Next chips: ${DateFormat('dd.MM.yyyy HH:mm').format(lastCreditTake!.toLocal())}',
+          style: GoogleFonts.manrope(
+            fontSize: AdaptiveSizes.getFontCreditBalanceSize(),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }

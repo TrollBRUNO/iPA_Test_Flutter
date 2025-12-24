@@ -67,7 +67,7 @@ Widget buildStatisticsRow(BuildContext context, DateTime date, int prize) {
         ),
 
         Text(
-          '$prize BGN',
+          '$prize EUR',
           style: GoogleFonts.radioCanada(
             color: labelColor,
             fontSize: AdaptiveSizes.getIconBackSettingsSize(),

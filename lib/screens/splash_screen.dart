@@ -1,6 +1,7 @@
 import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/background_worker.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/services/token_service.dart';
@@ -69,6 +70,17 @@ class _SplashScreenState extends State<SplashScreen> {
       final success = await AuthService.refreshToken();
       if (success) {
         await AuthService.loadProfile();
+
+        logger.i(
+          'UserSession loaded in SplashScreen init: '
+          'username=${UserSession.username}, '
+          'balance=${UserSession.balance}, '
+          'bonusBalance=${UserSession.bonusBalance}, '
+          'fakeBalance=${UserSession.fakeBalance}, '
+          'lastCreditTake=${UserSession.lastCreditTake}, '
+          'imageUrl=${UserSession.imageUrl}',
+        );
+
         context.go('/wheel');
         return;
       } else {

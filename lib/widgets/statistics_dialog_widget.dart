@@ -1,6 +1,7 @@
 import 'package:confetti/confetti.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/statistics.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/statistics_row_widget.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class StatisticsDialogWidget extends StatefulWidget {
   State<StatisticsDialogWidget> createState() => _StatisticsDialogState();
 }
 
-final List<Statistics> galleryList = [
+/* final List<Statistics> stats = [
   Statistics(publicationDate: DateTime(2025, 10, 20), prizeCount: 100),
 
   Statistics(publicationDate: DateTime(2025, 10, 12), prizeCount: 50),
@@ -47,12 +48,14 @@ final List<Statistics> galleryList = [
   Statistics(publicationDate: DateTime(2025, 9, 30), prizeCount: 10),
 
   Statistics(publicationDate: DateTime(2025, 9, 22), prizeCount: 20),
-];
+]; */
 
 class _StatisticsDialogState extends State<StatisticsDialogWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnim;
+
+  List<Statistics> stats = [];
 
   @override
   void initState() {
@@ -63,6 +66,15 @@ class _StatisticsDialogState extends State<StatisticsDialogWidget>
     );
     _scaleAnim = CurvedAnimation(parent: _controller, curve: Curves.ease);
     _controller.forward();
+
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    final result = await AuthService.loadStatistics();
+    setState(() {
+      stats = result;
+    });
   }
 
   @override
@@ -169,7 +181,7 @@ class _StatisticsDialogState extends State<StatisticsDialogWidget>
                                       child: SingleChildScrollView(
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
-                                          children: galleryList
+                                          children: stats
                                               .map(
                                                 (stat) => buildStatisticsRow(
                                                   context,

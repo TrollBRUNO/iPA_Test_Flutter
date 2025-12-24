@@ -45,18 +45,17 @@ class _WheelState extends State<WheelWidget> {
   }
 
   Future<void> loadWheel() async {
+    setState(() => isLoading = true);
+
     try {
-      final res = await http.get(Uri.parse("http://192.168.33.187:3000/wheel"));
-      if (res.statusCode == 200) {
-        final decoded = jsonDecode(res.body);
+      final values = await AccountTimeService.loadWheel();
 
-        prizeList = decoded.map<Prize>((item) => Prize(item['value'])).toList();
-      }
+      prizeList = values.map((v) => Prize(v)).toList();
     } catch (e) {
-      print("Ошибка загрузки: $e");
+      logger.e('Ошибка загрузки колеса', error: e);
+    } finally {
+      setState(() => isLoading = false);
     }
-
-    setState(() => isLoading = false);
   }
 
   Future<void> _loadSpinAvailability() async {
@@ -72,6 +71,7 @@ class _WheelState extends State<WheelWidget> {
     try {
       final res = await AccountTimeService.canSpin();
 
+      logger.i("Статус спина загружен: canSpin=$res");
       setState(() {
         canSpin = res;
         /* canSpin = res.canSpin;
@@ -190,11 +190,37 @@ class _WheelState extends State<WheelWidget> {
       lastSelectedIndex = result.index;
       selected.add(result.index);
     } catch (e) {
+      logger.e('Ошибка при спине: $e');
       showInfoDialog();
     } finally {
       setState(() => isSpinning = false);
     }
   }
+
+  /* Future<void> startSpin() async {
+    if (isSpinning) return;
+    setState(() => isSpinning = true);
+
+    try {
+      final canSpinNow = await AccountTimeService.canSpin();
+      if (!canSpinNow) {
+        showInfoDialog();
+        return;
+      }
+
+      final result = await AccountTimeService.spin(
+        prizeList.map((e) => e.value).toList(),
+      );
+
+      lastSelectedIndex = result.index;
+      selected.add(result.index);
+
+      // 👇 ОБНОВЛЯЕМ СОСТОЯНИЕ ПОСЛЕ СПИНА
+      setState(() => canSpin = false);
+    } finally {
+      setState(() => isSpinning = false);
+    }
+  } */
 
   void showPrizeDialog(String prize) {
     showGeneralDialog(
@@ -390,7 +416,7 @@ class _WheelState extends State<WheelWidget> {
               child: FortuneWheel(
                 rotationCount: 30,
                 curve: Curves.easeOutCirc,
-                duration: Duration(milliseconds: 2000),
+                duration: Duration(milliseconds: 20000),
                 animateFirst: false,
                 hapticImpact: HapticImpact.medium,
                 selected: selected.stream,

@@ -114,8 +114,8 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+                  //Column(
+                  /* mainAxisSize: MainAxisSize.min,
                     children: [
                       ScaleTransition(
                         scale: _scaleAnim,
@@ -214,7 +214,129 @@ class _PrizeDialogState extends State<PrizeDialogWidget>
                           ),
                         ),
                       ),
-                    ],
+                    ], */
+                  //children: [
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
+                          ),
+                          child: IntrinsicHeight(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ScaleTransition(
+                                  scale: _scaleAnim,
+                                  child: Icon(
+                                    isBigWin ? Icons.star : Icons.attach_money,
+                                    color: isBigWin
+                                        ? Colors.yellow[100]
+                                        : Colors.green[400],
+                                    size: AdaptiveSizes.getLogoPrizeSize(),
+                                  ),
+                                ),
+                                SizedBox(height: AdaptiveSizes.h(0.01026)),
+
+                                isBigWin
+                                    ? Text(
+                                        "BIG WIN",
+                                        style: TextStyle(
+                                          fontSize:
+                                              AdaptiveSizes.getBigWinFontSize(),
+                                          fontWeight: FontWeight.w800,
+                                          shadows: const [
+                                            Shadow(
+                                              color: Colors.black38,
+                                              blurRadius: 6,
+                                              offset: Offset(2, 2),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Text(
+                                        "congratulate".tr(),
+                                        style: TextStyle(
+                                          fontSize:
+                                              AdaptiveSizes.getFontBigPrizeSize(),
+                                          fontWeight: FontWeight.w600,
+                                          shadows: const [
+                                            Shadow(
+                                              color: Colors.black26,
+                                              blurRadius: 4,
+                                              offset: Offset(1, 2),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                SizedBox(
+                                  height: isBigWin
+                                      ? AdaptiveSizes.h(0.01539)
+                                      : AdaptiveSizes.h(0.00513),
+                                ),
+
+                                Text(
+                                  "${"you_win".tr()} ${widget.prize}",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: isBigWin
+                                        ? AdaptiveSizes.getBigWinYouWinPrizeSize()
+                                        : AdaptiveSizes.getFontProfileSize(),
+                                    fontStyle: isBigWin
+                                        ? FontStyle.italic
+                                        : FontStyle.normal,
+                                    fontWeight: isBigWin
+                                        ? FontWeight.w500
+                                        : FontWeight.w400,
+                                    shadows: const [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        blurRadius: 3,
+                                        offset: Offset(1, 2),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const Spacer(),
+
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: widget.onClaim,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: isBigWin
+                                          ? Colors.orangeAccent[100]
+                                          : Colors.green[200],
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      elevation: 5,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'take_it'.tr(),
+                                      style: TextStyle(
+                                        fontSize: isBigWin
+                                            ? AdaptiveSizes.getFontUniversalSize()
+                                            : AdaptiveSizes.getFontLanguageSize(),
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   Positioned(
                     top: -10,
