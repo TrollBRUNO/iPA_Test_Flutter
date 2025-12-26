@@ -323,6 +323,14 @@ class AdaptiveSizes {
     return const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
   }
 
+  static EdgeInsets getCardsPadding() {
+    if (screenWidth > 600)
+      return const EdgeInsets.symmetric(horizontal: 40, vertical: 8);
+    if (screenWidth > 400)
+      const EdgeInsets.symmetric(horizontal: 24, vertical: 5);
+    return const EdgeInsets.symmetric(horizontal: 24, vertical: 5);
+  }
+
   static EdgeInsets getNotificationPadding() {
     if (screenWidth > 600)
       return const EdgeInsets.only(left: 20, top: 20, bottom: 10);
@@ -465,6 +473,12 @@ class AdaptiveSizes {
     return 60;
   }
 
+  static double getCardSize() {
+    if (screenWidth > 600) return 50;
+    if (screenWidth > 400) return 25;
+    return 25;
+  }
+
   static double getLogoPrizeSize() {
     if (screenWidth > 600) return 80;
     if (screenWidth > 400) return 50;
@@ -557,6 +571,12 @@ class AdaptiveSizes {
     if (screenWidth > 600) return 28;
     if (screenWidth > 400) return 18;
     return 18;
+  }
+
+  static double getAddCardSize() {
+    if (screenWidth > 600) return 26;
+    if (screenWidth > 400) return 16;
+    return 16;
   }
 
   static double getFontBalanceSize() {

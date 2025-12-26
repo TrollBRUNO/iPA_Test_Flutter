@@ -4,6 +4,7 @@ import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/background_worker.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
+import 'package:first_app_flutter/widgets/add_card_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,7 +55,7 @@ class _RegistrationState extends State<RegistrationPage> {
     ).show(context);
   }
 
-  Future<Map<String, String>?> askForCard(BuildContext context) async {
+  /* Future<Map<String, String>?> askForCard(BuildContext context) async {
     return showDialog<Map<String, String>>(
       context: context,
       barrierDismissible: false,
@@ -178,7 +179,7 @@ class _RegistrationState extends State<RegistrationPage> {
         );
       },
     );
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -433,7 +434,10 @@ class _RegistrationState extends State<RegistrationPage> {
                               final password = _passwordController.text;
                               final realname = _realNameController.text;
 
-                              final cardData = await askForCard(context);
+                              //final cardData = await askForCard(context);
+                              final cardData = await AddCardDialogWidget.show(
+                                context,
+                              );
 
                               final errorCode =
                                   await AuthService.registerAndLogin(

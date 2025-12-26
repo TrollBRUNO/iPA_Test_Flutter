@@ -6,6 +6,7 @@ import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/services/token_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
+import 'package:first_app_flutter/widgets/cards_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/statistics_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -49,6 +50,8 @@ class _ProfileState extends State<ProfilePage> {
   bool canShowCreditButton = false;
   bool isLoading = true;
 
+  bool canShowTakeButton = false;
+
   Timer? _balanceTimer;
   //DateTime? _nextCreditTake;
 
@@ -60,23 +63,13 @@ class _ProfileState extends State<ProfilePage> {
     _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) _loadAll();
     });
-    /* _loadBalance();
-
-    _loadUsername();
-
-    _loadButtonState();
-
-    _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) _loadBalance();
-    }); */
   }
 
   Future<void> _loadAll() async {
     final results = await Future.wait([
-      /* _loadBalance(), //старое
-      _loadUsername(), //старое */
       _loadProfile(), //новое
       _loadButtonState(),
+      _loadTakeButton(),
     ]);
 
     if (!mounted) return;
@@ -84,6 +77,20 @@ class _ProfileState extends State<ProfilePage> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> _loadTakeButton() async {
+    try {
+      final res = await AccountTimeService.canSpin();
+
+      logger.i("Статус спина загружен: canSpin=$res");
+      setState(() {
+        canShowTakeButton = !res;
+      });
+    } catch (e) {
+      canShowTakeButton = false;
+      logger.w("Ошибка при загрузке статуса спина: $e");
+    }
   }
 
   Future<void> _loadButtonState() async {
@@ -125,49 +132,29 @@ class _ProfileState extends State<ProfilePage> {
     );
   }
 
-  /* Future<void> _loadBalance() async {
-    // Получаем JWT токен
-    /* String? jwtToken = await AuthService.getJwt();
-    if (jwtToken == null) {
-      jwtToken = await AuthService.loginAndSaveJwt();
-      if (jwtToken == null) {
-        throw Exception('Не удалось получить JWT токен');
-      }
-    } */
-
-    try {
-      //final balance = await AuthService.getBalance(jwtToken);
-
-      final prefs = await SharedPreferences.getInstance();
-
-      if (!mounted) return;
-      setState(() {
-        //balanceCount = balance;
-        bonusBalanceCount = prefs.getString('bonus_balance') ?? "0";
-        fakeBalanceCount = prefs.getString('fake_balance') ?? "0";
-      });
-
-      //logger.i("BALANCE: $balanceCount BONUS: $bonusBalanceCount");
-    } catch (e, st) {
-      logger.w('Error loading balance: $e\n$st');
-    }
+  void showCardsDialog() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "StatisticsDialog",
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(parent: animation, curve: Curves.easeIn);
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: CardsDialogWidget(
+              onClaim: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
-
-  Future<void> _loadUsername() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      var _username = prefs.getString(_login);
-
-      if (!mounted) return;
-      setState(() {
-        username = _username;
-      });
-
-      //logger.i("BALANCE: $balanceCount BONUS: $bonusBalanceCount");
-    } catch (e, st) {
-      logger.w('Error loading username: $e\n$st');
-    }
-  } */
 
   Future<void> _loadProfile() async {
     try {
@@ -342,6 +329,11 @@ class _ProfileState extends State<ProfilePage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
+
+                                        SizedBox(width: AdaptiveSizes.w(0.016)),
+
+                                        if (canShowTakeButton)
+                                          _buildTakeButton(),
                                       ],
                                     ),
                                     SizedBox(height: AdaptiveSizes.h(0.0064)),
@@ -365,9 +357,8 @@ class _ProfileState extends State<ProfilePage> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: AdaptiveSizes.w(0.011111),
-                                        ),
+
+                                        SizedBox(width: AdaptiveSizes.w(0.016)),
 
                                         if (canShowCreditButton)
                                           _buildCreditButton(),
@@ -396,6 +387,34 @@ class _ProfileState extends State<ProfilePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.credit_card,
+                                    size: AdaptiveSizes.getIconSettingsSize(),
+                                    color: Color.fromARGB(221, 22, 20, 20),
+                                  ),
+                                  title: Text(
+                                    'cards'.tr(),
+                                    style: GoogleFonts.openSans(
+                                      fontSize:
+                                          AdaptiveSizes.getFontSettingsSize(
+                                            false,
+                                          ),
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color.fromARGB(221, 22, 20, 20),
+                                      letterSpacing: 0.1,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    showCardsDialog();
+                                  },
+                                ),
+                                Divider(
+                                  height:
+                                      AdaptiveSizes.getDividerProfileHeight(),
+                                  color: Colors.black38,
+                                ),
                                 ListTile(
                                   leading: Icon(
                                     Icons.settings,
@@ -666,12 +685,19 @@ class _ProfileState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: SizedBox(
-        width: AdaptiveSizes.getButtonWidth() / 2.6,
-        height: AdaptiveSizes.getButtonHeight() / 1.6,
+        width: AdaptiveSizes.getButtonWidth() / 2.8,
+        height: AdaptiveSizes.getButtonHeight() / 1.8,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.deepPurple[700],
             foregroundColor: Colors.white,
+
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+
+            visualDensity: VisualDensity.compact,
+
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -700,6 +726,60 @@ class _ProfileState extends State<ProfilePage> {
                 }
               : null,
           child: Text('+1000'),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTakeButton() {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green[700]!.withOpacity(0.6),
+            spreadRadius: 0.2,
+            blurRadius: 4,
+            offset: Offset(0, 0),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: SizedBox(
+        width: AdaptiveSizes.getButtonWidth() / 2.5,
+        height: AdaptiveSizes.getButtonHeight() / 1.8,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green[700],
+            foregroundColor: Colors.white,
+
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+
+            visualDensity: VisualDensity.compact,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            textStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: AdaptiveSizes.getFontCreditBalanceSize2(),
+            ),
+          ),
+          onPressed: canShowTakeButton
+              ? () async {
+                  try {
+                    setState(() => canShowTakeButton = false);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Пока нельзя получить бонус'),
+                      ),
+                    );
+                    setState(() => canShowTakeButton = true);
+                  }
+                }
+              : null,
+          child: Text('Take Bonus', maxLines: 1, textAlign: TextAlign.center),
         ),
       ),
     );

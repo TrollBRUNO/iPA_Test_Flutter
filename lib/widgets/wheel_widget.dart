@@ -37,6 +37,8 @@ class _WheelState extends State<WheelWidget> {
   bool isLoading = true;
   bool isSpinning = false;
 
+  bool isDialogOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -59,13 +61,6 @@ class _WheelState extends State<WheelWidget> {
   }
 
   Future<void> _loadSpinAvailability() async {
-    /* final prefs = await SharedPreferences.getInstance();
-    final canSpin = prefs.getBool('can_spin_today') ?? true;
-
-    setState(() {
-      _canSpinToday = canSpin;
-      isLoading = false;
-    }); */
     setState(() => isLoading = true);
 
     try {
@@ -89,6 +84,8 @@ class _WheelState extends State<WheelWidget> {
   }
 
   void trySpin() {
+    if (isSpinning || isDialogOpen) return;
+
     if (!canSpin) {
       showInfoDialog();
       return;
@@ -123,61 +120,6 @@ class _WheelState extends State<WheelWidget> {
     super.dispose();
   }
 
-  /* void startSpin(int length) async {
-    if (!_canSpinToday) {
-      showInfoDialog();
-      return;
-    }
-
-    final index = Fortune.randomInt(0, length);
-    setState(() {
-      lastSelectedIndex = index;
-      selected.add(index);
-    });
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('can_spin_today', false);
-    await prefs.setBool('notified_spin_today', true);
-    await prefs.setBool('spin_followup_active', false);
-    setState(() {
-      _canSpinToday = false;
-    });
-
-    await AccountTimeService.saveSpinDate(); // сохраняем дату после начала кручения
-
-    await NotificationService().cancelNotification(11);
-
-    await NotificationManager.sendSpinAvailableNow();
-    //await NotificationService().cancelNotification(1);
-    //await NotificationManager.cancelRepeatSpinReminder(); // отключаем уведомление id=1
-    //await NotificationManager.scheduleFollowUpSpinReminder(); // включаем напоминание id=11
-  } */
-
-  /* Future<void> startSpin() async {
-    if (isSpinning) return;
-
-    setState(() => isSpinning = true);
-
-    try {
-      final canSpin = await AccountTimeService.canSpin();
-      if (!canSpin) {
-        showInfoDialog();
-        return;
-      }
-
-      final result = await AccountTimeService.spin(
-        prizeList.map((e) => e.value).toList(),
-      );
-
-      lastSelectedIndex = result.index;
-      selected.add(result.index);
-    } catch (e) {
-      showInfoDialog();
-    } finally {
-      setState(() => isSpinning = false);
-    }
-  } */
-
   Future<void> startSpin() async {
     if (isSpinning) return;
     setState(() => isSpinning = true);
@@ -196,31 +138,6 @@ class _WheelState extends State<WheelWidget> {
       setState(() => isSpinning = false);
     }
   }
-
-  /* Future<void> startSpin() async {
-    if (isSpinning) return;
-    setState(() => isSpinning = true);
-
-    try {
-      final canSpinNow = await AccountTimeService.canSpin();
-      if (!canSpinNow) {
-        showInfoDialog();
-        return;
-      }
-
-      final result = await AccountTimeService.spin(
-        prizeList.map((e) => e.value).toList(),
-      );
-
-      lastSelectedIndex = result.index;
-      selected.add(result.index);
-
-      // 👇 ОБНОВЛЯЕМ СОСТОЯНИЕ ПОСЛЕ СПИНА
-      setState(() => canSpin = false);
-    } finally {
-      setState(() => isSpinning = false);
-    }
-  } */
 
   void showPrizeDialog(String prize) {
     showGeneralDialog(
@@ -323,27 +240,41 @@ class _WheelState extends State<WheelWidget> {
     );
   } */
 
-  void showInfoDialog() {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "InfoDialog",
-      transitionDuration: const Duration(milliseconds: 500),
-      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        final curved = CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutBack,
-        );
-        return FadeTransition(
-          opacity: animation,
-          child: ScaleTransition(
-            scale: curved,
-            child: InfoDialogWidget(onClaim: () => Navigator.of(context).pop()),
-          ),
-        );
-      },
-    );
+  Future<void> showInfoDialog() async {
+    if (isDialogOpen) return;
+
+    isDialogOpen = true;
+
+    try {
+      await showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: "InfoDialog",
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+        transitionBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+          );
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: curved,
+              child: InfoDialogWidget(
+                onClaim: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ),
+          );
+        },
+      );
+    } finally {
+      isDialogOpen = false;
+    }
   }
 
   @override
@@ -539,18 +470,6 @@ class _WheelState extends State<WheelWidget> {
 
                 onAnimationEnd: () async {
                   final prize = prizeList[lastSelectedIndex ?? 0];
-                  /* final prefs = await SharedPreferences.getInstance();
-
-                  final bonusBalance = prefs.getString('bonus_balance') ?? "0";
-                  final bonusBalanceToDouble =
-                      int.tryParse(bonusBalance) ?? 0.0;
-
-                  final currentBalance = bonusBalanceToDouble + prize.value;
-
-                  await prefs.setString(
-                    'bonus_balance',
-                    currentBalance.toString(),
-                  ); */
                   showPrizeDialog(prize.formatted);
                   //showPrizeDialog('100 EUR');
                 },

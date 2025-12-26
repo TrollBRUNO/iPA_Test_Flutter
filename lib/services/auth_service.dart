@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:first_app_flutter/class/cards.dart';
 import 'package:first_app_flutter/class/statistics.dart';
 import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/services/token_service.dart';
@@ -157,6 +158,31 @@ class AuthService {
     }
   }
 
+  static Future<String?> bindCard({
+    required String cardId,
+    required String city,
+  }) async {
+    try {
+      await dio.post(
+        '$_baseUrl/account/bind-card',
+        data: {"card_id": cardId, "city": city},
+      );
+
+      return null; // Всё успешно
+    } on DioException catch (e, st) {
+      final status = e.response?.statusCode;
+      final data = e.response?.data;
+
+      logger.w('Bind card error [$status]: $data\n$st');
+
+      if (data is Map && data['message'] != null) {
+        return data['message'].toString().toLowerCase();
+      }
+
+      return 'bind_card_failed';
+    }
+  }
+
   static Future<String?> checkCard(String cardId) async {
     final res = await http.post(
       Uri.parse('$_baseUrl/account/check-card'),
@@ -196,6 +222,28 @@ class AuthService {
       return list.map((e) => Statistics.fromJson(e)).toList();
     } catch (e, st) {
       logger.w('Error loading statistics: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<List<Cards>> loadCards() async {
+    try {
+      final response = await dio.get('$_baseUrl/account/get-profile-cards');
+      final List list = response.data['cards'];
+
+      return list.map((e) => Cards.fromJson(e)).toList();
+    } catch (e, st) {
+      logger.w('Error loading cards: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<void> removeCard(String cardId) async {
+    try {
+      await dio.patch('$_baseUrl/account/cards/$cardId/deactivate');
+      logger.i('Card $cardId deactivated successfully');
+    } catch (e, st) {
+      logger.w('Error removing card: $e\n$st');
       rethrow;
     }
   }
