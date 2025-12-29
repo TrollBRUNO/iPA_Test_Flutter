@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:first_app_flutter/class/bonus_code.dart';
 import 'package:first_app_flutter/class/cards.dart';
 import 'package:first_app_flutter/class/statistics.dart';
 import 'package:first_app_flutter/class/user_session.dart';
@@ -299,6 +300,20 @@ class AuthService {
       logger.w('Error getting JWT from storage: $e');
       return null;
     }
+  }
+
+  static Future<BonusCodeResponse?> generateBonusCode() async {
+    try {
+      final response = await dio.post('$_baseUrl/bonus-code/generate');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return BonusCodeResponse.fromJson(response.data);
+      }
+    } on DioException catch (e, st) {
+      logger.w('Generate bonus code error: ${e.response?.data}\n$st');
+    }
+
+    return null;
   }
 
   /* static Future<String?> getBalance(String jwt) async {

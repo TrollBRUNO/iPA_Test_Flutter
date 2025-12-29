@@ -7,6 +7,7 @@ import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/services/token_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/cards_dialog_widget.dart';
+import 'package:first_app_flutter/widgets/code_bonus_dialog_profile_widget.dart';
 import 'package:first_app_flutter/widgets/statistics_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -106,6 +107,37 @@ class _ProfileState extends State<ProfilePage> {
       canShowCreditButton = false;
       setState(() {});
     }
+  }
+
+  Future<void> showCodeBonusDialog() async {
+    final data = await AuthService.generateBonusCode();
+    if (data == null) return;
+
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "PrizeDialog",
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: CodeBonusProfileDialogWidget(
+              data: data,
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void showStatisticsDialog() {
@@ -768,7 +800,8 @@ class _ProfileState extends State<ProfilePage> {
           onPressed: canShowTakeButton
               ? () async {
                   try {
-                    setState(() => canShowTakeButton = false);
+                    showCodeBonusDialog();
+                    //setState(() => canShowTakeButton = false);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

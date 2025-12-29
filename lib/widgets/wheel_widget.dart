@@ -4,6 +4,7 @@ import 'dart:convert';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
 import 'package:first_app_flutter/class/prize.dart';
+import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/background_worker.dart';
@@ -12,6 +13,7 @@ import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/web/teleslot_webview.dart';
 import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
+import 'package:first_app_flutter/widgets/code_bonus_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
@@ -160,6 +162,7 @@ class _WheelState extends State<WheelWidget> {
               onClaim: () {
                 Navigator.of(context).pop();
 
+                showCodeBonusDialog();
                 // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
                 //showAdsDialog();
               },
@@ -168,6 +171,39 @@ class _WheelState extends State<WheelWidget> {
         );
       },
     );
+  }
+
+  Future<void> showCodeBonusDialog() async {
+    final data = await AuthService.generateBonusCode();
+    if (data == null) return;
+
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "PrizeDialog",
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: CodeBonusDialogWidget(
+              data: data,
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    UserSession.canShowButton.value = true;
   }
 
   // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------

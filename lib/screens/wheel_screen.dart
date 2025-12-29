@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/class/user_session.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/background_worker.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
+import 'package:first_app_flutter/widgets/code_bonus_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/wheel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,8 +34,6 @@ class _WheelState extends State<WheelPage> {
 
   bool isLoading = true;
 
-  bool canShowTakeButton = false;
-
   bool isDialogOpen = false;
 
   Timer? _balanceTimer;
@@ -42,27 +43,64 @@ class _WheelState extends State<WheelPage> {
     super.initState();
     _loadTakeButton();
 
-    _balanceTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _balanceTimer = Timer.periodic(const Duration(seconds: 60), (_) {
       if (mounted) _loadTakeButton();
     });
   }
 
   Future<void> _loadTakeButton() async {
-    setState(() => isLoading = true);
+    logger.i(
+      "UserSession: ${UserSession.canShowButton.value} !!!!!!!!!!!!!!!!!!!!",
+    );
 
     try {
       final res = await AccountTimeService.canSpin();
-
       logger.i("Статус спина загружен: canSpin=$res");
-      setState(() {
-        canShowTakeButton = !res;
-      });
+
+      UserSession.canShowButton.value = !res;
     } catch (e) {
-      canShowTakeButton = false;
+      UserSession.canShowButton.value = false;
       logger.w("Ошибка при загрузке статуса спина: $e");
-    } finally {
-      setState(() => isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _balanceTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> showCodeBonusDialog() async {
+    final data = await AuthService.generateBonusCode();
+    if (data == null) return;
+
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "PrizeDialog",
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: CodeBonusDialogWidget(
+              data: data,
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    UserSession.canShowButton.value = true;
   }
 
   @override
@@ -129,31 +167,39 @@ class _WheelState extends State<WheelPage> {
                           child: const WheelWidget(),
                         ),
 
-                        if (!canShowTakeButton)
-                          SizedBox(
-                            height: context.locale.languageCode == 'bg'
-                                ? AdaptiveSizes.h(0.08) +
-                                      AdaptiveSizes.getWheelSizedBoxlanguageCode2()
-                                : context.locale.languageCode == 'ru'
-                                ? AdaptiveSizes.h(0.08) +
-                                      AdaptiveSizes.getWheelSizedBoxlanguageCode2()
-                                : AdaptiveSizes.h(0.08) +
-                                      AdaptiveSizes.getWheelSizedBoxlanguageCode2(),
-                          ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: UserSession.canShowButton,
+                          builder: (context, canShow, _) {
+                            if (!canShow) {
+                              return SizedBox(
+                                height: context.locale.languageCode == 'bg'
+                                    ? AdaptiveSizes.h(0.08) +
+                                          AdaptiveSizes.getWheelSizedBoxlanguageCode2()
+                                    : context.locale.languageCode == 'ru'
+                                    ? AdaptiveSizes.h(0.08) +
+                                          AdaptiveSizes.getWheelSizedBoxlanguageCode2()
+                                    : AdaptiveSizes.h(0.08) +
+                                          AdaptiveSizes.getWheelSizedBoxlanguageCode2(),
+                              );
+                            }
 
-                        if (canShowTakeButton)
-                          SizedBox(
-                            height: context.locale.languageCode == 'bg'
-                                ? AdaptiveSizes.h(0.039) +
-                                      AdaptiveSizes.getWheelSizedBoxlanguageCode2()
-                                : context.locale.languageCode == 'ru'
-                                ? AdaptiveSizes.h(0.039) +
-                                      AdaptiveSizes.getWheelSizedBoxlanguageCode2()
-                                : AdaptiveSizes.h(0.039) +
-                                      AdaptiveSizes.getWheelSizedBoxlanguageCode2(),
-                          ),
-
-                        if (canShowTakeButton) _buildTakeButton(),
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  height: context.locale.languageCode == 'bg'
+                                      ? AdaptiveSizes.h(0.039) +
+                                            AdaptiveSizes.getWheelSizedBoxlanguageCode2()
+                                      : context.locale.languageCode == 'ru'
+                                      ? AdaptiveSizes.h(0.039) +
+                                            AdaptiveSizes.getWheelSizedBoxlanguageCode2()
+                                      : AdaptiveSizes.h(0.039) +
+                                            AdaptiveSizes.getWheelSizedBoxlanguageCode2(),
+                                ),
+                                _buildTakeButton(),
+                              ],
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -194,20 +240,16 @@ class _WheelState extends State<WheelPage> {
               fontSize: AdaptiveSizes.getYouWinPrizeSize(),
             ),
           ),
-          onPressed: canShowTakeButton
-              ? () async {
-                  try {
-                    setState(() => canShowTakeButton = false);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Пока нельзя получить бонус'),
-                      ),
-                    );
-                    setState(() => canShowTakeButton = true);
-                  }
-                }
-              : null,
+          onPressed: () async {
+            try {
+              showCodeBonusDialog();
+              UserSession.canShowButton.value = false;
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Пока нельзя получить бонус')),
+              );
+            }
+          },
           child: Text('Take Bonus', maxLines: 1, textAlign: TextAlign.center),
         ),
       ),
