@@ -202,10 +202,10 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                 await prefs.setString(_login, user);
                                 await prefs.setString(_password, password); */
 
-                                if (user == "admin321" &&
+                                /* if (user == "admin321" &&
                                     password == "admin123") {
                                   context.go('/admin');
-                                }
+                                } */
                                 /* String? jwtToken = await AuthService.getJwt();
                                   if (jwtToken == null) {
                                     jwtToken =
@@ -242,6 +242,81 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                 } */
 
                                 await AuthService.loadProfile();
+
+                                String? role = UserSession.role;
+
+                                if (role == 'admin') {
+                                  final TextEditingController _codeController =
+                                      TextEditingController();
+
+                                  final code = await showDialog<String>(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('admin_code'.tr()),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'please_enter_admin_code'.tr(),
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            SizedBox(height: 12),
+                                            TextField(
+                                              controller: _codeController,
+                                              decoration: InputDecoration(
+                                                labelText: 'code'.tr(),
+                                                border: OutlineInputBorder(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(
+                                                context,
+                                              ).pop(); // cancel
+                                            },
+                                            child: Text('cancel'.tr()),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              final enteredCode =
+                                                  _codeController.text.trim();
+                                              if (enteredCode.isEmpty) {
+                                                // optionally show a warning
+                                                return;
+                                              }
+                                              Navigator.of(
+                                                context,
+                                              ).pop(enteredCode);
+                                            },
+                                            child: Text('confirm'.tr()),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+
+                                  if (code == null || code.isEmpty) return;
+
+                                  final ok = await AuthService.verifyAdminCode(
+                                    code,
+                                  );
+
+                                  if (ok) {
+                                    context.go('/admin');
+                                  } else {
+                                    logger.i("Неверный код");
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('invalid_code'.tr()),
+                                      ),
+                                    );
+                                  }
+                                  return;
+                                }
 
                                 Flushbar(
                                   messageText: Row(

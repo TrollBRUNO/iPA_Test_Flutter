@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountTimeService {
-  static const String _baseUrl = 'http://192.168.33.187:3000';
+  static const String _baseUrl = 'https://magicity.top';
 
   static Dio get _dio => AuthService.dio;
 

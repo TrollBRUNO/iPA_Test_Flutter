@@ -22,7 +22,7 @@ class AuthService {
   /* static const String _login = 'login';
   static const String _password = 'password'; */
 
-  static const String _baseUrl = 'http://192.168.33.187:3000';
+  static const String _baseUrl = 'https://magicity.top';
 
   static final Dio dio = Dio();
 
@@ -209,9 +209,22 @@ class AuthService {
       UserSession.fakeBalance = data['fake_balance']?.toString() ?? '0';
       UserSession.imageUrl = data['image_url']?.toString() ?? '';
       UserSession.lastCreditTake = DateTime.tryParse(dateStr ?? '');
+      UserSession.role = data['role']?.toString() ?? '';
     } catch (e, st) {
       logger.w('Error loading profile: $e\n$st');
       rethrow;
+    }
+  }
+
+  static Future<bool> verifyAdminCode(String code) async {
+    try {
+      final response = await dio.post(
+        '$_baseUrl/auth/admin-verify',
+        data: {"code": code},
+      );
+      return response.data['ok'] == true;
+    } catch (_) {
+      return false;
     }
   }
 

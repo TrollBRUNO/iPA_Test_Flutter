@@ -7,6 +7,7 @@ class UserSession {
   static String? fakeBalance = '0';
   static DateTime? lastCreditTake = DateTime.now();
   static String? imageUrl = '';
+  static String? role = '';
 
   static ValueNotifier<bool> canShowButton = ValueNotifier<bool>(false);
 }
