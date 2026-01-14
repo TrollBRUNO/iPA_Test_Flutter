@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:first_app_flutter/class/news.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/news_widget.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +41,10 @@ class _NewsTabState extends State<NewsTab> {
 
   Future<void> loadNews() async {
     try {
-      final res = await http.get(Uri.parse("http://192.168.33.187:3000/news"));
+      final res = await AuthService.dio.get("https://magicity.top/news");
+
       if (res.statusCode == 200) {
-        final decoded = jsonDecode(res.body);
+        final decoded = jsonDecode(res.data);
 
         news = decoded
             .map<News>(

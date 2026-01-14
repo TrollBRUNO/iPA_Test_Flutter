@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +26,8 @@ class _EditGalleryState extends State<EditGalleryPage> {
   List<dynamic> gallery = [];
   bool isLoading = false;
 
+  static const String _baseUrl = 'https://magicity.top';
+
   @override
   void initState() {
     super.initState();
@@ -32,16 +36,21 @@ class _EditGalleryState extends State<EditGalleryPage> {
 
   Future<void> loadGallery() async {
     setState(() => isLoading = true);
-    final res = await http.get(Uri.parse("http://192.168.33.187:3000/gallery"));
-    if (res.statusCode == 200) {
-      gallery = jsonDecode(res.body);
-    }
+    try {
+      final res = await AuthService.dio.get("$_baseUrl/gallery");
+      gallery = res.data;
+    } catch (_) {}
+
     setState(() => isLoading = false);
   }
 
   Future<void> deleteGallery(String id) async {
-    await http.delete(Uri.parse("http://192.168.33.187:3000/gallery/$id"));
-    await loadGallery();
+    try {
+      await AuthService.dio.delete("$_baseUrl/gallery/$id");
+      await loadGallery();
+    } catch (e) {
+      print("Delete error: $e");
+    }
   }
 
   Future<void> editOrCreateGallery({Map? item}) async {
@@ -97,25 +106,31 @@ class _EditGalleryState extends State<EditGalleryPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final body = jsonEncode({
+                final body = {
                   "description": descController.text,
                   "image_url": imgController.text,
-                });
+                };
 
-                if (item == null) {
-                  await http.post(
-                    Uri.parse("http://192.168.33.187:3000/gallery/json"),
-                    headers: {"Content-Type": "application/json"},
-                    body: body,
-                  );
-                } else {
-                  await http.put(
-                    Uri.parse(
-                      "http://192.168.33.187:3000/gallery/${item["_id"]}",
-                    ),
-                    headers: {"Content-Type": "application/json"},
-                    body: body,
-                  );
+                try {
+                  if (item == null) {
+                    await AuthService.dio.post(
+                      "$_baseUrl/gallery/json",
+                      data: jsonEncode(body),
+                      options: Options(
+                        headers: {"Content-Type": "application/json"},
+                      ),
+                    );
+                  } else {
+                    await AuthService.dio.put(
+                      "$_baseUrl/gallery/${item["_id"]}",
+                      data: jsonEncode(body),
+                      options: Options(
+                        headers: {"Content-Type": "application/json"},
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  print("Save error: $e");
                 }
 
                 Navigator.pop(context);
@@ -141,7 +156,7 @@ class _EditGalleryState extends State<EditGalleryPage> {
           TextButton(
             onPressed: () => editOrCreateGallery(),
             child: Text(
-              "Add New",
+              "Add Gallery",
               style: TextStyle(
                 color: Colors.orangeAccent[200],
                 fontSize: 18,
@@ -171,7 +186,7 @@ class _EditGalleryState extends State<EditGalleryPage> {
                         DataCell(
                           item["image_url"] != null
                               ? Image.network(
-                                  "http://192.168.33.187:3000${item["image_url"]}",
+                                  "$_baseUrl${item["image_url"]}",
                                   width: 70,
                                   height: 70,
                                   fit: BoxFit.cover,

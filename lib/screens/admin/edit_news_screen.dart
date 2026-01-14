@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class EditNewsScreen extends StatelessWidget {
   const EditNewsScreen({super.key});
@@ -24,6 +25,8 @@ class _EditNewsState extends State<EditNewsPage> {
   List<dynamic> news = [];
   bool isLoading = false;
 
+  static const String _baseUrl = 'https://magicity.top';
+
   @override
   void initState() {
     super.initState();
@@ -32,16 +35,22 @@ class _EditNewsState extends State<EditNewsPage> {
 
   Future<void> loadNews() async {
     setState(() => isLoading = true);
-    final res = await http.get(Uri.parse("http://192.168.33.187:3000/news"));
-    if (res.statusCode == 200) {
-      news = jsonDecode(res.body);
-    }
+
+    try {
+      final res = await AuthService.dio.get("$_baseUrl/news");
+      news = res.data;
+    } catch (_) {}
+
     setState(() => isLoading = false);
   }
 
   Future<void> deleteNews(String id) async {
-    await http.delete(Uri.parse("http://192.168.33.187:3000/news/$id"));
-    await loadNews();
+    try {
+      await AuthService.dio.delete("$_baseUrl/news/$id");
+      await loadNews();
+    } catch (e) {
+      print("Delete error: $e");
+    }
   }
 
   Future<void> editOrCreateNews({Map? item}) async {
@@ -106,24 +115,32 @@ class _EditNewsState extends State<EditNewsPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final body = jsonEncode({
+                final body = {
                   "title": titleController.text,
                   "description": descController.text,
                   "image_url": imgController.text,
-                });
+                };
 
-                if (item == null) {
-                  await http.post(
-                    Uri.parse("http://192.168.33.187:3000/news/json"),
-                    headers: {"Content-Type": "application/json"},
-                    body: body,
-                  );
-                } else {
-                  await http.put(
-                    Uri.parse("http://192.168.33.187:3000/news/${item["_id"]}"),
-                    headers: {"Content-Type": "application/json"},
-                    body: body,
-                  );
+                try {
+                  if (item == null) {
+                    await AuthService.dio.post(
+                      "$_baseUrl/news/json",
+                      data: jsonEncode(body),
+                      options: Options(
+                        headers: {"Content-Type": "application/json"},
+                      ),
+                    );
+                  } else {
+                    await AuthService.dio.put(
+                      "$_baseUrl/news/${item["_id"]}",
+                      data: jsonEncode(body),
+                      options: Options(
+                        headers: {"Content-Type": "application/json"},
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  print("Save error: $e");
                 }
 
                 Navigator.pop(context);
@@ -143,7 +160,7 @@ class _EditNewsState extends State<EditNewsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF121212),
+        backgroundColor: const Color(0xFF121212),
         foregroundColor: Colors.orangeAccent[200],
         actions: [
           TextButton(
@@ -176,11 +193,10 @@ class _EditNewsState extends State<EditNewsPage> {
                   for (var item in news)
                     DataRow(
                       cells: [
-                        // ==== IMAGE PREVIEW ====
                         DataCell(
                           item["image_url"] != null
                               ? Image.network(
-                                  "http://192.168.33.187:3000${item["image_url"]}",
+                                  "$_baseUrl${item["image_url"]}",
                                   width: 70,
                                   height: 70,
                                   fit: BoxFit.cover,
@@ -191,10 +207,8 @@ class _EditNewsState extends State<EditNewsPage> {
                                 )
                               : const Icon(Icons.image, color: Colors.white),
                         ),
-
                         DataCell(Text(item["title"] ?? "")),
                         DataCell(Text(item["description"] ?? "")),
-
                         DataCell(
                           Row(
                             children: [

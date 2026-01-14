@@ -175,7 +175,7 @@ class JackpotWidget extends StatelessWidget {
             children: [
               // Фоновое изображение
               Image.network(
-                "http://192.168.33.187:3000${jackpot.imageUrl}",
+                "https://magicity.top${jackpot.imageUrl}",
                 fit: BoxFit.fitWidth,
                 errorBuilder: (_, __, ___) =>
                     const Icon(Icons.broken_image, color: Colors.white),

@@ -164,7 +164,7 @@ class _JackpotState extends State<JackpotPage> {
 
   Future<void> loadCasinosFromServer() async {
     try {
-      final res = await Dio().get("http://192.168.33.187:3000/casino");
+      final res = await AuthService.dio.get("https://magicity.top/casino");
 
       if (res.statusCode == 200) {
         final data = res.data as List<dynamic>;

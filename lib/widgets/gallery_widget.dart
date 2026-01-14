@@ -63,7 +63,7 @@ class GalleryWidget extends StatelessWidget {
               topRight: Radius.circular(32),
             ),
             child: Image.network(
-              "http://192.168.33.187:3000${gallery.imageUrl}",
+              "https://magicity.top${gallery.imageUrl}",
               fit: BoxFit.cover,
               width: double.infinity,
               height: AdaptiveSizes.getNewsWidgetHeight(),

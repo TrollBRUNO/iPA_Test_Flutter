@@ -33,7 +33,7 @@ class _JackpotViewerScreenState extends State<JackpotViewerScreen> {
   Future<void> _loadData() async {
     try {
       final res = await http.get(
-        Uri.parse("http://192.168.33.187:3000/casino/${widget.id}/jackpots"),
+        Uri.parse("https://magicity.top/casino/${widget.id}/jackpots"),
       );
 
       if (res.statusCode == 200) {
