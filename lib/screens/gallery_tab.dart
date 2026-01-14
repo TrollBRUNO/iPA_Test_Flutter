@@ -49,9 +49,10 @@ class _GalleryTabState extends State<GalleryTab> {
     try {
       final res = await AuthService.dio.get("https://magicity.top/gallery");
       if (res.statusCode == 200) {
-        final decoded = jsonDecode(res.data);
+        //final decoded = jsonDecode(res.data);
+        final data = res.data as List<dynamic>;
 
-        gallery = decoded
+        gallery = data
             .map<Gallery>(
               (item) => Gallery(
                 description: item['description'],

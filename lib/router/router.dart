@@ -1,7 +1,9 @@
 import 'package:first_app_flutter/screens/admin/admin_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_account_screen.dart';
 import 'package:first_app_flutter/screens/admin/edit_gallery_screen.dart';
 import 'package:first_app_flutter/screens/admin/edit_news_screen.dart';
 import 'package:first_app_flutter/screens/admin/edit_casino_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_support_screen.dart';
 import 'package:first_app_flutter/screens/admin/edit_wheel_screen.dart';
 import 'package:first_app_flutter/screens/confidential_screen.dart';
 import 'package:first_app_flutter/screens/games_screen.dart';
@@ -62,11 +64,11 @@ final router = GoRouter(
         ),
         GoRoute(
           path: '/edit_reports',
-          builder: (context, state) => const EditNewsPage(title: 'Edit'),
+          builder: (context, state) => const EditSupportPage(title: 'Edit'),
         ),
         GoRoute(
           path: '/view_statistics',
-          builder: (context, state) => const EditNewsPage(title: 'View'),
+          builder: (context, state) => const EditAccountsPage(title: 'View'),
         ),
       ],
     ),

@@ -44,9 +44,10 @@ class _NewsTabState extends State<NewsTab> {
       final res = await AuthService.dio.get("https://magicity.top/news");
 
       if (res.statusCode == 200) {
-        final decoded = jsonDecode(res.data);
+        //final decoded = jsonDecode(res.data);
+        final data = res.data as List<dynamic>;
 
-        news = decoded
+        news = data
             .map<News>(
               (item) => News(
                 title: item['title'],

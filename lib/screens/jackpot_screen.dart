@@ -171,6 +171,7 @@ class _JackpotState extends State<JackpotPage> {
 
         _jackpots = data.map((c) {
           return Jackpot(
+            id: c["_id"] ?? "",
             city: c["city"] ?? "",
             address: c["address"] ?? "",
             imageUrl: c["image_url"],
@@ -204,7 +205,10 @@ class _JackpotState extends State<JackpotPage> {
       if (j.jackpotUrl.isEmpty) continue;
 
       try {
-        final res = await http.get(Uri.parse(j.jackpotUrl));
+        //final res = await http.get(Uri.parse(j.jackpotUrl));
+        final res = await http.get(
+          Uri.parse("https://magicity.top/casino/${j.id}/jackpots"),
+        );
         if (res.statusCode == 200) {
           final jsonData = jsonDecode(res.body);
 
@@ -379,7 +383,7 @@ class _JackpotState extends State<JackpotPage> {
                 //mqttService: mqttService,
                 miniBuilder: (value) => TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: value, end: jackpot.miniMystery),
-                  duration: const Duration(milliseconds: 800),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} EUR',
@@ -395,7 +399,7 @@ class _JackpotState extends State<JackpotPage> {
                     begin: value,
                     end: jackpot.middleMystery,
                   ),
-                  duration: const Duration(milliseconds: 800),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} EUR',
@@ -408,7 +412,7 @@ class _JackpotState extends State<JackpotPage> {
                 ),
                 megaBuilder: (value) => TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: value, end: jackpot.megaMystery),
-                  duration: const Duration(milliseconds: 800),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} EUR',
@@ -424,7 +428,7 @@ class _JackpotState extends State<JackpotPage> {
                     begin: value,
                     end: jackpot.majorBellLink,
                   ),
-                  duration: const Duration(milliseconds: 800),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} EUR',
@@ -440,7 +444,7 @@ class _JackpotState extends State<JackpotPage> {
                     begin: value,
                     end: jackpot.grandBellLink,
                   ),
-                  duration: const Duration(milliseconds: 800),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
                       '${animatedValue.toStringAsFixed(2)} EUR',

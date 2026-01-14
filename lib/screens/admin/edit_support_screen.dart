@@ -5,25 +5,25 @@ import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class EditWheelScreen extends StatelessWidget {
-  const EditWheelScreen({super.key});
+class EditSupportScreen extends StatelessWidget {
+  const EditSupportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const EditWheelPage(title: 'Edit Wheel');
+    return const EditSupportPage(title: 'Edit Support');
   }
 }
 
-class EditWheelPage extends StatefulWidget {
-  const EditWheelPage({super.key, required this.title});
+class EditSupportPage extends StatefulWidget {
+  const EditSupportPage({super.key, required this.title});
   final String title;
 
   @override
-  State<EditWheelPage> createState() => _EditWheelState();
+  State<EditSupportPage> createState() => _EditSupportState();
 }
 
-class _EditWheelState extends State<EditWheelPage> {
-  List<dynamic> wheel = [];
+class _EditSupportState extends State<EditSupportPage> {
+  List<dynamic> support = [];
   bool isLoading = false;
 
   static const String _baseUrl = 'https://magicity.top';
@@ -31,32 +31,38 @@ class _EditWheelState extends State<EditWheelPage> {
   @override
   void initState() {
     super.initState();
-    loadWheel();
+    loadSupport();
   }
 
-  Future<void> loadWheel() async {
+  Future<void> loadSupport() async {
     setState(() => isLoading = true);
     try {
-      final res = await AuthService.dio.get("$_baseUrl/wheel");
-      wheel = res.data;
+      final res = await AuthService.dio.get("$_baseUrl/support");
+      support = res.data;
     } catch (_) {}
 
     setState(() => isLoading = false);
   }
 
-  Future<void> deleteWheel(String id) async {
+  Future<void> deleteSupport(String id) async {
     try {
-      await AuthService.dio.delete("$_baseUrl/wheel/$id");
-      await loadWheel();
+      await AuthService.dio.delete("$_baseUrl/support/$id");
+      await loadSupport();
     } catch (e) {
       print("Delete error: $e");
     }
   }
 
-  Future<void> editOrCreateWheel({Map? item}) async {
-    final valueController = TextEditingController(
-      text: item?["value"]?.toString() ?? "",
+  Future<void> editOrCreateSupport({Map? item}) async {
+    final descriptionController = TextEditingController(
+      text: item?["description_problem"] ?? "",
     );
+
+    final userIdController = TextEditingController(
+      text: item?["user_id"] ?? "",
+    );
+
+    String status = item?["status"] ?? "open";
 
     await showDialog(
       context: context,
@@ -64,22 +70,47 @@ class _EditWheelState extends State<EditWheelPage> {
         return AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
           title: Text(
-            item == null ? "Add New Wheel" : "Edit Wheel",
+            item == null ? "Add Support Ticket" : "Edit Support Ticket",
             style: const TextStyle(color: Colors.white),
           ),
           content: SizedBox(
-            width: 400,
+            width: 450,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  controller: valueController,
-                  keyboardType: TextInputType.number,
+                  controller: descriptionController,
+                  maxLines: 4,
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
-                    labelText: "Value",
+                    labelText: "Problem Description",
                     labelStyle: TextStyle(color: Colors.white70),
                   ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: userIdController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: "User ID",
+                    labelStyle: TextStyle(color: Colors.white70),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: status,
+                  dropdownColor: Colors.black87,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: "Status",
+                    labelStyle: TextStyle(color: Colors.white70),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: "open", child: Text("Open")),
+                    DropdownMenuItem(value: "pending", child: Text("Pending")),
+                    DropdownMenuItem(value: "closed", child: Text("Closed")),
+                  ],
+                  onChanged: (v) => status = v!,
                 ),
               ],
             ),
@@ -94,18 +125,16 @@ class _EditWheelState extends State<EditWheelPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final intValue = int.tryParse(valueController.text);
-
-                if (intValue == null) {
-                  return;
-                }
-
-                final body = {"value": intValue};
+                final body = {
+                  "description_problem": descriptionController.text,
+                  "user_id": userIdController.text,
+                  "status": status,
+                };
 
                 try {
                   if (item == null) {
                     await AuthService.dio.post(
-                      "$_baseUrl/wheel/json",
+                      "$_baseUrl/support/json",
                       data: jsonEncode(body),
                       options: Options(
                         headers: {"Content-Type": "application/json"},
@@ -113,7 +142,7 @@ class _EditWheelState extends State<EditWheelPage> {
                     );
                   } else {
                     await AuthService.dio.put(
-                      "$_baseUrl/wheel/${item["_id"]}",
+                      "$_baseUrl/support/${item["_id"]}",
                       data: jsonEncode(body),
                       options: Options(
                         headers: {"Content-Type": "application/json"},
@@ -125,7 +154,7 @@ class _EditWheelState extends State<EditWheelPage> {
                 }
 
                 Navigator.pop(context);
-                await loadWheel();
+                await loadSupport();
               },
               child: const Text("Save"),
             ),
@@ -145,7 +174,7 @@ class _EditWheelState extends State<EditWheelPage> {
         foregroundColor: Colors.orangeAccent[200],
         actions: [
           TextButton(
-            onPressed: () => editOrCreateWheel(),
+            onPressed: () => editOrCreateSupport(),
             child: Text(
               "Add New",
               style: TextStyle(
@@ -165,14 +194,18 @@ class _EditWheelState extends State<EditWheelPage> {
                 headingTextStyle: const TextStyle(color: Colors.white),
                 dataTextStyle: const TextStyle(color: Colors.white70),
                 columns: const [
-                  DataColumn(label: Text("Value")),
+                  DataColumn(label: Text("Description")),
+                  DataColumn(label: Text("User ID")),
+                  DataColumn(label: Text("Status")),
                   DataColumn(label: Text("Actions")),
                 ],
                 rows: [
-                  for (var item in wheel)
+                  for (var item in support)
                     DataRow(
                       cells: [
-                        DataCell(Text(item["value"].toString())),
+                        DataCell(Text(item["description_problem"] ?? "")),
+                        DataCell(Text(item["user_id"] ?? "")),
+                        DataCell(Text(item["status"] ?? "")),
                         DataCell(
                           Row(
                             children: [
@@ -181,14 +214,15 @@ class _EditWheelState extends State<EditWheelPage> {
                                   Icons.edit,
                                   color: Colors.blue,
                                 ),
-                                onPressed: () => editOrCreateWheel(item: item),
+                                onPressed: () =>
+                                    editOrCreateSupport(item: item),
                               ),
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,
                                   color: Colors.red,
                                 ),
-                                onPressed: () => deleteWheel(item["_id"]),
+                                onPressed: () => deleteSupport(item["_id"]),
                               ),
                             ],
                           ),

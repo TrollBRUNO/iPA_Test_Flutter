@@ -484,7 +484,7 @@ class _JackpotDetailsScreenState extends State<JackpotDetailsScreen> {
           // Плавная анимация числа от предыдущего к новому
           TweenAnimationBuilder<double>(
             tween: Tween<double>(begin: prev, end: value),
-            duration: const Duration(milliseconds: 700),
+            duration: const Duration(milliseconds: 7000),
             curve: Curves.easeOut,
             builder: (context, animatedValue, child) {
               return Text(

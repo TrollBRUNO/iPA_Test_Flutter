@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -206,65 +207,78 @@ class _SupportState extends State<SupportPage> {
                           ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              final appeal = _appealController.text;
-
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setString(_appeal, appeal);
+                              final appeal = _appealController.text.trim();
 
                               setState(() {
                                 serverError = null;
                               });
 
-                              Flushbar(
-                                messageText: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.check_circle,
-                                      color: Colors.white,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        'successful_send'.tr(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                              try {
+                                await AuthService.dio.post(
+                                  "https://magicity.top/support/json",
+                                  data: {
+                                    "description_problem": appeal,
+                                    "status": "open",
+                                    // user_id сервер возьмёт из токена, если ты так настроил
+                                    // но если нужно явно — можно добавить:
+                                    // "user_id": AuthService.currentUserId,
+                                  },
+                                );
+
+                                Flushbar(
+                                  messageText: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          'successful_send'.tr(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                         ),
                                       ),
+                                    ],
+                                  ),
+                                  flushbarPosition: FlushbarPosition.TOP,
+                                  flushbarStyle: FlushbarStyle.FLOATING,
+                                  margin: const EdgeInsets.all(16),
+                                  borderRadius: BorderRadius.circular(12),
+                                  backgroundGradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C853),
+                                      Color(0xFF64DD17),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  boxShadows: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0, 3),
+                                      blurRadius: 6,
                                     ),
                                   ],
-                                ),
-                                flushbarPosition: FlushbarPosition.TOP,
-                                flushbarStyle: FlushbarStyle.FLOATING,
-                                margin: const EdgeInsets.all(16),
-                                borderRadius: BorderRadius.circular(12),
-                                backgroundGradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF00C853),
-                                    Color(0xFF64DD17),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                boxShadows: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    offset: const Offset(0, 3),
-                                    blurRadius: 6,
-                                  ),
-                                ],
-                                duration: const Duration(seconds: 2),
-                                animationDuration: const Duration(
-                                  milliseconds: 600,
-                                ),
-                              ).show(context);
+                                  duration: const Duration(seconds: 4),
+                                ).show(context);
 
-                              await Future.delayed(const Duration(seconds: 2));
-                              if (mounted) Navigator.of(context).pop();
+                                await Future.delayed(
+                                  const Duration(seconds: 4),
+                                );
+                                if (mounted) Navigator.of(context).pop();
+                              } catch (e) {
+                                setState(() {
+                                  serverError = "Server error";
+                                });
+                              }
                             }
                           },
+
                           child: Text('send'.tr()),
                         ),
                       ),

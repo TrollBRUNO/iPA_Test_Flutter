@@ -1,4 +1,5 @@
 class Jackpot {
+  String id; //= 'casino123';
   String city; //= 'Sample City';
   String address; //= 'Main Street 123';
   String imageUrl; //= 'assets/images/logo.png';
@@ -24,6 +25,7 @@ class Jackpot {
   String grandBellLinkRange; //= (8000 - 20000 BGN);
 
   Jackpot({
+    this.id = "",
     this.city = "No name",
     this.address = "No address",
     this.imageUrl = "assets/images/logo.png",
@@ -44,6 +46,7 @@ class Jackpot {
 
   static Jackpot from({required Jackpot jackpot}) {
     return Jackpot(
+      id: jackpot.id,
       city: jackpot.city,
       address: jackpot.address,
       imageUrl: jackpot.imageUrl,
@@ -64,6 +67,7 @@ class Jackpot {
   }
 
   Jackpot copyWith({
+    String? id,
     String? city,
     String? address,
     String? imageUrl,
@@ -82,6 +86,7 @@ class Jackpot {
     String? grandBellLinkRange,
   }) {
     return Jackpot(
+      id: id ?? this.id,
       city: city ?? this.city,
       address: address ?? this.address,
       imageUrl: imageUrl ?? this.imageUrl,
