@@ -70,7 +70,7 @@ class _WheelState extends State<WheelWidget> {
 
       logger.i("Статус спина загружен: canSpin=$res");
       setState(() {
-        canSpin = res;
+        canSpin = res.canSpin;
         /* canSpin = res.canSpin;
          nextSpinDate = res.nextSpin != null
             ? DateTime.parse(res.nextSpin)

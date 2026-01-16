@@ -14,7 +14,7 @@ void callbackDispatcher() {
     try {
       await checkAndSendBonusNotification();
 
-      if (task == spinCheckTask) {
+      /* if (task == spinCheckTask) {
         final prefs = await SharedPreferences.getInstance();
         final canSpin = await AccountTimeService.canSpin();
 
@@ -51,7 +51,7 @@ void callbackDispatcher() {
           await prefs.setBool('spin_followup_active', true);
           await prefs.setBool('notified_spin_today', false);
         } */
-      }
+      } */
     } catch (e) {
       // Логирование опционально
       logger.w('Background worker error: $e');

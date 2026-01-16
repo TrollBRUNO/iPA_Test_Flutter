@@ -86,7 +86,7 @@ class _ProfileState extends State<ProfilePage> {
 
       logger.i("Статус спина загружен: canSpin=$res");
       setState(() {
-        canShowTakeButton = !res;
+        canShowTakeButton = !res.canSpin;
       });
     } catch (e) {
       canShowTakeButton = false;

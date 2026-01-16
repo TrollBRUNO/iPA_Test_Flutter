@@ -22,9 +22,20 @@ class AccountTimeService {
     );
   } */
 
-  static Future<bool> canSpin() async {
+  /* static Future<bool> canSpin() async {
     final res = await _dio.get('$_baseUrl/account/can-spin');
     return res.data['canSpin'] == true;
+  } */
+
+  static Future<SpinAvailability> canSpin() async {
+    final res = await _dio.get('$_baseUrl/account/can-spin');
+
+    return SpinAvailability(
+      canSpin: res.data['canSpin'] == true,
+      nextSpin: res.data['nextSpin'] != null
+          ? DateTime.parse(res.data['nextSpin'])
+          : null,
+    );
   }
 
   static Future<bool> canTakeCredit() async {

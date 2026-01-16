@@ -29,6 +29,8 @@ class WheelPage extends StatefulWidget {
   State<WheelPage> createState() => _WheelState();
 }
 
+DateTime? cooldownUntil;
+
 class _WheelState extends State<WheelPage> {
   final _formKey = GlobalKey<FormState>();
 
@@ -44,7 +46,9 @@ class _WheelState extends State<WheelPage> {
     _loadTakeButton();
 
     _balanceTimer = Timer.periodic(const Duration(seconds: 60), (_) {
-      if (mounted) _loadTakeButton();
+      if (mounted) {
+        _loadTakeButton();
+      }
     });
   }
 
@@ -55,11 +59,17 @@ class _WheelState extends State<WheelPage> {
 
     try {
       final res = await AccountTimeService.canSpin();
+
+      UserSession.canShowButton.value = !res.canSpin;
+
       logger.i("Статус спина загружен: canSpin=$res");
 
-      UserSession.canShowButton.value = !res;
+      setState(() {
+        cooldownUntil = res.nextSpin;
+      });
     } catch (e) {
       UserSession.canShowButton.value = false;
+
       logger.w("Ошибка при загрузке статуса спина: $e");
     }
   }
@@ -167,6 +177,11 @@ class _WheelState extends State<WheelPage> {
                           child: const WheelWidget(),
                         ),
 
+                        if (cooldownUntil != null) ...[
+                          SizedBox(height: AdaptiveSizes.h(0.02)),
+                          _buildCooldownTimer(),
+                        ],
+
                         ValueListenableBuilder<bool>(
                           valueListenable: UserSession.canShowButton,
                           builder: (context, canShow, _) {
@@ -255,4 +270,42 @@ class _WheelState extends State<WheelPage> {
       ),
     );
   }
+}
+
+Widget _buildCooldownTimer() {
+  final now = DateTime.now();
+  final diff = cooldownUntil!.difference(now);
+
+  final hours = diff.inHours;
+  final minutes = diff.inMinutes % 60;
+  final seconds = diff.inSeconds % 60;
+
+  final timeLeft =
+      '${hours.toString().padLeft(2, '0')}:'
+      '${minutes.toString().padLeft(2, '0')}:'
+      '${seconds.toString().padLeft(2, '0')}';
+
+  // Форматируем дату
+  final dateStr = DateFormat('dd MMM yyyy, HH:mm').format(cooldownUntil!);
+
+  return Column(
+    children: [
+      Text(
+        'Осталось $timeLeft чтобы забрать бонус ',
+        style: TextStyle(
+          color: Colors.white70,
+          fontSize: AdaptiveSizes.getSupportWelcomeTextSize(),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        'Будет доступно: $dateStr',
+        style: TextStyle(
+          color: Colors.white38,
+          fontSize: AdaptiveSizes.getSupportWelcomeTextSize() * 0.9,
+        ),
+      ),
+    ],
+  );
 }
