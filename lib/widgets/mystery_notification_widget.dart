@@ -1,12 +1,13 @@
-import 'package:first_app_flutter/config/mystery_notification_config.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
+import 'package:first_app_flutter/class/notification.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MysteryNotificationTile extends StatefulWidget {
-  final MysteryNotificationConfig config;
+  final UserNotificationSettings settings;
 
-  const MysteryNotificationTile({super.key, required this.config});
+  const MysteryNotificationTile({super.key, required this.settings});
 
   @override
   State<MysteryNotificationTile> createState() =>
@@ -14,41 +15,35 @@ class MysteryNotificationTile extends StatefulWidget {
 }
 
 class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
-  bool enabled = true;
+  late int mini;
+  late int middle;
+  late int mega;
 
   @override
   void initState() {
     super.initState();
-    load();
+    mini = widget.settings.mini;
+    middle = widget.settings.middle;
+    mega = widget.settings.mega;
   }
 
-  Future<void> load() async {
-    enabled = await MysteryNotificationManager.loadSwitchState(
-      widget.config.prefKey,
-      true,
-    );
+  Future<void> _save() async {
+    widget.settings.mini = mini;
+    widget.settings.middle = middle;
+    widget.settings.mega = mega;
 
-    await widget.config.loadMysteryValues();
-    setState(() {});
-  }
-
-  Future<void> toggle(bool v) async {
-    setState(() => enabled = v);
-    await MysteryNotificationManager.toggleMysteryNotification(
-      widget.config,
-      v,
-    );
+    await NotificationService.saveSettings(widget.settings);
   }
 
   Widget sliderRow({
     required String label,
-    required double value,
-    required double min,
-    required double max,
+    required int value,
+    required int min,
+    required int max,
     required Color labelColor,
     required Color shadowColor,
     required IconData iconJackpot,
-    required Function(double) onChange,
+    required Function(int) onChange,
   }) {
     return Padding(
       padding: const EdgeInsets.only(top: 30, bottom: 10),
@@ -69,7 +64,6 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                   ),
                 ],
               ),
-
               SizedBox(width: AdaptiveSizes.w(0.01288)),
               Text(
                 label,
@@ -85,20 +79,9 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                     ),
                   ],
                 ),
-              ) /* 
-              const Spacer(),
-              Text(
-                value.toStringAsFixed(0),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: AdaptiveSizes.getJackpotCountSize(),
-                ),
-              ), */,
-
+              ),
               SizedBox(width: AdaptiveSizes.w(0.01)),
 
-              // Слайдер с value над ползунком
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
@@ -124,20 +107,21 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                             overlayColor: Colors.white12,
                           ),
                           child: Slider(
-                            min: min,
-                            max: max,
-                            value: value,
+                            min: min.toDouble(),
+                            max: max.toDouble(),
+                            value: value.toDouble(),
                             onChanged: (v) {
-                              setState(() => onChange(v));
-                              widget.config.saveMysteryValues();
+                              setState(() => onChange(v.toInt()));
+                              _save();
                             },
                           ),
                         ),
+
                         Positioned(
-                          left: thumbPos - 15, // сдвиг для центрирования
-                          bottom: 37.5, // над слайдером
+                          left: thumbPos - 15,
+                          bottom: 37.5,
                           child: Text(
-                            value.toStringAsFixed(0),
+                            value.toString(),
                             style: GoogleFonts.raleway(
                               color: Colors.white,
                               fontSize:
@@ -145,28 +129,30 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                             ),
                           ),
                         ),
+
                         Positioned(
                           left: 18,
                           bottom: -6,
                           child: Opacity(
                             opacity: 0.5,
                             child: Text(
-                              min.toStringAsFixed(0),
-                              style: TextStyle(
+                              min.toString(),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
                               ),
                             ),
                           ),
                         ),
+
                         Positioned(
                           right: 18,
                           bottom: -6,
                           child: Opacity(
                             opacity: 0.5,
                             child: Text(
-                              max.toStringAsFixed(0),
-                              style: TextStyle(
+                              max.toString(),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
                               ),
@@ -187,24 +173,16 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
 
   @override
   Widget build(BuildContext context) {
-    final cfg = widget.config;
-
     return Padding(
       padding: AdaptiveSizes.getNotificationPadding2(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(
-            255,
-            0,
-            0,
-            0,
-          ).withOpacity(0.9), //const Color(0xFF1E1E1E)
+          color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9),
           borderRadius: AdaptiveSizes.getJackpotWidgetBorderRadius(),
           boxShadow: [
             BoxShadow(
               color: Colors.white.withOpacity(0.6),
-              //Color.fromARGB(255, 46, 178, 255)
               spreadRadius: 0.2,
               blurRadius: 1,
               offset: const Offset(0, 0),
@@ -213,12 +191,11 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
         ),
         child: Column(
           children: [
-            // Header row (TITLE + SWITCH)
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    cfg.title,
+                    "Mystery Jackpot Thresholds",
                     style: GoogleFonts.raleway(
                       fontSize: AdaptiveSizes.getFontInfoSize(),
                       color: Colors.white,
@@ -226,32 +203,14 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                     ),
                   ),
                 ),
-                Transform.scale(
-                  scale: AdaptiveSizes.getNotificationSwitchSize(),
-                  child: Switch(
-                    // первые два мб надо будет поменять на что-то по типу:
-                    // value: value,
-                    // onChanged: onChanged,
-                    value: enabled,
-                    onChanged: toggle,
-                    activeColor: Colors.white,
-                    activeTrackColor: Colors.orangeAccent[400],
-                    inactiveThumbColor: Colors.grey[600],
-                    inactiveTrackColor: Colors.grey[800],
-                  ),
-                ),
               ],
             ),
-            /* Divider(
-              height: AdaptiveSizes.getDividerProfileHeight(),
-              color: Colors.white,
-            ), */
-            // --- MINI ---
+
             sliderRow(
               label: "Mini:",
-              value: cfg.miniMystery,
-              min: cfg.miniMin,
-              max: cfg.miniMax,
+              value: mini,
+              min: 30,
+              max: 300,
               labelColor: Colors.cyanAccent,
               shadowColor: const Color.fromARGB(
                 255,
@@ -260,15 +219,14 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                 128,
               ).withOpacity(0.5),
               iconJackpot: Icons.star_border_purple500_rounded,
-              onChange: (v) => cfg.miniMystery = v,
+              onChange: (v) => mini = v,
             ),
 
-            // --- MIDDLE ---
             sliderRow(
               label: "Middle:",
-              value: cfg.middleMystery,
-              min: cfg.middleMin,
-              max: cfg.middleMax,
+              value: middle,
+              min: 500,
+              max: 1000,
               labelColor: Colors.blueAccent,
               shadowColor: const Color.fromARGB(
                 255,
@@ -277,15 +235,14 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                 128,
               ).withOpacity(0.6),
               iconJackpot: Icons.grade_outlined,
-              onChange: (v) => cfg.middleMystery = v,
+              onChange: (v) => middle = v,
             ),
 
-            // --- MEGA ---
             sliderRow(
               label: "Mega:",
-              value: cfg.megaMystery,
-              min: cfg.megaMin,
-              max: cfg.megaMax,
+              value: mega,
+              min: 3000,
+              max: 10000,
               labelColor: Colors.deepPurpleAccent,
               shadowColor: const Color.fromARGB(
                 255,
@@ -294,7 +251,7 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
                 160,
               ).withOpacity(0.8),
               iconJackpot: Icons.auto_awesome_outlined,
-              onChange: (v) => cfg.megaMystery = v,
+              onChange: (v) => mega = v,
             ),
           ],
         ),

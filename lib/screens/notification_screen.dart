@@ -1,26 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:first_app_flutter/config/mystery_notification_config.dart';
-import 'package:first_app_flutter/config/notification_config.dart';
+import 'package:first_app_flutter/class/notification.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/mystery_notification_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:first_app_flutter/services/notification_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return NotificationPage(title: 'Notification');
+    return const NotificationPage(title: 'Notification');
   }
 }
-
-//DateTime scheduleTime = DateTime.now().add(const Duration(minutes: 1));
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key, required this.title});
@@ -31,216 +24,195 @@ class NotificationPage extends StatefulWidget {
   State<NotificationPage> createState() => _NotificationState();
 }
 
-// Стили для заголовков
-Widget sectionTitle(String title) {
-  return Padding(
-    padding: AdaptiveSizes.getNotificationPadding(),
-    child: Text(
-      title,
-      style: GoogleFonts.raleway(
-        fontSize: AdaptiveSizes.getFontBigPrizeSize(),
-        fontWeight: FontWeight.bold,
-        color: Colors.orangeAccent[200],
-      ),
-    ),
-  );
-}
-
-// Стили для подпунктов с переключателем
-Widget settingOption(String title, bool value, Function(bool) onChanged) {
-  return Padding(
-    padding: AdaptiveSizes.getNotificationPadding2(),
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      /* decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(12),
-      ), */
-      decoration: BoxDecoration(
-        color: const Color(
-          0xFF1E1E1E,
-        ), //const Color.fromARGB(255,0,0,0,).withOpacity(0.9),
-        borderRadius: AdaptiveSizes.getJackpotWidgetBorderRadius(),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withOpacity(0.6),
-            //Color.fromARGB(255, 46, 178, 255)
-            spreadRadius: 0.2,
-            blurRadius: 1,
-            offset: const Offset(0, 0),
-          ),
-        ],
-      ),
-      height: 70,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              style: GoogleFonts.raleway(
-                fontSize: AdaptiveSizes.getFontInfoSize(),
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          SizedBox(width: 30),
-          Transform.scale(
-            scale: AdaptiveSizes.getNotificationSwitchSize(),
-            child: Switch(
-              value: value,
-              onChanged: onChanged,
-              activeColor: Colors.white,
-              activeTrackColor: Colors.orangeAccent[400],
-              inactiveThumbColor: Colors.grey[600],
-              inactiveTrackColor: Colors.grey[800],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 class _NotificationState extends State<NotificationPage> {
-  final _formKey = GlobalKey<FormState>();
-  late Map<String, bool> _notificationStates;
-
-  Future<void> saveSwitchState(String key, bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool(key, value);
-  }
-
-  Future<bool> loadSwitchState(String key, bool def) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(key) ?? def;
-  }
+  UserNotificationSettings? settings;
 
   @override
   void initState() {
     super.initState();
-    _loadAllNotifications();
-    NotificationService().initNotification();
+    _loadSettings();
+    NotificationService.initFCM();
   }
 
-  Future<void> _loadAllNotifications() async {
-    _notificationStates = {};
-    for (var config in NotificationManager.notifications) {
-      final isEnabled = await NotificationManager.loadSwitchState(
-        config.prefKey,
-        true,
-      );
-      _notificationStates[config.prefKey] = isEnabled;
-    }
+  Future<void> _loadSettings() async {
+    settings = await NotificationService.loadSettings();
     setState(() {});
+  }
+
+  Widget sectionTitle(String title) {
+    return Padding(
+      padding: AdaptiveSizes.getNotificationPadding(),
+      child: Text(
+        title,
+        style: GoogleFonts.raleway(
+          fontSize: AdaptiveSizes.getFontBigPrizeSize(),
+          fontWeight: FontWeight.bold,
+          color: Colors.orangeAccent[200],
+        ),
+      ),
+    );
+  }
+
+  Widget switchTile({
+    required String title,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
+    return Padding(
+      padding: AdaptiveSizes.getNotificationPadding2(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E1E),
+          borderRadius: AdaptiveSizes.getJackpotWidgetBorderRadius(),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.6),
+              spreadRadius: 0.2,
+              blurRadius: 1,
+              offset: const Offset(0, 0),
+            ),
+          ],
+        ),
+        height: 70,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.raleway(
+                  fontSize: AdaptiveSizes.getFontInfoSize(),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Transform.scale(
+              scale: AdaptiveSizes.getNotificationSwitchSize(),
+              child: Switch(
+                value: value,
+                onChanged: onChanged,
+                activeColor: Colors.white,
+                activeTrackColor: Colors.orangeAccent[400],
+                inactiveThumbColor: Colors.grey[600],
+                inactiveTrackColor: Colors.grey[800],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
+    if (settings == null) {
+      return const Scaffold(
+        backgroundColor: Color(0xFF121212),
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.orangeAccent),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 12,
-                          left: 8,
-                          right: 8,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // HEADER
+              Padding(
+                padding: const EdgeInsets.only(top: 12, left: 8, right: 8),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.orangeAccent[200],
+                          size: AdaptiveSizes.getIconBackSettingsSize(),
                         ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Кнопка "назад" — слева
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.arrow_back_ios_new_rounded,
-                                  color: Colors.orangeAccent[200],
-                                  size: AdaptiveSizes.getIconBackSettingsSize(),
-                                ),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                            ),
-
-                            Text(
-                              'notice'.tr(),
-                              style: GoogleFonts.daysOne(
-                                fontSize: AdaptiveSizes.getFontUsernameSize(),
-                                fontWeight: FontWeight.w100,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.orangeAccent[200],
-                                shadows: const [
-                                  Shadow(
-                                    color: Color.fromARGB(255, 51, 51, 51),
-                                    offset: Offset(3.5, 4.5),
-                                    blurRadius: 3,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-
-                      const SizedBox(height: 20),
-
-                      // Весь список
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          sectionTitle("Колесо удачи"),
-                          ..._buildNotificationSection([
-                            NotificationManager.notifications[0],
-                            NotificationManager.notifications[1],
-                          ]),
-
-                          sectionTitle("Подписаться на новости"),
-                          ..._buildNotificationSection([
-                            NotificationManager.notifications[2],
-                            NotificationManager.notifications[3],
-                          ]),
-                          sectionTitle("Дополнительные"),
-                          MysteryNotificationTile(
-                            config: MysteryNotificationManager.mysteryConfig,
+                    ),
+                    Text(
+                      'notice'.tr(),
+                      style: GoogleFonts.daysOne(
+                        fontSize: AdaptiveSizes.getFontUsernameSize(),
+                        fontWeight: FontWeight.w100,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.orangeAccent[200],
+                        shadows: const [
+                          Shadow(
+                            color: Color.fromARGB(255, 51, 51, 51),
+                            offset: Offset(3.5, 4.5),
+                            blurRadius: 3,
                           ),
-
-                          const SizedBox(height: 20),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
+
+              const SizedBox(height: 20),
+
+              // SECTIONS
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  sectionTitle("Колесо удачи"),
+                  switchTile(
+                    title: "Уведомление о новой возможности крутить колесо",
+                    value: settings!.wheelReady,
+                    onChanged: (v) {
+                      setState(() => settings!.wheelReady = v);
+                      NotificationService.saveSettings(settings!);
+                    },
+                  ),
+                  switchTile(
+                    title: "Напоминание забрать бонус",
+                    value: settings!.bonusReminder,
+                    onChanged: (v) {
+                      setState(() => settings!.bonusReminder = v);
+                      NotificationService.saveSettings(settings!);
+                    },
+                  ),
+
+                  sectionTitle("Подписаться на новости"),
+                  switchTile(
+                    title: "Свежие новости и розыгрыши",
+                    value: settings!.newsPost,
+                    onChanged: (v) {
+                      setState(() => settings!.newsPost = v);
+                      NotificationService.saveSettings(settings!);
+                    },
+                  ),
+                  switchTile(
+                    title: "Уведомление о больших выигрышах",
+                    value: settings!.jackpotWin,
+                    onChanged: (v) {
+                      setState(() => settings!.jackpotWin = v);
+                      NotificationService.saveSettings(settings!);
+                    },
+                  ),
+
+                  sectionTitle("Дополнительные"),
+                  MysteryNotificationTile(settings: settings!),
+
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  List<Widget> _buildNotificationSection(List<NotificationConfig> configs) {
-    return configs.map((config) {
-      final isEnabled = _notificationStates[config.prefKey] ?? true;
-      return settingOption(config.title, isEnabled, (val) async {
-        setState(() {
-          _notificationStates[config.prefKey] = val;
-        });
-        await NotificationManager.toggleNotification(config, val);
-      });
-    }).toList();
   }
 }

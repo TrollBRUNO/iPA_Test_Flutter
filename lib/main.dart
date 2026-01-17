@@ -1,4 +1,4 @@
-import 'package:first_app_flutter/config/notification_config.dart';
+//import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/router/router.dart';
 import 'package:first_app_flutter/interceptor/auth_interceptor.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
@@ -7,18 +7,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:workmanager/workmanager.dart';
-import 'package:first_app_flutter/services/background_worker.dart';
+//import 'package:workmanager/workmanager.dart';
+//import 'package:first_app_flutter/services/background_worker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  await NotificationService().initNotification();
+  //await NotificationService().initNotification();
+  //await NotificationService.initFCM();
 
   configureInterceptors();
   // Инициализируем Workmanager
-  if (!kIsWeb) {
+  /* if (!kIsWeb) {
     await Workmanager().initialize(
       callbackDispatcher, // callbackDispatcher из background_worker.dart
       isInDebugMode:
@@ -33,7 +34,7 @@ void main() async {
       initialDelay: const Duration(minutes: 1),
       existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
     );
-  }
+  } */
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

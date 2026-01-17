@@ -10,6 +10,9 @@ import 'package:first_app_flutter/widgets/code_bonus_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/wheel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
+
+final Logger logger = Logger();
 
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});

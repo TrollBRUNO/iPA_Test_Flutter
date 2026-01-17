@@ -1,4 +1,4 @@
-import 'package:first_app_flutter/services/notification_service.dart';
+/* import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MysteryNotificationConfig {
@@ -150,3 +150,4 @@ class MysteryNotificationManager {
     await saveSwitchState(config.prefKey, false);
   }
 }
+ */

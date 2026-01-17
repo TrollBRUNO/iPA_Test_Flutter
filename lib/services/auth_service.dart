@@ -329,6 +329,10 @@ class AuthService {
     return null;
   }
 
+  static Future<void> sendFcmToken(String token) async {
+    await dio.post('$_baseUrl/account/fcm-token', data: {'token': token});
+  }
+
   /* static Future<String?> getBalance(String jwt) async {
     try {
       final dio = Dio();

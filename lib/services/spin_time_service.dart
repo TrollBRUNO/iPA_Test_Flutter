@@ -3,7 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/background_worker.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final Logger logger = Logger();
 
 class AccountTimeService {
   static const String _baseUrl = 'https://magicity.top';

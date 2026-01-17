@@ -1,4 +1,4 @@
-import 'dart:io';
+/* import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -228,5 +228,46 @@ class NotificationService {
   /// Получает список всех запланированных уведомлений
   Future<List<PendingNotificationRequest>> getPendingNotifications() async {
     return await notificationsPlugin.pendingNotificationRequests();
+  }
+}
+ */
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/local_notification.dart';
+import 'package:first_app_flutter/class/notification.dart'; // тут лежит UserNotificationSettings
+
+class NotificationService {
+  static const String _baseUrl = 'https://magicity.top';
+
+  static Future<void> initFCM() async {
+    await LocalNotification.init();
+
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+
+    final token = await fcm.getToken();
+    if (token != null) {
+      await AuthService.sendFcmToken(token);
+    }
+
+    FirebaseMessaging.onMessage.listen((message) {
+      LocalNotification.show(
+        title: message.notification?.title ?? '',
+        body: message.notification?.body ?? '',
+      );
+    });
+  }
+
+  static Future<UserNotificationSettings> loadSettings() async {
+    final res = await AuthService.dio.get('$_baseUrl/account/notifications');
+    return UserNotificationSettings.fromJson(res.data);
+  }
+
+  static Future<void> saveSettings(UserNotificationSettings s) async {
+    await AuthService.dio.put(
+      '$_baseUrl/account/notifications',
+      data: s.toJson(),
+    );
   }
 }

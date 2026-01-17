@@ -16,7 +16,10 @@ import 'package:first_app_flutter/widgets/jackpot_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import '../class/jackpot.dart';
+
+Logger logger = Logger();
 
 class JackpotDetailsScreen extends StatefulWidget {
   final Jackpot jackpot;

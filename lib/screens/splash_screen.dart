@@ -39,8 +39,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    await NotificationService().initNotification();
-    NotificationManager.initializeAllNotifications();
+    //await NotificationService().initNotification();
+    await NotificationService.initFCM();
+
+    //NotificationManager.initializeAllNotifications();
     //await TokenService.loadAccessToken();
     TokenService.accessToken = null;
 
