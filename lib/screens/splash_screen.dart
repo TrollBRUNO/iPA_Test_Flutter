@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
@@ -40,7 +42,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _initializeApp() async {
     //await NotificationService().initNotification();
-    await NotificationService.initFCM();
+
+    // параллельно
+    unawaited(NotificationService.initFCM());
 
     //NotificationManager.initializeAllNotifications();
     //await TokenService.loadAccessToken();

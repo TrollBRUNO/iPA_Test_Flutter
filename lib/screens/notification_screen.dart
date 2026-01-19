@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:first_app_flutter/class/notification.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/mystery_notification_widget.dart';
@@ -207,6 +209,34 @@ class _NotificationState extends State<NotificationPage> {
                   MysteryNotificationTile(settings: settings!),
 
                   const SizedBox(height: 20),
+
+                  SizedBox(
+                    width: AdaptiveSizes.getButtonSupportWidth(),
+                    height: AdaptiveSizes.getButtonSupportHeight(),
+                    child: ElevatedButton(
+                      key: const Key('test_notification_button'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent[200],
+                        foregroundColor: const Color.fromARGB(221, 22, 20, 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: AdaptiveSizes.getButtonSupportTextSize(),
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                      onPressed: () async {
+                        await AuthService.testNotification(
+                          await FirebaseMessaging.instance.getToken() ?? '',
+                        );
+                      },
+
+                      child: Text('Send Test Notification'.tr()),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ],

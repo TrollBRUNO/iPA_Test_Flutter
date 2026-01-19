@@ -9,6 +9,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
 //import 'package:workmanager/workmanager.dart';
 //import 'package:first_app_flutter/services/background_worker.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,8 @@ void main() async {
 
   //await NotificationService().initNotification();
   //await NotificationService.initFCM();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   configureInterceptors();
   // Инициализируем Workmanager

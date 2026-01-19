@@ -235,28 +235,33 @@ class NotificationService {
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/local_notification.dart';
-import 'package:first_app_flutter/class/notification.dart'; // тут лежит UserNotificationSettings
+import 'package:first_app_flutter/class/notification.dart';
+import 'package:first_app_flutter/services/spin_time_service.dart'; // тут лежит UserNotificationSettings
 
 class NotificationService {
   static const String _baseUrl = 'https://magicity.top';
 
   static Future<void> initFCM() async {
-    await LocalNotification.init();
+    try {
+      await LocalNotification.init();
 
-    final fcm = FirebaseMessaging.instance;
-    await fcm.requestPermission();
+      final fcm = FirebaseMessaging.instance;
+      await fcm.requestPermission();
 
-    final token = await fcm.getToken();
-    if (token != null) {
-      await AuthService.sendFcmToken(token);
+      final token = await fcm.getToken();
+      if (token != null) {
+        await AuthService.sendFcmToken(token);
+      }
+
+      FirebaseMessaging.onMessage.listen((message) {
+        LocalNotification.show(
+          title: message.notification?.title ?? '',
+          body: message.notification?.body ?? '',
+        );
+      });
+    } catch (e, s) {
+      logger.w('FCM init failed: $e');
     }
-
-    FirebaseMessaging.onMessage.listen((message) {
-      LocalNotification.show(
-        title: message.notification?.title ?? '',
-        body: message.notification?.body ?? '',
-      );
-    });
   }
 
   static Future<UserNotificationSettings> loadSettings() async {

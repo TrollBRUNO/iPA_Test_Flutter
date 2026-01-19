@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "5704494639",
+    "project_id": "magiccity-6e868",
+    "storage_bucket": "magiccity-6e868.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5704494639:android:cd050af8b448963c8b60da",
+        "android_client_info": {
+          "package_name": "com.example.first_app_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIv_vKTKsCq2llAjXEDIISXUzY5oST5Ng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
