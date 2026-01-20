@@ -110,7 +110,7 @@ class _CodeBonusProfileDialogState extends State<CodeBonusProfileDialogWidget>
                   children: [
                     /// Заголовок
                     Text(
-                      'Покажите этот код кассиру\nдля взятия бонуса',
+                      'show_code'.tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.85),
@@ -151,7 +151,7 @@ class _CodeBonusProfileDialogState extends State<CodeBonusProfileDialogWidget>
 
                     /// Таймер
                     Text(
-                      'Код действителен: ${_format(_remaining)}',
+                      'code_active'.tr() + '${_format(_remaining)}',
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.7),
                         fontSize: 14,
@@ -162,8 +162,7 @@ class _CodeBonusProfileDialogState extends State<CodeBonusProfileDialogWidget>
 
                     /// Дисклеймер
                     Text(
-                      'Чтобы забрать бонус, нужно добавить карту в аккаунт.\n'
-                      'Если у вас нет карты — её можно бесплатно получить у кассира.',
+                      'bonus_instruction'.tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.6),

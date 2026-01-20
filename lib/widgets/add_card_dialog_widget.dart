@@ -119,7 +119,7 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
                       )
                       .toList(),
                   onChanged: (v) => setState(() => _selectedCity = v),
-                  decoration: const InputDecoration(labelText: 'City'),
+                  decoration: InputDecoration(labelText: 'city'.tr()),
                 ),
               ],
             ),

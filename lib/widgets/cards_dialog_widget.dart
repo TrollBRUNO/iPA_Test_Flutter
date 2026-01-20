@@ -117,16 +117,16 @@ class _CardsDialogState extends State<CardsDialogWidget>
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Remove card'),
-        content: const Text('Do you really want to deactivate this card?'),
+        title: Text('remove_card'.tr()),
+        content: Text('confirm_deactivate_card'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Remove'),
+            child: Text('remove'.tr()),
           ),
         ],
       ),
@@ -344,7 +344,7 @@ class _CardsDialogState extends State<CardsDialogWidget>
 
                                         if (cardId == null || city == null) {
                                           Flushbar(
-                                            message: 'Invalid card data',
+                                            message: 'invalid_card_data'.tr(),
                                             duration: const Duration(
                                               seconds: 3,
                                             ),
@@ -362,8 +362,8 @@ class _CardsDialogState extends State<CardsDialogWidget>
                                           if (errorCode ==
                                               'card_already_used') {
                                             Flushbar(
-                                              message:
-                                                  'This card is already linked to another account.',
+                                              message: 'card_already_linked'
+                                                  .tr(),
                                               duration: const Duration(
                                                 seconds: 3,
                                               ),
@@ -375,7 +375,7 @@ class _CardsDialogState extends State<CardsDialogWidget>
                                         await _loadCards();
                                       },
                                       child: Text(
-                                        'Add new card',
+                                        'add_new_card'.tr(),
                                         maxLines: 1,
                                         textAlign: TextAlign.center,
                                       ),

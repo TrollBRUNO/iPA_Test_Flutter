@@ -251,10 +251,10 @@ class _RegistrationState extends State<RegistrationPage> {
                               ),
                               validator: (val) {
                                 if (val == null || val.length < 6) {
-                                  return 'Username too short.';
+                                  return 'to_short_username'.tr();
                                 }
                                 if (serverError == 'username_taken') {
-                                  return 'This username is already taken.';
+                                  return 'username_taken'.tr();
                                 }
                                 return null;
                               },
@@ -299,7 +299,7 @@ class _RegistrationState extends State<RegistrationPage> {
                               ),
                               validator: (val) {
                                 if (val == null || val.length < 2) {
-                                  return 'Real name empty.';
+                                  return 'realname_empty'.tr();
                                 }
                                 return null;
                               },
@@ -345,10 +345,10 @@ class _RegistrationState extends State<RegistrationPage> {
                               ),
                               validator: (val) {
                                 if (val == null || val.length < 6) {
-                                  return 'Password too short.';
+                                  return 'to_short_password'.tr();
                                 }
                                 if (RegExp(r'^\d+$').hasMatch(val)) {
-                                  return 'Password cannot be only numbers.';
+                                  return 'only_number_password'.tr();
                                 }
                                 return null;
                               },
@@ -396,7 +396,7 @@ class _RegistrationState extends State<RegistrationPage> {
                               validator: (val) {
                                 if (val != null &&
                                     val != _passwordController.text) {
-                                  return 'Passwords do not match.';
+                                  return 'passwords_do_not_match'.tr();
                                 }
                                 return null;
                               },
@@ -453,8 +453,7 @@ class _RegistrationState extends State<RegistrationPage> {
 
                                 if (errorCode == 'card_already_used') {
                                   Flushbar(
-                                    message:
-                                        'This card is already linked to another account.',
+                                    message: 'card_already_used'.tr(),
                                     duration: const Duration(seconds: 3),
                                   ).show(context);
                                 }

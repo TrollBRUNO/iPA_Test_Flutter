@@ -749,9 +749,7 @@ class _ProfileState extends State<ProfilePage> {
                     await _loadProfile();
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Пока нельзя получить бонус'),
-                      ),
+                      SnackBar(content: Text('error_take_bonus'.tr())),
                     );
                     setState(() => canShowCreditButton = true);
                   }
@@ -804,15 +802,17 @@ class _ProfileState extends State<ProfilePage> {
                     //setState(() => canShowTakeButton = false);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Пока нельзя получить бонус'),
-                      ),
+                      SnackBar(content: Text('error_take_bonus'.tr())),
                     );
                     setState(() => canShowTakeButton = true);
                   }
                 }
               : null,
-          child: Text('Take Bonus', maxLines: 1, textAlign: TextAlign.center),
+          child: Text(
+            'take_bonus'.tr(),
+            maxLines: 1,
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
@@ -828,7 +828,8 @@ class _ProfileState extends State<ProfilePage> {
         ),
         SizedBox(width: AdaptiveSizes.w(0.01111)),
         Text(
-          'Next chips: ${DateFormat('dd.MM.yyyy HH:mm').format(lastCreditTake!.toLocal())}',
+          'next_chip'.tr() +
+              '${DateFormat('dd.MM.yyyy HH:mm').format(lastCreditTake!.toLocal())}',
           style: GoogleFonts.manrope(
             fontSize: AdaptiveSizes.getFontCreditBalanceSize(),
             fontWeight: FontWeight.w600,
