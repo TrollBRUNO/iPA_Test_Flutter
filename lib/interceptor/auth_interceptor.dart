@@ -4,7 +4,14 @@ import 'package:first_app_flutter/services/token_service.dart';
 
 class AuthInterceptor extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    if (TokenService.accessToken == null) {
+      await TokenService.loadAccessToken();
+    }
+
     if (TokenService.accessToken != null) {
       options.headers['Authorization'] = 'Bearer ${TokenService.accessToken}';
     }

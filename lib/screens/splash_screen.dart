@@ -42,13 +42,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _initializeApp() async {
     //await NotificationService().initNotification();
+    //NotificationManager.initializeAllNotifications();
+    //TokenService.accessToken = null;
 
-    // параллельно
+    // параллельно уведомления
     unawaited(NotificationService.initFCM());
 
-    //NotificationManager.initializeAllNotifications();
-    //await TokenService.loadAccessToken();
-    TokenService.accessToken = null;
+    // Загружаем токен из хранилища
+    await TokenService.loadAccessToken();
 
     // Предварительная проверка возможности спина
     await _preCheckSpinAvailability();
