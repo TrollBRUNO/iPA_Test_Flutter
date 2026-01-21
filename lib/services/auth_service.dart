@@ -26,13 +26,24 @@ class AuthService {
 
   static final Dio dio = Dio();
 
-  static Future<List<String>> loadCities() async {
+  /* static Future<List<String>> loadCities() async {
     final response = await http.get(Uri.parse('$_baseUrl/casino/cities'));
 
     if (response.statusCode != 200) return [];
 
     final List data = jsonDecode(response.body);
     return data.map((e) => e.toString()).toList();
+  } */
+
+  static Future<List<Map<String, String>>> loadCities() async {
+    final response = await http.get(Uri.parse('$_baseUrl/casino/cities'));
+
+    if (response.statusCode != 200) return [];
+
+    final List data = jsonDecode(response.body);
+    return data
+        .map<Map<String, String>>((e) => Map<String, String>.from(e))
+        .toList();
   }
 
   static Future<bool> login(String login, String password) async {

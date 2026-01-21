@@ -158,6 +158,19 @@ class _JackpotState extends State<JackpotPage> {
     startTimer();
   }
 
+  Locale? _lastLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final currentLocale = context.locale;
+    if (_lastLocale != currentLocale) {
+      _lastLocale = currentLocale;
+      loadCasinosFromServer(); // перезагружаем при смене языка
+    }
+  }
+
   Future<void> loadData() async {
     await loadCasinosFromServer();
   }
@@ -168,12 +181,13 @@ class _JackpotState extends State<JackpotPage> {
 
       if (res.statusCode == 200) {
         final data = res.data as List<dynamic>;
+        final locale = context.locale.languageCode;
 
         _jackpots = data.map((c) {
           return Jackpot(
             id: c["_id"] ?? "",
-            city: c["city"] ?? "",
-            address: c["address"] ?? "",
+            city: c["city"][locale] ?? c['city']['en'] ?? "",
+            address: c["address"][locale] ?? c['address']['en'] ?? "",
             imageUrl: c["image_url"],
             isMysteryProgressive: c["mystery_progressive"] == true,
             jackpotUrl: c["jackpot_url"] ?? "",

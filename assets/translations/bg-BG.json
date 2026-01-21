@@ -93,5 +93,16 @@
   "remove_card": "Премахни картата",
   "confirm_deactivate_card": "Наистина ли искате да деактивирате тази карта?",
   "cancel": "Отказ",
-  "remove": "Премахни"
+  "remove": "Премахни",
+  "remained_time_bonus1": "Остало ",
+  "remained_time_bonus2": " да вземеш бонуса",
+  "available_at": "На разположение: ",
+  "wheel": "Колело на късмета",
+  "notification_wheel": "Уведомление за нова възможност да завъртите колело",
+  "notification_remind_bonus": "Напомняне за взимане на бонус",
+  "subscribe_news": "Абонирайте се за новини",
+  "notification_news": "Свежи новини и лотария",
+  "notification_big_win": "Уведомление за големи печалби",
+  "notification_additional": "Допълнителни уведомления", 
+  "mystery_jackpot_thresholds": "Прагове на Mystery Jackpot"
 }

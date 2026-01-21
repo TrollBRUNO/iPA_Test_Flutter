@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/class/notification.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
@@ -195,7 +196,7 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
               children: [
                 Expanded(
                   child: Text(
-                    "Mystery Jackpot Thresholds",
+                    "mystery_jackpot_thresholds".tr(),
                     style: GoogleFonts.raleway(
                       fontSize: AdaptiveSizes.getFontInfoSize(),
                       color: Colors.white,

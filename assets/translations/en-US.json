@@ -93,5 +93,16 @@
   "remove_card": "Remove card",
   "confirm_deactivate_card": "Do you really want to deactivate this card?",
   "cancel": "Cancel",
-  "remove": "Remove"
+  "remove": "Remove",
+  "remained_time_bonus1": "Remained ",
+  "remained_time_bonus2": " to take bonus",
+  "available_at": "Available at: ",
+  "wheel": "Wheel of Fortune",
+  "notification_wheel": "Notification about new opportunity to spin the wheel",
+  "notification_remind_bonus": "Reminder to take bonus",
+  "subscribe_news": "Subscribe to news",
+  "notification_news": "Fresh news and raffles",
+  "notification_big_win": "Notification about big wins",
+  "notification_additional": "Additional notifications", 
+  "mystery_jackpot_thresholds": "Mystery Jackpot Thresholds"
 }

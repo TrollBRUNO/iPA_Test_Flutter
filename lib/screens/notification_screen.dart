@@ -169,9 +169,9 @@ class _NotificationState extends State<NotificationPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  sectionTitle("Колесо удачи"),
+                  sectionTitle("wheel".tr()),
                   switchTile(
-                    title: "Уведомление о новой возможности крутить колесо",
+                    title: "notification_wheel".tr(),
                     value: settings!.wheelReady,
                     onChanged: (v) {
                       setState(() => settings!.wheelReady = v);
@@ -179,7 +179,7 @@ class _NotificationState extends State<NotificationPage> {
                     },
                   ),
                   switchTile(
-                    title: "Напоминание забрать бонус",
+                    title: "notification_remind_bonus".tr(),
                     value: settings!.bonusReminder,
                     onChanged: (v) {
                       setState(() => settings!.bonusReminder = v);
@@ -187,9 +187,9 @@ class _NotificationState extends State<NotificationPage> {
                     },
                   ),
 
-                  sectionTitle("Подписаться на новости"),
+                  sectionTitle("subscribe_news".tr()),
                   switchTile(
-                    title: "Свежие новости и розыгрыши",
+                    title: "notification_news".tr(),
                     value: settings!.newsPost,
                     onChanged: (v) {
                       setState(() => settings!.newsPost = v);
@@ -197,7 +197,7 @@ class _NotificationState extends State<NotificationPage> {
                     },
                   ),
                   switchTile(
-                    title: "Уведомление о больших выигрышах",
+                    title: "notification_big_win".tr(),
                     value: settings!.jackpotWin,
                     onChanged: (v) {
                       setState(() => settings!.jackpotWin = v);
@@ -205,7 +205,7 @@ class _NotificationState extends State<NotificationPage> {
                     },
                   ),
 
-                  sectionTitle("Дополнительные"),
+                  sectionTitle("notification_additional".tr()),
                   MysteryNotificationTile(settings: settings!),
 
                   const SizedBox(height: 20),

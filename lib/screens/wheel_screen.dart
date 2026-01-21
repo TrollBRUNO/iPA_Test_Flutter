@@ -43,6 +43,8 @@ class _WheelState extends State<WheelPage> {
 
   Timer? _balanceTimer;
 
+  String? bonusBalanceCount = "0";
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +71,7 @@ class _WheelState extends State<WheelPage> {
 
       setState(() {
         cooldownUntil = res.nextSpin;
+        bonusBalanceCount = UserSession.bonusBalance;
       });
     } catch (e) {
       UserSession.canShowButton.value = false;
@@ -182,12 +185,18 @@ class _WheelState extends State<WheelPage> {
 
                         if (cooldownUntil != null) ...[
                           SizedBox(height: AdaptiveSizes.h(0.02)),
-                          _buildCooldownTimer(),
+                          _buildCooldownTimer(context),
                         ],
 
                         ValueListenableBuilder<bool>(
                           valueListenable: UserSession.canShowButton,
                           builder: (context, canShow, _) {
+                            final show = canShow && bonusBalanceCount != "0";
+
+                            if (!show) {
+                              return SizedBox(height: AdaptiveSizes.h(0.08));
+                            }
+
                             if (!canShow) {
                               return SizedBox(
                                 height: context.locale.languageCode == 'bg'
@@ -263,19 +272,23 @@ class _WheelState extends State<WheelPage> {
               showCodeBonusDialog();
               UserSession.canShowButton.value = false;
             } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Пока нельзя получить бонус')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('error_take_bonus'.tr())));
             }
           },
-          child: Text('Take Bonus', maxLines: 1, textAlign: TextAlign.center),
+          child: Text(
+            'take_bonus'.tr(),
+            maxLines: 1,
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
   }
 }
 
-Widget _buildCooldownTimer() {
+Widget _buildCooldownTimer(BuildContext context) {
   final now = DateTime.now();
   final diff = cooldownUntil!.difference(now);
 
@@ -289,12 +302,15 @@ Widget _buildCooldownTimer() {
       '${seconds.toString().padLeft(2, '0')}';
 
   // Форматируем дату
-  final dateStr = DateFormat('dd MMM yyyy, HH:mm').format(cooldownUntil!);
+  final dateStr = DateFormat(
+    'dd MMM yyyy, HH:mm',
+    context.locale.languageCode,
+  ).format(cooldownUntil!);
 
   return Column(
     children: [
       Text(
-        'Осталось $timeLeft чтобы забрать бонус ',
+        'remained_time_bonus1'.tr() + timeLeft + 'remained_time_bonus2'.tr(),
         style: TextStyle(
           color: Colors.white70,
           fontSize: AdaptiveSizes.getSupportWelcomeTextSize(),
@@ -303,7 +319,7 @@ Widget _buildCooldownTimer() {
       ),
       const SizedBox(height: 4),
       Text(
-        'Будет доступно: $dateStr',
+        'available_at'.tr() + dateStr,
         style: TextStyle(
           color: Colors.white38,
           fontSize: AdaptiveSizes.getSupportWelcomeTextSize() * 0.9,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:first_app_flutter/screens/admin/drag_drop_uploader.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
@@ -54,93 +55,177 @@ class _EditGalleryState extends State<EditGalleryPage> {
   }
 
   Future<void> editOrCreateGallery({Map? item}) async {
-    final descController = TextEditingController(
-      text: item?["description"] ?? "",
+    String? uploadedImageUrl;
+
+    // --- Контроллеры для мультиязычных полей ---
+    final descEn = TextEditingController(
+      text: item?["description"]?["en"] ?? "",
     );
+    final descRu = TextEditingController(
+      text: item?["description"]?["ru"] ?? "",
+    );
+    final descBg = TextEditingController(
+      text: item?["description"]?["bg"] ?? "",
+    );
+
     final imgController = TextEditingController(
       text: item?["image_url"] != null
           ? item!["image_url"].toString().split('/').last
           : "",
     );
 
+    int tabIndex = 0;
+
     await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF1E1E1E),
-          title: Text(
-            item == null ? "Add Gallery" : "Edit Gallery",
-            style: const TextStyle(color: Colors.white),
-          ),
-          content: SizedBox(
-            width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: descController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: "Description",
-                    labelStyle: TextStyle(color: Colors.white70),
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF1E1E1E),
+              title: Text(
+                item == null ? "Add Gallery" : "Edit Gallery",
+                style: const TextStyle(color: Colors.white),
+              ),
+              content: SizedBox(
+                width: 400,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // --- Переключатель языков ---
+                    DefaultTabController(
+                      length: 3,
+                      initialIndex: tabIndex,
+                      child: Column(
+                        children: [
+                          TabBar(
+                            onTap: (i) => setStateDialog(() => tabIndex = i),
+                            indicatorColor: Colors.orangeAccent,
+                            labelColor: Colors.orangeAccent,
+                            unselectedLabelColor: Colors.white70,
+                            tabs: const [
+                              Tab(text: "EN"),
+                              Tab(text: "RU"),
+                              Tab(text: "BG"),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 260,
+                            child: TabBarView(
+                              children: [
+                                _langEditor(descEn),
+                                _langEditor(descRu),
+                                _langEditor(descBg),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    DragDropUploader(
+                      onUploaded: (url) {
+                        uploadedImageUrl = url;
+                        imgController.text = url.split('/').last;
+                        imgController.selection = TextSelection.collapsed(
+                          offset: imgController.text.length,
+                        );
+                      },
+                    ),
+
+                    if ((uploadedImageUrl ?? imgController.text).isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Image.network(
+                          "$_baseUrl/uploads/${uploadedImageUrl ?? imgController.text}",
+                          height: 120,
+                          errorBuilder: (_, __, ___) => const Text(
+                            "Файл не найден",
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
+                        ),
+                      ),
+
+                    SizedBox(height: 20),
+
+                    TextField(
+                      controller: imgController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: "Image filename",
+                        labelStyle: TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-                TextField(
-                  controller: imgController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: "Image filename",
-                    labelStyle: TextStyle(color: Colors.white70),
-                  ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final body = {
+                      "description": {
+                        "en": descEn.text,
+                        "ru": descRu.text,
+                        "bg": descBg.text,
+                      },
+                      "image_url": uploadedImageUrl ?? imgController.text,
+                    };
+
+                    try {
+                      if (item == null) {
+                        await AuthService.dio.post(
+                          "$_baseUrl/gallery/json",
+                          data: jsonEncode(body),
+                          options: Options(
+                            headers: {"Content-Type": "application/json"},
+                          ),
+                        );
+                      } else {
+                        await AuthService.dio.put(
+                          "$_baseUrl/gallery/${item["_id"]}",
+                          data: jsonEncode(body),
+                          options: Options(
+                            headers: {"Content-Type": "application/json"},
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      print("Save error: $e");
+                    }
+
+                    Navigator.pop(context);
+                    await loadGallery();
+                  },
+                  child: const Text("Save"),
                 ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final body = {
-                  "description": descController.text,
-                  "image_url": imgController.text,
-                };
-
-                try {
-                  if (item == null) {
-                    await AuthService.dio.post(
-                      "$_baseUrl/gallery/json",
-                      data: jsonEncode(body),
-                      options: Options(
-                        headers: {"Content-Type": "application/json"},
-                      ),
-                    );
-                  } else {
-                    await AuthService.dio.put(
-                      "$_baseUrl/gallery/${item["_id"]}",
-                      data: jsonEncode(body),
-                      options: Options(
-                        headers: {"Content-Type": "application/json"},
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  print("Save error: $e");
-                }
-
-                Navigator.pop(context);
-                await loadGallery();
-              },
-              child: const Text("Save"),
-            ),
-          ],
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _langEditor(TextEditingController desc) {
+    return Column(
+      children: [
+        TextField(
+          controller: desc,
+          maxLines: 5,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            labelText: "Description",
+            labelStyle: TextStyle(color: Colors.white70),
+          ),
+        ),
+      ],
     );
   }
 
@@ -175,7 +260,7 @@ class _EditGalleryState extends State<EditGalleryPage> {
                 dataTextStyle: const TextStyle(color: Colors.white70),
                 columns: const [
                   DataColumn(label: Text("Image")),
-                  DataColumn(label: Text("Description")),
+                  DataColumn(label: Text("Description (EN)")),
                   DataColumn(label: Text("Actions")),
                 ],
                 rows: [
@@ -198,7 +283,7 @@ class _EditGalleryState extends State<EditGalleryPage> {
                               : const Icon(Icons.image, color: Colors.white),
                         ),
 
-                        DataCell(Text(item["description"] ?? "")),
+                        DataCell(Text(item["description"]?["en"] ?? "")),
 
                         DataCell(
                           Row(

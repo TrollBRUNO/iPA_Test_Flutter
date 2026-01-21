@@ -364,7 +364,8 @@ class _ProfileState extends State<ProfilePage> {
 
                                         SizedBox(width: AdaptiveSizes.w(0.016)),
 
-                                        if (canShowTakeButton)
+                                        if (canShowTakeButton &&
+                                            bonusBalanceCount != "0")
                                           _buildTakeButton(),
                                       ],
                                     ),

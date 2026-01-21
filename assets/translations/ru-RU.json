@@ -93,5 +93,16 @@
   "remove_card": "Удалить карту",
   "confirm_deactivate_card": "Вы действительно хотите деактивировать эту карту?",
   "cancel": "Отмена",
-  "remove": "Удалить"
+  "remove": "Удалить",
+  "remained_time_bonus1": "Осталось ",
+  "remained_time_bonus2": " чтобы забрать бонус",
+  "available_at": "Будет доступно: ",
+  "wheel": "Колесо удачи",
+  "notification_wheel": "Уведомление о новой возможности крутить колесо",
+  "notification_remind_bonus": "Напоминание забрать бонус",
+  "subscribe_news": "Подписаться на новости",
+  "notification_news": "Свежие новости и розыгрыши",
+  "notification_big_win": "Уведомление о больших выигрышах",
+  "notification_additional": "Дополнительные уведомления", 
+  "mystery_jackpot_thresholds": "Пороги Mystery Jackpot"
 }

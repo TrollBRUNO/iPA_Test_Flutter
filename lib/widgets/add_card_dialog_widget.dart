@@ -22,8 +22,10 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
   late TextEditingController _cardController;
   String? _cardError;
   bool _loading = false;
-  List<String> _cities = [];
-  String? _selectedCity;
+
+  // Мультиязычные города
+  List<Map<String, String>> _cities = [];
+  Map<String, String>? _selectedCity;
 
   void showError(String message) {
     Flushbar(
@@ -41,6 +43,7 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
 
   Future<void> _loadCities() async {
     final cities = await AuthService.loadCities();
+
     setState(() {
       _cities = cities;
       _selectedCity = cities.isNotEmpty ? cities.first : null;
@@ -53,11 +56,10 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
 
   Future<void> _submit() async {
     final cardId = _cardController.text.trim();
+    final locale = context.locale.languageCode;
 
     if (!_isValidLocal(cardId)) {
-      setState(() {
-        _cardError = 'wrong_card_format'.tr();
-      });
+      setState(() => _cardError = 'wrong_card_format'.tr());
       showError('wrong_card_format'.tr());
       return;
     }
@@ -67,14 +69,15 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
     setState(() => _loading = false);
 
     if (error == 'card_already_used') {
-      setState(() {
-        _cardError = 'card_already_used'.tr();
-      });
+      setState(() => _cardError = 'card_already_used'.tr());
       showError('card_already_used'.tr());
       return;
     }
 
-    Navigator.pop(context, {'card_id': cardId, 'city': _selectedCity!});
+    Navigator.pop(context, {
+      'card_id': cardId,
+      'city': _selectedCity![locale] ?? _selectedCity!["en"]!,
+    });
   }
 
   @override
@@ -85,6 +88,8 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = context.locale.languageCode;
+
     return AlertDialog(
       title: const Text('have_card').tr(),
       content: _cities.isEmpty
@@ -110,14 +115,15 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
                   },
                 ),
                 const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
+
+                DropdownButtonFormField<Map<String, String>>(
                   value: _selectedCity,
-                  items: _cities
-                      .map(
-                        (city) =>
-                            DropdownMenuItem(value: city, child: Text(city)),
-                      )
-                      .toList(),
+                  items: _cities.map((city) {
+                    return DropdownMenuItem(
+                      value: city,
+                      child: Text(city[locale] ?? city["en"]!),
+                    );
+                  }).toList(),
                   onChanged: (v) => setState(() => _selectedCity = v),
                   decoration: InputDecoration(labelText: 'city'.tr()),
                 ),

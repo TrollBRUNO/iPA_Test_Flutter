@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:first_app_flutter/screens/admin/drag_drop_uploader.dart';
 import 'package:first_app_flutter/screens/admin/jackpot_viewer_screen.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
@@ -55,10 +56,23 @@ class _EditCasinoState extends State<EditCasinoPage> {
   }
 
   Future<void> editOrCreateCasino({Map? item}) async {
-    final cityController = TextEditingController(text: item?["city"] ?? "");
-    final addressController = TextEditingController(
-      text: item?["address"] ?? "",
+    String? uploadedImageUrl;
+
+    // --- Контроллеры для мультиязычных полей ---
+    final cityEn = TextEditingController(text: item?["city"]?["en"] ?? "");
+    final cityRu = TextEditingController(text: item?["city"]?["ru"] ?? "");
+    final cityBg = TextEditingController(text: item?["city"]?["bg"] ?? "");
+
+    final addressEn = TextEditingController(
+      text: item?["address"]?["en"] ?? "",
     );
+    final addressRu = TextEditingController(
+      text: item?["address"]?["ru"] ?? "",
+    );
+    final addressBg = TextEditingController(
+      text: item?["address"]?["bg"] ?? "",
+    );
+
     final jackpotController = TextEditingController(
       text: item?["jackpot_url"] ?? "",
     );
@@ -75,132 +89,213 @@ class _EditCasinoState extends State<EditCasinoPage> {
           : "",
     );
 
+    int tabIndex = 0;
+
     await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF1E1E1E),
-          title: Text(
-            item == null ? "Add Casino" : "Edit Casino",
-            style: const TextStyle(color: Colors.white),
-          ),
-          content: SizedBox(
-            width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: cityController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: "City",
-                    labelStyle: TextStyle(color: Colors.white70),
-                  ),
-                ),
-                TextField(
-                  controller: addressController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: "Address",
-                    labelStyle: TextStyle(color: Colors.white70),
-                  ),
-                ),
-                TextField(
-                  controller: imgController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: "Image filename",
-                    labelStyle: TextStyle(color: Colors.white70),
-                  ),
-                ),
-                TextField(
-                  controller: jackpotController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: "Jackpot URL",
-                    labelStyle: TextStyle(color: Colors.white70),
-                  ),
-                ),
-                Row(
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF1E1E1E),
+              title: Text(
+                item == null ? "Add Casino" : "Edit Casino",
+                style: const TextStyle(color: Colors.white),
+              ),
+              content: SizedBox(
+                width: 400,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      "Mystery Progressive",
-                      style: TextStyle(color: Colors.white70),
+                    // --- Переключатель языков ---
+                    DefaultTabController(
+                      length: 3,
+                      initialIndex: tabIndex,
+                      child: Column(
+                        children: [
+                          TabBar(
+                            onTap: (i) => setStateDialog(() => tabIndex = i),
+                            indicatorColor: Colors.orangeAccent,
+                            labelColor: Colors.orangeAccent,
+                            unselectedLabelColor: Colors.white70,
+                            tabs: const [
+                              Tab(text: "EN"),
+                              Tab(text: "RU"),
+                              Tab(text: "BG"),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 260,
+                            child: TabBarView(
+                              children: [
+                                _langEditor(cityEn, addressEn),
+                                _langEditor(cityRu, addressRu),
+                                _langEditor(cityBg, addressBg),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Checkbox(
-                      value: mysteryProgressive,
-                      onChanged: (val) {
-                        setState(() {
-                          mysteryProgressive = val ?? false;
-                        });
+
+                    DragDropUploader(
+                      onUploaded: (url) {
+                        uploadedImageUrl = url;
+                        imgController.text = url.split('/').last;
+                        imgController.selection = TextSelection.collapsed(
+                          offset: imgController.text.length,
+                        );
                       },
+                    ),
+
+                    if ((uploadedImageUrl ?? imgController.text).isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Image.network(
+                          "$_baseUrl/uploads/${uploadedImageUrl ?? imgController.text}",
+                          height: 120,
+                          errorBuilder: (_, __, ___) => const Text(
+                            "Файл не найден",
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
+                        ),
+                      ),
+
+                    SizedBox(height: 20),
+
+                    TextField(
+                      controller: imgController,
+                      onChanged: (_) => setStateDialog(() {}),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: "Image filename",
+                        labelStyle: TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                    TextField(
+                      controller: jackpotController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: "Jackpot URL",
+                        labelStyle: TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Mystery Progressive",
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                        Checkbox(
+                          value: mysteryProgressive,
+                          onChanged: (val) {
+                            setState(() {
+                              mysteryProgressive = val ?? false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    TextField(
+                      controller: uuIdListController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: "Camera IDs",
+                        labelStyle: TextStyle(color: Colors.white70),
+                      ),
                     ),
                   ],
                 ),
-                TextField(
-                  controller: uuIdListController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: "Camera IDs",
-                    labelStyle: TextStyle(color: Colors.white70),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final body = {
+                      "city": {
+                        "en": cityEn.text,
+                        "ru": cityRu.text,
+                        "bg": cityBg.text,
+                      },
+                      "address": {
+                        "en": addressEn.text,
+                        "ru": addressRu.text,
+                        "bg": addressBg.text,
+                      },
+                      "mystery_progressive": mysteryProgressive,
+                      "jackpot_url": jackpotController.text,
+                      "image_url": uploadedImageUrl ?? imgController.text,
+                      "uu_id_list": uuIdListController.text
+                          .split(",")
+                          .map((e) => e.trim())
+                          .where((e) => e.isNotEmpty)
+                          .toList(),
+                    };
+
+                    try {
+                      if (item == null) {
+                        await AuthService.dio.post(
+                          "$_baseUrl/casino/json",
+                          data: jsonEncode(body),
+                          options: Options(
+                            headers: {"Content-Type": "application/json"},
+                          ),
+                        );
+                      } else {
+                        await AuthService.dio.put(
+                          "$_baseUrl/casino/${item["_id"]}",
+                          data: jsonEncode(body),
+                          options: Options(
+                            headers: {"Content-Type": "application/json"},
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      print("Save error: $e");
+                    }
+
+                    Navigator.pop(context);
+                    await loadCasino();
+                  },
+                  child: const Text("Save"),
+                ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final body = {
-                  "city": cityController.text,
-                  "address": addressController.text,
-                  "mystery_progressive": mysteryProgressive,
-                  "jackpot_url": jackpotController.text,
-                  "image_url": imgController.text,
-                  "uu_id_list": uuIdListController.text
-                      .split(",")
-                      .map((e) => e.trim())
-                      .where((e) => e.isNotEmpty)
-                      .toList(),
-                };
-
-                try {
-                  if (item == null) {
-                    await AuthService.dio.post(
-                      "$_baseUrl/casino/json",
-                      data: jsonEncode(body),
-                      options: Options(
-                        headers: {"Content-Type": "application/json"},
-                      ),
-                    );
-                  } else {
-                    await AuthService.dio.put(
-                      "$_baseUrl/casino/${item["_id"]}",
-                      data: jsonEncode(body),
-                      options: Options(
-                        headers: {"Content-Type": "application/json"},
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  print("Save error: $e");
-                }
-
-                Navigator.pop(context);
-                await loadCasino();
-              },
-              child: const Text("Save"),
-            ),
-          ],
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _langEditor(
+    TextEditingController city,
+    TextEditingController address,
+  ) {
+    return Column(
+      children: [
+        TextField(
+          controller: city,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            labelText: "City",
+            labelStyle: TextStyle(color: Colors.white70),
+          ),
+        ),
+        TextField(
+          controller: address,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            labelText: "Address",
+            labelStyle: TextStyle(color: Colors.white70),
+          ),
+        ),
+      ],
     );
   }
 
@@ -235,8 +330,8 @@ class _EditCasinoState extends State<EditCasinoPage> {
                 dataTextStyle: const TextStyle(color: Colors.white70),
                 columns: const [
                   DataColumn(label: Text("Image")),
-                  DataColumn(label: Text("City")),
-                  DataColumn(label: Text("Address")),
+                  DataColumn(label: Text("City (EN)")),
+                  DataColumn(label: Text("Address (EN)")),
                   DataColumn(label: Text("Jackpot URL")),
                   DataColumn(label: Text("Mystery Progressive")),
                   DataColumn(label: Text("Camera ID's")),
@@ -260,8 +355,8 @@ class _EditCasinoState extends State<EditCasinoPage> {
                                 )
                               : const Icon(Icons.image, color: Colors.white),
                         ),
-                        DataCell(Text(item["city"] ?? "")),
-                        DataCell(Text(item["address"] ?? "")),
+                        DataCell(Text(item["city"]?["en"] ?? "")),
+                        DataCell(Text(item["address"]?["en"] ?? "")),
                         DataCell(Text(item["jackpot_url"] ?? "")),
                         DataCell(
                           Text(

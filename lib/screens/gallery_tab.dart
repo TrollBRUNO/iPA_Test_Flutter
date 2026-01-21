@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:first_app_flutter/class/gallery.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
@@ -42,7 +43,19 @@ class _GalleryTabState extends State<GalleryTab> {
   @override
   void initState() {
     super.initState();
-    loadGallery();
+  }
+
+  Locale? _lastLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final currentLocale = context.locale;
+    if (_lastLocale != currentLocale) {
+      _lastLocale = currentLocale;
+      loadGallery(); // перезагружаем при смене языка
+    }
   }
 
   Future<void> loadGallery() async {
@@ -51,11 +64,13 @@ class _GalleryTabState extends State<GalleryTab> {
       if (res.statusCode == 200) {
         //final decoded = jsonDecode(res.data);
         final data = res.data as List<dynamic>;
+        final locale = context.locale.languageCode;
 
         gallery = data
             .map<Gallery>(
               (item) => Gallery(
-                description: item['description'],
+                description:
+                    item['description'][locale] ?? item['description']['en'],
                 imageUrl: item['image_url'],
                 publicationDate: DateTime.parse(item['create_date']),
               ),
