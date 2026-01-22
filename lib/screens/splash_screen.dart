@@ -41,62 +41,67 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    //await NotificationService().initNotification();
-    //NotificationManager.initializeAllNotifications();
-    //TokenService.accessToken = null;
+    logger.i("🔵 Splash: запуск приложения");
 
-    // параллельно уведомления
+    // 1. Инициализация FCM
     unawaited(NotificationService.initFCM());
+    logger.i("🔵 FCM инициализирован");
 
-    // Загружаем токен из хранилища
-    await TokenService.loadAccessToken();
+    // 2. Загружаем access token
+    final loadedAccess = await TokenService.loadAccessToken();
+    logger.i("🔵 Загруженный accessToken: $loadedAccess");
 
-    // Предварительная проверка возможности спина
-    await _preCheckSpinAvailability();
-
-    await Future.delayed(const Duration(seconds: 1)); // для красоты
-
-    // Проверяем токены
+    // 3. Загружаем refresh token
     final refreshToken = await TokenService.getRefreshToken();
+    logger.i("🔵 Загруженный refreshToken: $refreshToken");
 
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // 4. Если refreshToken есть — пробуем обновить
     if (refreshToken != null) {
-      // Пробуем обновить access_token
+      logger.i("🟡 Refresh token найден. Пробуем обновить access token...");
+
       final success = await AuthService.refreshToken();
+
+      logger.i("🟡 Результат refreshToken(): $success");
+
       if (success) {
-        await AuthService.loadProfile();
+        logger.i("🟢 Refresh успешен! Загружаем профиль...");
 
-        logger.i(
-          'UserSession loaded in SplashScreen init: '
-          'username=${UserSession.username}, '
-          'balance=${UserSession.balance}, '
-          'bonusBalance=${UserSession.bonusBalance}, '
-          'fakeBalance=${UserSession.fakeBalance}, '
-          'lastCreditTake=${UserSession.lastCreditTake}, '
-          'imageUrl=${UserSession.imageUrl}',
-        );
+        try {
+          // 5. Проверка спина
+          try {
+            final canSpin = await AccountTimeService.canSpin();
+            logger.i("🔵 Проверка спина: $canSpin");
+          } catch (e) {
+            logger.w("⚠️ Ошибка при проверке спина: $e");
+          }
 
-        context.go('/wheel');
-        return;
+          await AuthService.loadProfile();
+          logger.i(
+            "🟢 Профиль загружен: "
+            "username=${UserSession.username}, "
+            "balance=${UserSession.balance}, "
+            "bonus=${UserSession.bonusBalance}, "
+            "fake=${UserSession.fakeBalance}",
+          );
+
+          context.go('/wheel');
+          return;
+        } catch (e, st) {
+          logger.e("🔴 Ошибка загрузки профиля: $e\n$st");
+        }
       } else {
-        // Токен просрочен или невалиден — очистка
+        logger.w("🔴 Refresh не удался. Чистим токены...");
         await TokenService.clearTokens();
       }
+    } else {
+      logger.w("🔴 Refresh token отсутствует!");
     }
 
-    // Если токена нет или не удалось обновить
+    // 6. Переход на авторизацию
+    logger.w("🔴 Переходим на экран авторизации");
     context.go('/authorization');
-  }
-
-  Future<void> _preCheckSpinAvailability() async {
-    try {
-      // предварительно проверяем и сохраняем флаг возможности спина
-      final canSpin = await AccountTimeService.canSpin();
-
-      Logger().i('Can spin today: $canSpin');
-    } catch (e) {
-      Logger().w('Error during pre-check spin availability: $e');
-      // в случае ошибки разрешаем спин по умолчанию
-    }
   }
 
   @override

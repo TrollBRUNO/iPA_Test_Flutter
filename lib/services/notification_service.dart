@@ -232,6 +232,7 @@ class NotificationService {
 }
  */
 
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/services/local_notification.dart';
@@ -270,9 +271,16 @@ class NotificationService {
   }
 
   static Future<void> saveSettings(UserNotificationSettings s) async {
-    await AuthService.dio.put(
-      '$_baseUrl/account/notifications',
-      data: s.toJson(),
-    );
+    try {
+      final res = await AuthService.dio.put(
+        '$_baseUrl/account/notifications',
+        data: s.toJson(),
+      );
+      logger.i('Notification settings saved: ${res.statusCode} ${res.data}');
+    } on DioException catch (e, st) {
+      logger.w(
+        'Save notification settings failed: ${e.response?.statusCode} ${e.response?.data}\n$st',
+      );
+    }
   }
 }

@@ -25,7 +25,7 @@ class UserNotificationSettings {
       wheelReady: json['wheel_ready'] ?? true,
       bonusReminder: json['bonus_reminder'] ?? true,
       newsPost: json['news_post'] ?? true,
-      jackpotWin: json['jackpot_win'] ?? true,
+      jackpotWin: json['jackpot_win_post'] ?? true,
 
       mini: thresholds['mini'] ?? 100,
       middle: thresholds['middle'] ?? 500,
@@ -38,7 +38,7 @@ class UserNotificationSettings {
       'wheel_ready': wheelReady,
       'bonus_reminder': bonusReminder,
       'news_post': newsPost,
-      'jackpot_win': jackpotWin,
+      'jackpot_win_post': jackpotWin,
       'jackpot_thresholds': {'mini': mini, 'middle': middle, 'mega': mega},
     };
   }

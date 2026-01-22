@@ -74,21 +74,39 @@ class AuthService {
 
   static Future<bool> refreshToken() async {
     final refreshToken = await TokenService.getRefreshToken();
+    logger.i("🔵 [refreshToken] refreshToken: $refreshToken");
+
     if (refreshToken == null) return false;
 
     try {
-      final response = await dio.post(
-        '$_baseUrl/auth/refresh',
+      // ❗ Создаём отдельный Dio без интерсепторов
+      final dioNoInterceptor = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
+      );
+
+      logger.i("🟡 [refreshToken] Отправляем запрос...");
+
+      final response = await dioNoInterceptor.post(
+        'https://magicity.top/auth/refresh',
         data: {'refresh_token': refreshToken},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      final data = response.data;
-      await TokenService.saveAccessToken(data['access_token']);
-      await TokenService.saveRefreshToken(data['refresh_token']);
+      logger.i("🟢 [refreshToken] Ответ сервера: ${response.data}");
+
+      await TokenService.saveAccessToken(response.data['access_token']);
+      await TokenService.saveRefreshToken(response.data['refresh_token']);
+
       return true;
-    } catch (e) {
-      await TokenService.clearTokens();
+    } on DioException catch (e, st) {
+      logger.e("🔴 [refreshToken] Dio error: ${e.message}");
+      logger.e("🔴 Response: ${e.response?.data}");
+      return false;
+    } catch (e, st) {
+      logger.e("🔴 [refreshToken] Unknown error: $e");
       return false;
     }
   }
