@@ -1,5 +1,6 @@
 //import 'dart:developer';
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -7,6 +8,7 @@ import 'package:first_app_flutter/class/bonus_code.dart';
 import 'package:first_app_flutter/class/cards.dart';
 import 'package:first_app_flutter/class/statistics.dart';
 import 'package:first_app_flutter/class/user_session.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/services/token_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
@@ -60,6 +62,9 @@ class AuthService {
         final data = response.data;
         await TokenService.saveAccessToken(data['access_token']);
         await TokenService.saveRefreshToken(data['refresh_token']);
+
+        unawaited(NotificationService.initFCM());
+
         return true;
       } else {
         logger.w('Auth error');

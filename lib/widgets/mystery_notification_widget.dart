@@ -210,8 +210,8 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
             sliderRow(
               label: "Mini:",
               value: mini,
-              min: 30,
-              max: 300,
+              min: 50,
+              max: 100,
               labelColor: Colors.cyanAccent,
               shadowColor: const Color.fromARGB(
                 255,
@@ -226,8 +226,8 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
             sliderRow(
               label: "Middle:",
               value: middle,
-              min: 500,
-              max: 1000,
+              min: 300,
+              max: 500,
               labelColor: Colors.blueAccent,
               shadowColor: const Color.fromARGB(
                 255,
@@ -242,8 +242,8 @@ class _MysteryNotificationTileState extends State<MysteryNotificationTile> {
             sliderRow(
               label: "Mega:",
               value: mega,
-              min: 3000,
-              max: 10000,
+              min: 750,
+              max: 1250,
               labelColor: Colors.deepPurpleAccent,
               shadowColor: const Color.fromARGB(
                 255,
