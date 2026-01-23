@@ -19,23 +19,22 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
-      # 🔥 ВАЖНО: Полная очистка iOS перед сборкой
-      - name: Clean iOS build artifacts
+      - name: Clean Flutter
+        run: flutter clean
+
+      - name: Get Flutter packages
+        run: flutter pub get
+
+      - name: Clean iOS Pods
         run: |
-          flutter clean
           cd ios
           rm -rf Pods Podfile.lock
           pod install
           cd ..
 
-      # (опционально) обновление репо CocoaPods
-      - name: Update pod repo
-        run: pod repo update
-        working-directory: ios
-
-      # 🔥 Сборка iOS без подписи
       - name: Build iOS release
         run: flutter build ios --release --no-codesign
+
 
       # Создание Payload
       - name: Create Payload folder
