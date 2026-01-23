@@ -194,6 +194,13 @@ class AdaptiveSizes {
     return screenHeight * 0.07813;
   }
 
+  static double getAllScreenContainerHeight() {
+    if (screenWidth > 600) return screenHeight * 0.04;
+    if (screenWidth > 400) return screenHeight * 0.0625;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.058;
+    return screenHeight * 0.0625;
+  }
+
   static double getJackpotWidgetHeight() {
     if (screenWidth > 600) return screenHeight * 0.19872;
     if (screenWidth > 400) return screenHeight * 0.2782;

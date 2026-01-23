@@ -45,9 +45,8 @@ class _NewsState extends State<NewsPage> {
                 //floating: true, // Allow the app bar to float
                 //snap: false,
                 expandedHeight: AdaptiveSizes.getNewsTabHeight(),
-                toolbarHeight: AdaptiveSizes.h(
-                  0.02564,
-                ), // Provide some minimum height to prevent overflow
+                // Provide some minimum height to prevent overflow
+                toolbarHeight: AdaptiveSizes.h(0.02564),
                 elevation: 0,
                 backgroundColor: Colors.transparent,
                 flexibleSpace: LayoutBuilder(
@@ -145,9 +144,10 @@ class _NewsState extends State<NewsPage> {
                   },
                 ),
                 bottom: PreferredSize(
+                  // Reduced height
                   preferredSize: Size.fromHeight(
-                    AdaptiveSizes.h(0.03333),
-                  ), // Reduced height
+                    AdaptiveSizes.getAllScreenContainerHeight(),
+                  ),
                   /* preferredSize: Size.fromHeight(
                     AdaptiveSizes.getNewsTabSecondHeight(),
                   ),  */
@@ -188,13 +188,9 @@ class _NewsState extends State<NewsPage> {
               ),
             ];
           },
-          body: TabBarView(
-            children: [
-              // Каждая вкладка — свой скроллируемый контент
-              // Например, NewsTab может быть CustomScrollView с SliverList и т.д.
-              NewsTab(),
-              GalleryTab(),
-            ],
+          body: Container(
+            height: double.infinity,
+            child: TabBarView(children: [NewsTab(), GalleryTab()]),
           ),
         ),
       ),

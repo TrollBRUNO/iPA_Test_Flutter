@@ -357,7 +357,11 @@ class _ProfileState extends State<ProfilePage> {
                                           '${'bonus_balance'.tr()} $bonusBalanceCount',
                                           style: GoogleFonts.manrope(
                                             fontSize:
-                                                AdaptiveSizes.getFontBalanceSize(),
+                                                context.locale.languageCode ==
+                                                    'ru'
+                                                ? AdaptiveSizes.getFontBalanceSize() -
+                                                      2
+                                                : AdaptiveSizes.getFontBalanceSize(),
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),

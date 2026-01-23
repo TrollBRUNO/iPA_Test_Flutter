@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 10), () {
+    Future.delayed(const Duration(seconds: 20), () {
       if (mounted) {
         context.go('/authorization');
       }

@@ -167,14 +167,33 @@ class _WheelState extends State<WheelPage> {
                           ),
                         ),
 
-                        SizedBox(
-                          height: context.locale.languageCode == 'bg'
-                              ? AdaptiveSizes.h(0.09) -
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
-                              : context.locale.languageCode == 'ru'
-                              ? AdaptiveSizes.h(0.09) -
-                                    AdaptiveSizes.getWheelSizedBoxlanguageCode()
-                              : AdaptiveSizes.h(0.09),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: UserSession.canShowButton,
+                          builder: (context, canShow, _) {
+                            final show = canShow && bonusBalanceCount != "0";
+
+                            if (!show) {
+                              return SizedBox(
+                                height: context.locale.languageCode == 'bg'
+                                    ? AdaptiveSizes.h(0.09) -
+                                          AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                                    : context.locale.languageCode == 'ru'
+                                    ? AdaptiveSizes.h(0.09) -
+                                          AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                                    : AdaptiveSizes.h(0.09),
+                              );
+                            }
+
+                            return SizedBox(
+                              height: context.locale.languageCode == 'bg'
+                                  ? AdaptiveSizes.h(0.04) -
+                                        AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                                  : context.locale.languageCode == 'ru'
+                                  ? AdaptiveSizes.h(0.04) -
+                                        AdaptiveSizes.getWheelSizedBoxlanguageCode()
+                                  : AdaptiveSizes.h(0.04),
+                            );
+                          },
                         ),
 
                         SizedBox(
@@ -214,15 +233,16 @@ class _WheelState extends State<WheelPage> {
                               children: [
                                 SizedBox(
                                   height: context.locale.languageCode == 'bg'
-                                      ? AdaptiveSizes.h(0.039) +
+                                      ? AdaptiveSizes.h(0.005) +
                                             AdaptiveSizes.getWheelSizedBoxlanguageCode2()
                                       : context.locale.languageCode == 'ru'
-                                      ? AdaptiveSizes.h(0.039) +
+                                      ? AdaptiveSizes.h(0.005) +
                                             AdaptiveSizes.getWheelSizedBoxlanguageCode2()
-                                      : AdaptiveSizes.h(0.039) +
+                                      : AdaptiveSizes.h(0.005) +
                                             AdaptiveSizes.getWheelSizedBoxlanguageCode2(),
                                 ),
                                 _buildTakeButton(),
+                                SizedBox(height: AdaptiveSizes.h(0.03)),
                               ],
                             );
                           },
