@@ -16,15 +16,17 @@ jobs:
           channel: 'stable'
           architecture: x64
 
-      # 1. Полная очистка Flutter
+      - name: Install specific CocoaPods version
+        run: |
+          sudo gem uninstall cocoapods -a -q || true
+          sudo gem install cocoapods -v 1.15.2
+
       - name: Clean Flutter
         run: flutter clean
 
-      # 2. Установка зависимостей Flutter (создаёт Generated.xcconfig)
       - name: Get Flutter packages
         run: flutter pub get
 
-      # 3. Очистка Pods и установка заново
       - name: Clean iOS Pods
         run: |
           cd ios
@@ -32,7 +34,6 @@ jobs:
           pod install
           cd ..
 
-      # 4. Сборка iOS
       - name: Build iOS release
         run: flutter build ios --release --no-codesign
 
