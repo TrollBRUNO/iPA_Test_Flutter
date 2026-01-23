@@ -6,20 +6,20 @@ on:
 jobs:
   build-ios:
     name: 🎉 iOS Build
-    runs-on: macos-latest
+    runs-on: macos-15 # ARM раннер
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          architecture: x64
+          channel: stable
+          # ВАЖНО: НЕ указываем architecture: x64 — Flutter будет ARM
 
-      - name: Install specific CocoaPods version
-        run: |
-          sudo gem uninstall cocoapods -a -q || true
-          sudo gem install cocoapods -v 1.15.2
+      - name: Flutter doctor (debug info)
+        run: flutter doctor -v
 
       - name: Clean Flutter
         run: flutter clean
@@ -27,36 +27,49 @@ jobs:
       - name: Get Flutter packages
         run: flutter pub get
 
-      - name: Clean iOS Pods
+      # Опционально: кеш Pods, чтобы не ждать каждый раз по 5–10 минут
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ios/Podfile.lock
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install CocoaPods (latest stable)
+        run: |
+          sudo gem uninstall cocoapods -a -q || true
+          sudo gem install cocoapods
+
+      - name: Reinstall Pods for ARM
         run: |
           cd ios
           rm -rf Pods Podfile.lock
+          pod repo update
           pod install
-          cd ..
 
-      - name: Build iOS release
+      - name: Build iOS release (no codesign)
         run: flutter build ios --release --no-codesign
 
-      # 5. Создание Payload
       - name: Create Payload folder
         run: mkdir Payload
         working-directory: build/ios/iphoneos
 
       - name: Move Runner.app into Payload
-        run: mv Runner.app/ Payload
+        run: mv Runner.app Payload
         working-directory: build/ios/iphoneos
 
-      # 6. Архивация в IPA
-      - name: Zip output
+      - name: Zip output to IPA
         run: zip -qq -r -9 FlutterIpaExport.ipa Payload
         working-directory: build/ios/iphoneos
 
-      # 7. Загрузка IPA в релиз
-      - name: Upload binaries to release
+      - name: Upload IPA to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/ios/iphoneos/FlutterIpaExport.ipa
           tag: v1.0
           overwrite: true
-          body: "This is first release"
+          body: "Automated iOS IPA build (ARM runner)"
