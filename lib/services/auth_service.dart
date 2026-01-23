@@ -1,6 +1,16 @@
 //import 'dart:developer';
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:first_app_flutter/class/bonus_code.dart';
+import 'package:first_app_flutter/class/cards.dart';
+import 'package:first_app_flutter/class/statistics.dart';
+import 'package:first_app_flutter/class/user_session.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
+import 'package:first_app_flutter/services/token_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,20 +19,293 @@ class AuthService {
   static const String _loginUrl = 'https://live.teleslot.net/login';
   static const String _balanceUrl =
       'https://live.teleslot.net/teleslot_player_api/get_my_balance';
-  //static const String _username = 'cvetan';
-  //static const String _password = '123qweXX';
   static const String _jwtKey = 'jwt_token';
 
-  static const String _login = 'login';
-  static const String _password = 'password';
+  /* static const String _login = 'login';
+  static const String _password = 'password'; */
 
-  static Future<String?> loginAndSaveJwt() async {
+  static const String _baseUrl = 'https://magicity.top';
+
+  static final Dio dio = Dio();
+
+  /* static Future<List<String>> loadCities() async {
+    final response = await http.get(Uri.parse('$_baseUrl/casino/cities'));
+
+    if (response.statusCode != 200) return [];
+
+    final List data = jsonDecode(response.body);
+    return data.map((e) => e.toString()).toList();
+  } */
+
+  static Future<List<Map<String, String>>> loadCities() async {
+    final response = await http.get(Uri.parse('$_baseUrl/casino/cities'));
+
+    if (response.statusCode != 200) return [];
+
+    final List data = jsonDecode(response.body);
+    return data
+        .map<Map<String, String>>((e) => Map<String, String>.from(e))
+        .toList();
+  }
+
+  static Future<bool> login(String login, String password) async {
+    try {
+      final response = await dio.post(
+        '$_baseUrl/auth/login',
+        //"http://10.0.2.2:3000/auth/login",
+        data: jsonEncode({"login": login, "password": password}),
+        //data: jsonEncode({"login": "test123", "password": "test123"}),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+        await TokenService.saveAccessToken(data['access_token']);
+        await TokenService.saveRefreshToken(data['refresh_token']);
+
+        unawaited(NotificationService.initFCM());
+
+        return true;
+      } else {
+        logger.w('Auth error');
+      }
+    } on DioException catch (e) {
+      logger.w('DioError: ${e.response?.statusCode} ${e.response?.data}');
+      return false;
+    }
+
+    return false;
+  }
+
+  static Future<bool> refreshToken() async {
+    final refreshToken = await TokenService.getRefreshToken();
+    logger.i("🔵 [refreshToken] refreshToken: $refreshToken");
+
+    if (refreshToken == null) return false;
+
+    try {
+      // ❗ Создаём отдельный Dio без интерсепторов
+      final dioNoInterceptor = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
+      );
+
+      logger.i("🟡 [refreshToken] Отправляем запрос...");
+
+      final response = await dioNoInterceptor.post(
+        'https://magicity.top/auth/refresh',
+        data: {'refresh_token': refreshToken},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      logger.i("🟢 [refreshToken] Ответ сервера: ${response.data}");
+
+      await TokenService.saveAccessToken(response.data['access_token']);
+      await TokenService.saveRefreshToken(response.data['refresh_token']);
+
+      return true;
+    } on DioException catch (e, st) {
+      logger.e("🔴 [refreshToken] Dio error: ${e.message}");
+      logger.e("🔴 Response: ${e.response?.data}");
+      return false;
+    } catch (e, st) {
+      logger.e("🔴 [refreshToken] Unknown error: $e");
+      return false;
+    }
+  }
+
+  static Future<void> logout() async {
+    final refreshToken = await TokenService.getRefreshToken();
+    if (refreshToken != null) {
+      await dio.post(
+        '$_baseUrl/auth/logout',
+        data: {'refresh_token': refreshToken},
+      );
+    }
+    await TokenService.clearTokens();
+  }
+
+  static Future<String?> registerAndLogin({
+    required String login,
+    required String password,
+    required String realname,
+    String? cardId,
+    String? city,
+  }) async {
+    try {
+      final body = {
+        "login": login,
+        "password": password,
+        "realname": realname,
+        if (cardId != null && city != null)
+          "cards": [
+            {"card_id": cardId, "city": city, "active": true},
+          ],
+      };
+
+      logger.i('Registration body: $body');
+
+      /* final response = await http.post(
+      Uri.parse('$_baseUrl/account/register'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(body),
+    ); */
+
+      final response = await dio.post(
+        '$_baseUrl/account/register',
+        data: jsonEncode(body),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        try {
+          final data = jsonDecode(response.data);
+
+          final message = data['message'] ?? 'registration_failed';
+
+          if (message == 'USERNAME_TAKEN') return 'username_taken';
+          if (message == 'CARD_ALREADY_USED') return 'card_already_used';
+          if (message == 'MISSING_FIELDS') return 'missing_fields';
+
+          return message.toString().toLowerCase();
+        } catch (_) {}
+
+        return 'registration_failed';
+      }
+
+      final success = await AuthService.login(login, password);
+      if (!success) return 'login_failed';
+
+      return null; // Всё успешно
+    } on DioException catch (e, st) {
+      final status = e.response?.statusCode;
+      final data = e.response?.data;
+
+      logger.w('Registration error [$status]: $data\n$st');
+
+      if (data is Map && data['message'] != null) {
+        return data['message'].toString().toLowerCase();
+      }
+
+      return 'registration_failed';
+    }
+  }
+
+  static Future<String?> bindCard({
+    required String cardId,
+    required String city,
+  }) async {
+    try {
+      await dio.post(
+        '$_baseUrl/account/bind-card',
+        data: {"card_id": cardId, "city": city},
+      );
+
+      return null; // Всё успешно
+    } on DioException catch (e, st) {
+      final status = e.response?.statusCode;
+      final data = e.response?.data;
+
+      logger.w('Bind card error [$status]: $data\n$st');
+
+      if (data is Map && data['message'] != null) {
+        return data['message'].toString().toLowerCase();
+      }
+
+      return 'bind_card_failed';
+    }
+  }
+
+  static Future<String?> checkCard(String cardId) async {
+    final res = await http.post(
+      Uri.parse('$_baseUrl/account/check-card'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'card_id': cardId}),
+    );
+
+    if (res.statusCode == 200) return null;
+
+    final data = jsonDecode(res.body);
+    return data['message']?.toString().toLowerCase();
+  }
+
+  static Future<void> loadProfile() async {
+    try {
+      final response = await dio.get('$_baseUrl/account/me');
+      final data = response.data;
+      final dateStr = data['last_credit_take_date'] as String?;
+
+      UserSession.username = data['login']?.toString() ?? '';
+      UserSession.balance = data['balance']?.toString() ?? '0';
+      UserSession.bonusBalance = data['bonus_balance']?.toString() ?? '0';
+      UserSession.fakeBalance = data['fake_balance']?.toString() ?? '0';
+      UserSession.imageUrl = data['image_url']?.toString() ?? '';
+      UserSession.lastCreditTake = DateTime.tryParse(dateStr ?? '');
+      UserSession.role = data['role']?.toString() ?? '';
+    } catch (e, st) {
+      logger.w('Error loading profile: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<bool> verifyAdminCode(String code) async {
+    try {
+      final response = await dio.post(
+        '$_baseUrl/auth/admin-verify',
+        data: {"code": code},
+      );
+      return response.data['ok'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<List<Statistics>> loadStatistics() async {
+    try {
+      final response = await dio.get('$_baseUrl/statistics/get-profile-stats');
+      final List list = response.data['history'];
+
+      return list.map((e) => Statistics.fromJson(e)).toList();
+    } catch (e, st) {
+      logger.w('Error loading statistics: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<List<Cards>> loadCards() async {
+    try {
+      final response = await dio.get('$_baseUrl/account/get-profile-cards');
+      final List list = response.data['cards'];
+
+      return list.map((e) => Cards.fromJson(e)).toList();
+    } catch (e, st) {
+      logger.w('Error loading cards: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<void> removeCard(String cardId) async {
+    try {
+      await dio.patch('$_baseUrl/account/cards/$cardId/deactivate');
+      logger.i('Card $cardId deactivated successfully');
+    } catch (e, st) {
+      logger.w('Error removing card: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static Future<String?> loginAndSaveJwtForCamera() async {
     try {
       final dio = Dio();
       final prefs = await SharedPreferences.getInstance();
 
-      var username = prefs.getString(_login);
-      var password = prefs.getString(_password);
+      /* var username = prefs.getString(_login);
+      var password = prefs.getString(_password); */
+
+      var username = "cvetan";
+      var password = "123qweXX";
 
       final response = await dio.post(
         _loginUrl,
@@ -55,7 +338,40 @@ class AuthService {
     }
   }
 
-  static Future<String?> getBalance(String jwt) async {
+  static Future<String?> getJwtForCamera() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_jwtKey);
+      return prefs.getString(_jwtKey);
+    } catch (e) {
+      logger.w('Error getting JWT from storage: $e');
+      return null;
+    }
+  }
+
+  static Future<BonusCodeResponse?> generateBonusCode() async {
+    try {
+      final response = await dio.post('$_baseUrl/bonus-code/generate');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return BonusCodeResponse.fromJson(response.data);
+      }
+    } on DioException catch (e, st) {
+      logger.w('Generate bonus code error: ${e.response?.data}\n$st');
+    }
+
+    return null;
+  }
+
+  static Future<void> sendFcmToken(String token) async {
+    await dio.post('$_baseUrl/account/fcm-token', data: {'token': token});
+  }
+
+  static Future<void> testNotification(String token) async {
+    await dio.post('$_baseUrl/account/push-test', data: {'token': token});
+  }
+
+  /* static Future<String?> getBalance(String jwt) async {
     try {
       final dio = Dio();
 
@@ -75,16 +391,5 @@ class AuthService {
       logger.w('Error getting JWT from storage: $e');
       return null;
     }
-  }
-
-  static Future<String?> getJwt() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_jwtKey);
-      return prefs.getString(_jwtKey);
-    } catch (e) {
-      logger.w('Error getting JWT from storage: $e');
-      return null;
-    }
-  }
+  } */
 }

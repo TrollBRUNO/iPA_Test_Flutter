@@ -1,4 +1,12 @@
+import 'package:first_app_flutter/screens/admin/admin_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_account_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_gallery_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_news_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_casino_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_support_screen.dart';
+import 'package:first_app_flutter/screens/admin/edit_wheel_screen.dart';
 import 'package:first_app_flutter/screens/confidential_screen.dart';
+import 'package:first_app_flutter/screens/games_screen.dart';
 import 'package:first_app_flutter/screens/jackpot_screen.dart';
 import 'package:first_app_flutter/layout/layout_scaffold.dart';
 import 'package:first_app_flutter/screens/news_screen.dart';
@@ -20,6 +28,7 @@ final router = GoRouter(
   initialLocation: '/splash',
   routes: [
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+
     GoRoute(
       path: '/registration',
       builder: (context, state) => const RegistrationScreen(),
@@ -28,6 +37,42 @@ final router = GoRouter(
       path: '/authorization',
       builder: (context, state) => const AuthorizationScreen(),
     ),
+
+    GoRoute(
+      path: '/admin',
+      builder: (context, state) => const AdminScreen(),
+      routes: [
+        GoRoute(
+          path: '/edit_news',
+          builder: (context, state) => const EditNewsPage(title: 'Edit'),
+        ),
+        GoRoute(
+          path: '/edit_gallery',
+          builder: (context, state) => const EditGalleryPage(title: 'Edit'),
+        ),
+        GoRoute(
+          path: '/edit_casino',
+          builder: (context, state) => const EditCasinoPage(title: 'Edit'),
+        ),
+        GoRoute(
+          path: '/edit_wheel',
+          builder: (context, state) => const EditWheelPage(title: 'Edit'),
+        ),
+        GoRoute(
+          path: '/edit_app',
+          builder: (context, state) => const EditNewsPage(title: 'Edit'),
+        ),
+        GoRoute(
+          path: '/edit_reports',
+          builder: (context, state) => const EditSupportPage(title: 'Edit'),
+        ),
+        GoRoute(
+          path: '/view_statistics',
+          builder: (context, state) => const EditAccountsPage(title: 'View'),
+        ),
+      ],
+    ),
+
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => LayoutScaffold(
         navigationShell: navigationShell,
@@ -61,6 +106,15 @@ final router = GoRouter(
           ],
         ),
 
+        // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+        /* StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/games',
+              builder: (context, state) => const GamesPage(title: 'Games'),
+            ),
+          ],
+        ), */
         StatefulShellBranch(
           routes: [
             GoRoute(

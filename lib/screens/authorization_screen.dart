@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/services/auth_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as dio;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -45,7 +47,7 @@ class _AuthorizationState extends State<AuthorizationPage> {
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
-    AdaptiveSizes.printSizes();
+    //AdaptiveSizes.printSizes();
 
     return Scaffold(
       body: SafeArea(
@@ -114,6 +116,11 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                 }
                                 return null;
                               },
+                              onChanged: (_) {
+                                if (serverError != null) {
+                                  setState(() => serverError = null);
+                                }
+                              },
                             ),
                           ),
                         ),
@@ -157,6 +164,11 @@ class _AuthorizationState extends State<AuthorizationPage> {
                                 }
                                 return null;
                               },
+                              onChanged: (_) {
+                                if (serverError != null) {
+                                  setState(() => serverError = null);
+                                }
+                              },
                               obscureText: true,
                             ),
                           ),
@@ -180,34 +192,131 @@ class _AuthorizationState extends State<AuthorizationPage> {
                             ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                final user = _loginController.text;
+                                final user = _loginController.text.trim();
                                 final password = _passwordController.text;
 
                                 logger.i('Email: $user, Password: $password');
 
-                                final prefs =
+                                /* final prefs =
                                     await SharedPreferences.getInstance();
                                 await prefs.setString(_login, user);
-                                await prefs.setString(_password, password);
+                                await prefs.setString(_password, password); */
 
-                                String? jwtToken = await AuthService.getJwt();
-                                if (jwtToken == null) {
-                                  jwtToken =
-                                      await AuthService.loginAndSaveJwt();
+                                /* if (user == "admin321" &&
+                                    password == "admin123") {
+                                  context.go('/admin');
+                                } */
+                                /* String? jwtToken = await AuthService.getJwt();
                                   if (jwtToken == null) {
-                                    setState(() {
-                                      serverError = 'wrong'.tr();
-                                    });
-                                    await prefs.remove(_login);
-                                    await prefs.remove(_password);
-                                    logger.w('Такого аккаунта нет');
-                                    return;
-                                  }
+                                    jwtToken =
+                                        await AuthService.loginAndSaveJwt();
+                                    if (jwtToken == null) {
+                                      setState(() {
+                                        serverError = 'wrong'.tr();
+                                      });
+                                      await prefs.remove(_login);
+                                      await prefs.remove(_password);
+                                      logger.w('Такого аккаунта нет');
+                                      return;
+                                    }
+                                  } */
+
+                                final success = await AuthService.login(
+                                  user,
+                                  password,
+                                );
+                                if (!success) {
+                                  setState(() {
+                                    serverError = 'wrong'.tr();
+                                  });
+                                  logger.w('Invalid credentials for $user');
+                                  return;
                                 }
 
-                                setState(() {
-                                  serverError = null;
-                                });
+                                /* try {
+                                  await AuthService.dio.get(
+                                    'http://192.168.33.187:3000/some-protected-route',
+                                  );
+                                } catch (e) {
+                                  logger.w('Error during test request: $e');
+                                } */
+
+                                await AuthService.loadProfile();
+
+                                String? role = UserSession.role;
+
+                                if (role == 'admin') {
+                                  final TextEditingController _codeController =
+                                      TextEditingController();
+
+                                  final code = await showDialog<String>(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('admin_code'.tr()),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'please_enter_admin_code'.tr(),
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            SizedBox(height: 12),
+                                            TextField(
+                                              controller: _codeController,
+                                              decoration: InputDecoration(
+                                                labelText: 'code'.tr(),
+                                                border: OutlineInputBorder(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(
+                                                context,
+                                              ).pop(); // cancel
+                                            },
+                                            child: Text('cancel'.tr()),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              final enteredCode =
+                                                  _codeController.text.trim();
+                                              if (enteredCode.isEmpty) {
+                                                // optionally show a warning
+                                                return;
+                                              }
+                                              Navigator.of(
+                                                context,
+                                              ).pop(enteredCode);
+                                            },
+                                            child: Text('confirm'.tr()),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+
+                                  if (code == null || code.isEmpty) return;
+
+                                  final ok = await AuthService.verifyAdminCode(
+                                    code,
+                                  );
+
+                                  if (ok) {
+                                    context.go('/admin');
+                                  } else {
+                                    logger.i("Неверный код");
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('invalid_code'.tr()),
+                                      ),
+                                    );
+                                  }
+                                  return;
+                                }
 
                                 Flushbar(
                                   messageText: Row(
@@ -268,9 +377,9 @@ class _AuthorizationState extends State<AuthorizationPage> {
 
                         InkWell(
                           onTap: () {
-                            /* context.go(
+                            context.go(
                               '/registration',
-                            ); */ // Переход на экран регистрации
+                            ); // Переход на экран регистрации
                           },
                           child: Text(
                             'no_account'.tr(),

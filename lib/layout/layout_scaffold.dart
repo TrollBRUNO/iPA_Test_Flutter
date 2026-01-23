@@ -95,6 +95,15 @@ class LayoutScaffold extends StatelessWidget {
                   ),
                 ),
 
+                // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+                /* BottomNavigationBarItem(
+                  icon: Icon(Icons.local_play, size: AdaptiveSizes.w(0.075)),
+                  label: 'Games',
+                  activeIcon: Icon(
+                    Icons.local_play_outlined,
+                    size: AdaptiveSizes.w(0.085),
+                  ),
+                ), */
                 BottomNavigationBarItem(
                   icon: Icon(Icons.account_box, size: AdaptiveSizes.w(0.075)),
                   label: 'Profile',

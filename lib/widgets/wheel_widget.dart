@@ -1,15 +1,26 @@
 import 'dart:async';
+import 'dart:convert';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
 import 'package:first_app_flutter/class/prize.dart';
+import 'package:first_app_flutter/class/user_session.dart';
+import 'package:first_app_flutter/config/notification_config.dart';
+import 'package:first_app_flutter/services/auth_service.dart';
+import 'package:first_app_flutter/services/background_worker.dart';
+import 'package:first_app_flutter/services/notification_service.dart';
 import 'package:first_app_flutter/services/spin_time_service.dart';
 import 'package:first_app_flutter/utils/adaptive_sizes.dart';
+import 'package:first_app_flutter/web/teleslot_webview.dart';
 import 'package:first_app_flutter/widgets/ads_dialog_widget.dart';
+import 'package:first_app_flutter/widgets/code_bonus_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/info_dialog_widget.dart';
 import 'package:first_app_flutter/widgets/prize_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,29 +34,87 @@ class WheelWidget extends StatefulWidget {
 class _WheelState extends State<WheelWidget> {
   StreamController<int> selected = StreamController<int>();
   int? lastSelectedIndex;
-  bool _canSpinToday = true;
+  bool canSpin = true;
+  List<Prize> prizeList = [];
+  bool isLoading = true;
+  bool isSpinning = false;
+
+  bool isDialogOpen = false;
 
   @override
   void initState() {
     super.initState();
     _loadSpinAvailability();
+    loadWheel();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Обновляем статус при каждом возвращении на экран
-    _loadSpinAvailability();
+  Future<void> loadWheel() async {
+    setState(() => isLoading = true);
+
+    try {
+      final values = await AccountTimeService.loadWheel();
+
+      prizeList = values.map((v) => Prize(v)).toList();
+    } catch (e) {
+      logger.e('Ошибка загрузки колеса', error: e);
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 
   Future<void> _loadSpinAvailability() async {
-    final prefs = await SharedPreferences.getInstance();
-    final canSpin = prefs.getBool('can_spin_today') ?? true;
+    setState(() => isLoading = true);
 
-    setState(() {
-      _canSpinToday = canSpin;
-    });
+    try {
+      final res = await AccountTimeService.canSpin();
+
+      logger.i("Статус спина загружен: canSpin=$res");
+      setState(() {
+        canSpin = res.canSpin;
+        /* canSpin = res.canSpin;
+         nextSpinDate = res.nextSpin != null
+            ? DateTime.parse(res.nextSpin)
+            : null; */
+      });
+    } catch (e) {
+      canSpin = false;
+      //nextSpinDate = null;
+      logger.w("Ошибка при загрузке статуса спина: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
+
+  void trySpin() {
+    if (isSpinning || isDialogOpen) return;
+
+    if (!canSpin) {
+      showInfoDialog();
+      return;
+    }
+    startSpin();
+  }
+  // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+  /* void openTeleslotAutoLogin(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString('login');
+    final password = prefs.getString('password');
+
+    if (username == null || password == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Нет сохранённых данных для входа")),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            TeleslotLoginWebView(username: username, password: password),
+      ),
+    );
+  } */
 
   @override
   void dispose() {
@@ -53,25 +122,23 @@ class _WheelState extends State<WheelWidget> {
     super.dispose();
   }
 
-  void startSpin(int length) async {
-    if (!_canSpinToday) {
+  Future<void> startSpin() async {
+    if (isSpinning) return;
+    setState(() => isSpinning = true);
+
+    try {
+      final result = await AccountTimeService.spin(
+        prizeList.map((e) => e.value).toList(),
+      );
+
+      lastSelectedIndex = result.index;
+      selected.add(result.index);
+    } catch (e) {
+      logger.e('Ошибка при спине: $e');
       showInfoDialog();
-      return;
+    } finally {
+      setState(() => isSpinning = false);
     }
-
-    final index = Fortune.randomInt(0, length);
-    setState(() {
-      lastSelectedIndex = index;
-      selected.add(index);
-    });
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('can_spin_today', false);
-    setState(() {
-      _canSpinToday = false;
-    });
-
-    await SpinTimeService.saveSpinDate(); // сохраняем дату после начала кручения
   }
 
   void showPrizeDialog(String prize) {
@@ -94,7 +161,10 @@ class _WheelState extends State<WheelWidget> {
               prize: prize,
               onClaim: () {
                 Navigator.of(context).pop();
-                showAdsDialog();
+
+                showCodeBonusDialog();
+                // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+                //showAdsDialog();
               },
             ),
           ),
@@ -103,7 +173,41 @@ class _WheelState extends State<WheelWidget> {
     );
   }
 
-  void showAdsDialog() {
+  Future<void> showCodeBonusDialog() async {
+    final data = await AuthService.generateBonusCode();
+    if (data == null) return;
+
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "PrizeDialog",
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: curved,
+            child: CodeBonusDialogWidget(
+              data: data,
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    UserSession.canShowButton.value = true;
+  }
+
+  // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
+  /* void showAdsDialog() {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -120,10 +224,10 @@ class _WheelState extends State<WheelWidget> {
           child: ScaleTransition(
             scale: curved,
             child: AdsDialogWidget(
-              onTry: () async {
+              /* onTry: () async {
                 Navigator.of(context).pop();
 
-                const url = 'https://live.teleslot.net/login';
+                const url = 'https://live.teleslot.net/';
 
                 final uri = Uri.parse(url);
 
@@ -145,6 +249,21 @@ class _WheelState extends State<WheelWidget> {
                     ),
                   );
                 }
+              }, */
+              onTry: () async {
+                Navigator.of(context).pop();
+
+                try {
+                  openTeleslotAutoLogin(context);
+                } catch (e) {
+                  debugPrint("Ошибка перехода: $e");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Не удалось открыть сайт'),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                }
               },
 
               onClose: () {
@@ -155,36 +274,50 @@ class _WheelState extends State<WheelWidget> {
         );
       },
     );
-  }
+  } */
 
-  void showInfoDialog() {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "InfoDialog",
-      transitionDuration: const Duration(milliseconds: 500),
-      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        final curved = CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutBack,
-        );
-        return FadeTransition(
-          opacity: animation,
-          child: ScaleTransition(
-            scale: curved,
-            child: InfoDialogWidget(onClaim: () => Navigator.of(context).pop()),
-          ),
-        );
-      },
-    );
+  Future<void> showInfoDialog() async {
+    if (isDialogOpen) return;
+
+    isDialogOpen = true;
+
+    try {
+      await showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: "InfoDialog",
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+        transitionBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+          );
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: curved,
+              child: InfoDialogWidget(
+                onClaim: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ),
+          );
+        },
+      );
+    } finally {
+      isDialogOpen = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     AdaptiveSizes.init(context);
 
-    final prizeList = <Prize>[
+    /* final prizeList = <Prize>[
       const Prize(20),
       const Prize(10),
       const Prize(50),
@@ -221,13 +354,29 @@ class _WheelState extends State<WheelWidget> {
       const Prize(20),
       const Prize(10),
       const Prize(40),
-    ];
+    ]; */
+
+    if (isLoading) {
+      /* return Center(
+        child: CircularProgressIndicator(color: Colors.orangeAccent[200]),
+      ); */
+      return Scaffold(
+        body: Center(
+          child: Lottie.asset(
+            "assets/lottie/8_bit_coin.json",
+            width: 200,
+            height: 200,
+            repeat: true,
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
       body: GestureDetector(
-        onTap: () => startSpin(prizeList.length),
+        onTap: () => trySpin(),
         child: Column(
           children: [
             Expanded(
@@ -353,24 +502,12 @@ class _WheelState extends State<WheelWidget> {
                   );
                 }),
 
-                onFling: () => startSpin(prizeList.length),
+                onFling: () => trySpin(),
 
                 onAnimationEnd: () async {
-                  final prefs = await SharedPreferences.getInstance();
                   final prize = prizeList[lastSelectedIndex ?? 0];
-
-                  final bonusBalance = prefs.getString('bonus_balance') ?? "0";
-                  final bonusBalanceToDouble =
-                      int.tryParse(bonusBalance) ?? 0.0;
-
-                  final currentBalance = bonusBalanceToDouble + prize.value;
-
-                  await prefs.setString(
-                    'bonus_balance',
-                    currentBalance.toString(),
-                  );
                   showPrizeDialog(prize.formatted);
-                  //showPrizeDialog('100 BGN');
+                  //showPrizeDialog('100 EUR');
                 },
               ),
             ),

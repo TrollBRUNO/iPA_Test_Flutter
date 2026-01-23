@@ -13,6 +13,7 @@ import 'package:first_app_flutter/utils/adaptive_sizes.dart';
 import 'package:first_app_flutter/widgets/jackpot_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class JackpotScreen extends StatelessWidget {
@@ -35,7 +36,7 @@ class JackpotPage extends StatefulWidget {
 
 class _JackpotState extends State<JackpotPage> {
   Logger logger = Logger();
-  final MqttJackpotService mqttService = MqttJackpotService();
+  //final MqttJackpotService mqttService = MqttJackpotService();
 
   List<Jackpot> _jackpots = [];
 
@@ -50,13 +51,21 @@ class _JackpotState extends State<JackpotPage> {
   Timer? _timer;
   int _counter = 0;
 
+  Timer? _refreshTimer;
+
+  void startLiveUpdates() {
+    _refreshTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      updateJackpots();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
     // Тестовые данные джекпотов
     //List<Jackpot> get jackpots => [
-    _jackpots = [
+    /* _jackpots = [
       Jackpot(
         city: 'address_plovdiv_city',
         address: 'address_plovdiv_address',
@@ -103,9 +112,13 @@ class _JackpotState extends State<JackpotPage> {
         middleMystery: 999.86,
         megaMystery: 7631.18,
       ),
-    ];
+    ]; */
 
-    _loadMqtt();
+    loadData().then((_) {
+      startLiveUpdates();
+    });
+
+    /* _loadMqtt();
 
     mqttService.jackpotStream.listen((json) {
       final jackpots = json['jackpots'] as List<dynamic>;
@@ -139,14 +152,137 @@ class _JackpotState extends State<JackpotPage> {
           }
         }
       });
-    });
+    }); */
+
     //ДЛЯ ТЕСТА АНИМАЦИИ
     startTimer();
+  }
+
+  Locale? _lastLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final currentLocale = context.locale;
+    if (_lastLocale != currentLocale) {
+      _lastLocale = currentLocale;
+      loadCasinosFromServer(); // перезагружаем при смене языка
+    }
+  }
+
+  Future<void> loadData() async {
+    await loadCasinosFromServer();
+  }
+
+  Future<void> loadCasinosFromServer() async {
+    try {
+      final res = await AuthService.dio.get("https://magicity.top/casino");
+
+      if (res.statusCode == 200) {
+        final data = res.data as List<dynamic>;
+        final locale = context.locale.languageCode;
+
+        _jackpots = data.map((c) {
+          return Jackpot(
+            id: c["_id"] ?? "",
+            city: c["city"][locale] ?? c['city']['en'] ?? "",
+            address: c["address"][locale] ?? c['address']['en'] ?? "",
+            imageUrl: c["image_url"],
+            isMysteryProgressive: c["mystery_progressive"] == true,
+            jackpotUrl: c["jackpot_url"] ?? "",
+            uuIdList: (c["uu_id_list"] != null && c["uu_id_list"] is List)
+                ? List<String>.from(c["uu_id_list"])
+                : [],
+            miniMystery: 0,
+            middleMystery: 0,
+            megaMystery: 0,
+            majorBellLink: 0,
+            grandBellLink: 0,
+            miniRange: "(0 - 0) EUR",
+            middleRange: "(0 - 0) EUR",
+            megaRange: "(0 - 0) EUR",
+            majorBellLinkRange: "(0 - 0) EUR",
+            grandBellLinkRange: "(0 - 0) EUR",
+          );
+        }).toList();
+
+        setState(() {});
+      }
+    } catch (e) {
+      logger.e("Ошибка загрузки казино: $e");
+    }
+  }
+
+  Future<void> updateJackpots() async {
+    for (var j in _jackpots) {
+      if (j.jackpotUrl.isEmpty) continue;
+
+      try {
+        //final res = await http.get(Uri.parse(j.jackpotUrl));
+        final res = await http.get(
+          Uri.parse("https://magicity.top/casino/${j.id}/jackpots"),
+        );
+        if (res.statusCode == 200) {
+          final jsonData = jsonDecode(res.body);
+
+          logger.i("Обновление джекпота для ${j.city}: $jsonData");
+
+          final jackpotsList = jsonData["jackpots"] as List<dynamic>?;
+
+          if (jackpotsList != null) {
+            for (var jackpotItem in jackpotsList) {
+              final name = jackpotItem["name"] ?? "";
+              final value = (jackpotItem["value"] is num)
+                  ? (jackpotItem["value"] as num).toDouble()
+                  : double.tryParse('${jackpotItem["value"]}') ?? 0.0;
+
+              final range = (jackpotItem["range"] is String)
+                  ? jackpotItem["range"].toString()
+                  : "(0 - 0) EUR";
+
+              if (j.isMysteryProgressive) {
+                switch (name) {
+                  case "Mini":
+                    j.miniMystery = value;
+                    j.miniRange = "(" + range + ")";
+                    break;
+                  case "Middle":
+                    j.middleMystery = value;
+                    j.middleRange = "(" + range + ")";
+                    break;
+                  case "Super":
+                    j.megaMystery = value;
+                    j.megaRange = "(" + range + ")";
+                    break;
+                }
+              } else {
+                switch (name) {
+                  case "Major":
+                    j.majorBellLink = value;
+                    j.majorBellLinkRange = "(" + range + ")";
+                    break;
+                  case "Grand":
+                    j.grandBellLink = value;
+                    j.grandBellLinkRange = "(" + range + ")";
+                    break;
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        logger.w("Ошибка обновления джекпота: $err");
+      }
+    }
+
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _refreshTimer?.cancel();
     // если mqttService имеет метод для остановки, вызови его; иначе просто супер
     super.dispose();
   }
@@ -165,7 +301,7 @@ class _JackpotState extends State<JackpotPage> {
     });
   }
 
-  Future<void> _loadMqtt() async {
+  /* Future<void> _loadMqtt() async {
     try {
       final result = await mqttService.main();
       // Выводим результат в консоль через logger
@@ -173,7 +309,7 @@ class _JackpotState extends State<JackpotPage> {
     } catch (e) {
       logger.w('Ошибка MQTT: $e');
     }
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -258,13 +394,13 @@ class _JackpotState extends State<JackpotPage> {
               final jackpot = _jackpots[index];
               return JackpotWidget(
                 jackpot: jackpot,
-                mqttService: mqttService,
+                //mqttService: mqttService,
                 miniBuilder: (value) => TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: value, end: miniMystery),
-                  duration: const Duration(milliseconds: 800),
+                  tween: Tween<double>(begin: value, end: jackpot.miniMystery),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
-                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      '${animatedValue.toStringAsFixed(2)} EUR',
                       style: TextStyle(
                         fontSize: AdaptiveSizes.getJackpotCountSize(),
                         color: Colors.white,
@@ -273,11 +409,14 @@ class _JackpotState extends State<JackpotPage> {
                   },
                 ),
                 middleBuilder: (value) => TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: value, end: middleMystery),
-                  duration: const Duration(milliseconds: 800),
+                  tween: Tween<double>(
+                    begin: value,
+                    end: jackpot.middleMystery,
+                  ),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
-                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      '${animatedValue.toStringAsFixed(2)} EUR',
                       style: TextStyle(
                         fontSize: AdaptiveSizes.getJackpotCountSize(),
                         color: Colors.white,
@@ -286,11 +425,11 @@ class _JackpotState extends State<JackpotPage> {
                   },
                 ),
                 megaBuilder: (value) => TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: value, end: megaMystery),
-                  duration: const Duration(milliseconds: 800),
+                  tween: Tween<double>(begin: value, end: jackpot.megaMystery),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
-                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      '${animatedValue.toStringAsFixed(2)} EUR',
                       style: TextStyle(
                         fontSize: AdaptiveSizes.getJackpotCountSize(),
                         color: Colors.white,
@@ -299,11 +438,14 @@ class _JackpotState extends State<JackpotPage> {
                   },
                 ),
                 majorBuilder: (value) => TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: value, end: majorBellLink),
-                  duration: const Duration(milliseconds: 800),
+                  tween: Tween<double>(
+                    begin: value,
+                    end: jackpot.majorBellLink,
+                  ),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
-                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      '${animatedValue.toStringAsFixed(2)} EUR',
                       style: TextStyle(
                         fontSize: AdaptiveSizes.getIconBackSettingsSize(),
                         color: Colors.white,
@@ -312,17 +454,56 @@ class _JackpotState extends State<JackpotPage> {
                   },
                 ),
                 grandBuilder: (value) => TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: value, end: grandBellLink),
-                  duration: const Duration(milliseconds: 800),
+                  tween: Tween<double>(
+                    begin: value,
+                    end: jackpot.grandBellLink,
+                  ),
+                  duration: const Duration(milliseconds: 8000),
                   builder: (context, animatedValue, child) {
                     return Text(
-                      '${animatedValue.toStringAsFixed(2)} BGN',
+                      '${animatedValue.toStringAsFixed(2)} EUR',
                       style: TextStyle(
                         fontSize: AdaptiveSizes.getIconBackSettingsSize(),
                         color: Colors.white,
                       ),
                     );
                   },
+                ),
+
+                miniRangeBuilder: (range) => Text(
+                  jackpot.miniRange,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: AdaptiveSizes.getRangeJackpotSize(),
+                  ),
+                ),
+                middleRangeBuilder: (range) => Text(
+                  jackpot.middleRange,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: AdaptiveSizes.getRangeJackpotSize(),
+                  ),
+                ),
+                megaRangeBuilder: (range) => Text(
+                  jackpot.megaRange,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: AdaptiveSizes.getRangeJackpotSize(),
+                  ),
+                ),
+                majorBellLinkRangeBuilder: (range) => Text(
+                  jackpot.majorBellLinkRange,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: AdaptiveSizes.getRangeJackpotSize(),
+                  ),
+                ),
+                grandBellLinkRangeBuilder: (range) => Text(
+                  jackpot.grandBellLinkRange,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: AdaptiveSizes.getRangeJackpotSize(),
+                  ),
                 ),
               );
             }, childCount: _jackpots.length),

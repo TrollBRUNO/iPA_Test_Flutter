@@ -34,9 +34,9 @@ class _CameraWidgetState extends State<CameraWidget> {
   }
 
   Future<void> _loadLocalHtml() async {
-    String? jwtToken = await AuthService.getJwt();
+    String? jwtToken = await AuthService.getJwtForCamera();
     if (jwtToken == null) {
-      jwtToken = await AuthService.loginAndSaveJwt();
+      jwtToken = await AuthService.loginAndSaveJwtForCamera();
       if (jwtToken == null) {
         throw Exception('Не удалось получить JWT токен');
       }

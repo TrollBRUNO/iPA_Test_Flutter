@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 
 class JackpotWidget extends StatelessWidget {
   final Jackpot jackpot;
-  final MqttJackpotService? mqttService;
+  //final MqttJackpotService? mqttService;
   final Widget Function(double value)? miniBuilder;
   final Widget Function(double value)? middleBuilder;
   final Widget Function(double value)? megaBuilder;
@@ -20,15 +20,28 @@ class JackpotWidget extends StatelessWidget {
   final Widget Function(double value)? majorBuilder;
   final Widget Function(double value)? grandBuilder;
 
+  final Widget Function(String range)? miniRangeBuilder;
+  final Widget Function(String range)? middleRangeBuilder;
+  final Widget Function(String range)? megaRangeBuilder;
+
+  final Widget Function(String range)? majorBellLinkRangeBuilder;
+  final Widget Function(String range)? grandBellLinkRangeBuilder;
+
   const JackpotWidget({
     super.key,
     required this.jackpot,
-    this.mqttService,
+    //this.mqttService,
     this.miniBuilder,
     this.middleBuilder,
     this.megaBuilder,
     this.majorBuilder,
     this.grandBuilder,
+
+    this.miniRangeBuilder,
+    this.middleRangeBuilder,
+    this.megaRangeBuilder,
+    this.majorBellLinkRangeBuilder,
+    this.grandBellLinkRangeBuilder,
   });
 
   @override
@@ -42,7 +55,9 @@ class JackpotWidget extends StatelessWidget {
           buildJackpotRow(
             "Mini",
             jackpot.miniMystery,
+            jackpot.miniRange,
             valueBuilder: miniBuilder,
+            rangeBuilder: miniRangeBuilder,
           ),
         );
       }
@@ -51,7 +66,9 @@ class JackpotWidget extends StatelessWidget {
           buildJackpotRow(
             "Middle",
             jackpot.middleMystery,
+            jackpot.middleRange,
             valueBuilder: middleBuilder,
+            rangeBuilder: middleRangeBuilder,
           ),
         );
       }
@@ -60,7 +77,9 @@ class JackpotWidget extends StatelessWidget {
           buildJackpotRow(
             "Mega",
             jackpot.megaMystery,
+            jackpot.megaRange,
             valueBuilder: megaBuilder,
+            rangeBuilder: megaRangeBuilder,
           ),
         );
       }
@@ -70,7 +89,9 @@ class JackpotWidget extends StatelessWidget {
           buildJackpotRow(
             "Major",
             jackpot.majorBellLink,
+            jackpot.majorBellLinkRange,
             valueBuilder: majorBuilder,
+            rangeBuilder: majorBellLinkRangeBuilder,
           ),
         );
       }
@@ -79,7 +100,9 @@ class JackpotWidget extends StatelessWidget {
           buildJackpotRow(
             "Grand",
             jackpot.grandBellLink,
+            jackpot.grandBellLinkRange,
             valueBuilder: grandBuilder,
+            rangeBuilder: grandBellLinkRangeBuilder,
           ),
         );
       }
@@ -95,7 +118,7 @@ class JackpotWidget extends StatelessWidget {
             pageBuilder: (context, animation, secondaryAnimation) =>
                 JackpotDetailsScreen(
                   jackpot: jackpot,
-                  mqttService: mqttService,
+                  //mqttService: mqttService,
                 ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -151,7 +174,12 @@ class JackpotWidget extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               // Фоновое изображение
-              Image.asset(jackpot.imageUrl, fit: BoxFit.fitWidth),
+              Image.network(
+                "https://magicity.top${jackpot.imageUrl}",
+                fit: BoxFit.fitWidth,
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.broken_image, color: Colors.white),
+              ),
 
               // Blur + затемнение
               BackdropFilter(

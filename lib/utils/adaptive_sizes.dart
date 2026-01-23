@@ -1,4 +1,5 @@
 import 'package:first_app_flutter/class/jackpot.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/web.dart';
@@ -37,6 +38,9 @@ class AdaptiveSizes {
   }
 
   static double getUniversalTitleSize() {
+    if (kIsWeb) {
+      return 28;
+    }
     if (screenWidth > 600) return screenWidth * 0.11667;
     if (screenWidth > 400) return screenWidth * 0.125;
     if (screenHeight > 700 && screenWidth < 400) return screenWidth * 0.135;
@@ -190,6 +194,13 @@ class AdaptiveSizes {
     return screenHeight * 0.07813;
   }
 
+  static double getAllScreenContainerHeight() {
+    if (screenWidth > 600) return screenHeight * 0.04;
+    if (screenWidth > 400) return screenHeight * 0.0625;
+    if (screenHeight > 700 && screenWidth < 400) return screenHeight * 0.058;
+    return screenHeight * 0.0625;
+  }
+
   static double getJackpotWidgetHeight() {
     if (screenWidth > 600) return screenHeight * 0.19872;
     if (screenWidth > 400) return screenHeight * 0.2782;
@@ -204,7 +215,7 @@ class AdaptiveSizes {
   }
 
   static double getDividerProfileHeight() {
-    if (screenHeight > 1000) return screenHeight * 0.0153;
+    if (screenHeight > 1000) return screenHeight * 0.0103; // 0.0153
     return screenHeight * 0.01042;
   }
 
@@ -319,6 +330,14 @@ class AdaptiveSizes {
     return const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
   }
 
+  static EdgeInsets getCardsPadding() {
+    if (screenWidth > 600)
+      return const EdgeInsets.symmetric(horizontal: 40, vertical: 8);
+    if (screenWidth > 400)
+      const EdgeInsets.symmetric(horizontal: 24, vertical: 5);
+    return const EdgeInsets.symmetric(horizontal: 24, vertical: 5);
+  }
+
   static EdgeInsets getNotificationPadding() {
     if (screenWidth > 600)
       return const EdgeInsets.only(left: 20, top: 20, bottom: 10);
@@ -397,6 +416,12 @@ class AdaptiveSizes {
     return screenHeight * 0.0024;
   }
 
+  static double getButtonWidth2() {
+    if (screenWidth > 600) return screenWidth * 0.41667 * 1.5;
+    if (screenWidth > 400) return screenWidth * 0.5 * 1.5;
+    return screenWidth * 0.5 * 1.5;
+  }
+
   static double getButtonWidth() {
     if (screenWidth > 600) return screenWidth * 0.41667;
     if (screenWidth > 400) return screenWidth * 0.5;
@@ -453,6 +478,12 @@ class AdaptiveSizes {
     if (screenWidth > 600) return 80;
     if (screenWidth > 400) return 60;
     return 60;
+  }
+
+  static double getCardSize() {
+    if (screenWidth > 600) return 50;
+    if (screenWidth > 400) return 25;
+    return 25;
   }
 
   static double getLogoPrizeSize() {
@@ -549,10 +580,28 @@ class AdaptiveSizes {
     return 18;
   }
 
+  static double getAddCardSize() {
+    if (screenWidth > 600) return 26;
+    if (screenWidth > 400) return 16;
+    return 16;
+  }
+
   static double getFontBalanceSize() {
     if (screenWidth > 600) return 28;
     if (screenWidth > 400) return 18;
     return 18;
+  }
+
+  static double getFontCreditBalanceSize() {
+    if (screenWidth > 600) return 24;
+    if (screenWidth > 400) return 14;
+    return 14;
+  }
+
+  static double getFontCreditBalanceSize2() {
+    if (screenWidth > 600) return 20;
+    if (screenWidth > 400) return 12;
+    return 12;
   }
 
   static double getSupportWelcomeTextSize() {
@@ -734,7 +783,32 @@ class AdaptiveSizes {
     );
   }
 
+  static TextStyle getDemoTextStyle() {
+    if (screenWidth > 600) {
+      return const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+    }
+    if (screenWidth > 400) {
+      return const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      );
+    }
+    return const TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    );
+  }
+
   static TextStyle getLabelStyleButton() {
+    if (kIsWeb) {
+      return const TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+    }
     if (screenWidth > 600) {
       return TextStyle(
         fontWeight: FontWeight.bold,
@@ -789,20 +863,20 @@ class AdaptiveSizes {
       return TextStyle(
         fontSize: screenWidth * 0.041667,
         color: Colors.white54,
-        decoration: TextDecoration.lineThrough,
+        //decoration: TextDecoration.lineThrough,
       );
     }
     if (screenWidth > 400) {
       return TextStyle(
         fontSize: screenWidth * 0.041667,
         color: Colors.white54,
-        decoration: TextDecoration.lineThrough,
+        //decoration: TextDecoration.lineThrough,
       );
     }
     return TextStyle(
       fontSize: screenWidth * 0.041667,
       color: Colors.white54,
-      decoration: TextDecoration.lineThrough,
+      //decoration: TextDecoration.lineThrough,
     );
   }
 

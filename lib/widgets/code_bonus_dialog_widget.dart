@@ -1,0 +1,188 @@
+import 'dart:async';
+
+import 'package:easy_localization/easy_localization.dart';
+import 'package:first_app_flutter/class/bonus_code.dart';
+import 'package:first_app_flutter/utils/adaptive_sizes.dart';
+import 'package:flutter/material.dart';
+
+class CodeBonusDialogWidget extends StatefulWidget {
+  final BonusCodeResponse data;
+  final VoidCallback onClose;
+
+  const CodeBonusDialogWidget({
+    required this.data,
+    required this.onClose,
+    super.key,
+  });
+
+  @override
+  State<CodeBonusDialogWidget> createState() => _CodeBonusDialogState();
+}
+
+class _CodeBonusDialogState extends State<CodeBonusDialogWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnim;
+
+  late Duration _serverOffset;
+  late Duration _remaining;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _scaleAnim = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    );
+    _controller.forward();
+
+    _serverOffset = DateTime.now().difference(widget.data.serverTime);
+
+    _tick();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
+  void _tick() {
+    final serverNow = DateTime.now().subtract(_serverOffset);
+    final diff = widget.data.expiresAt.difference(serverNow);
+
+    if (diff.isNegative) {
+      _timer.cancel();
+      widget.onClose();
+      return;
+    }
+
+    setState(() => _remaining = diff);
+  }
+
+  String _format(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: ScaleTransition(
+          scale: _scaleAnim,
+          child: Container(
+            width: AdaptiveSizes.getInfoDialogMaxWidth(),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2A0A2E), Color(0xFF120015)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.pinkAccent.withOpacity(0.4),
+                  blurRadius: 25,
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    /// Заголовок
+                    Text(
+                      'show_code'.tr(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    /// Код
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 20,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF4FA3), Color(0xFFFF9AD5)],
+                        ),
+                      ),
+                      child: Text(
+                        widget.data.code.replaceAllMapped(
+                          RegExp(r'.{3}'),
+                          (m) => '${m.group(0)} ',
+                        ),
+                        style: const TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 4,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    /// Таймер
+                    Text(
+                      'code_active'.tr() + '${_format(_remaining)}',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.85),
+                        fontSize: 14,
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    /// Дисклеймер
+                    Text(
+                      'bonus_instruction'.tr(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+
+                /// Кнопка закрытия
+                Positioned(
+                  right: -6,
+                  top: -6,
+                  child: IconButton(
+                    onPressed: widget.onClose,
+                    icon: const Icon(Icons.close),
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
