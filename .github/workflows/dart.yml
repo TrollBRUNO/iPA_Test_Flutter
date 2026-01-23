@@ -7,6 +7,7 @@ jobs:
   build-ios:
     name: 🎉 iOS Build
     runs-on: macos-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -14,24 +15,43 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
-      - run: flutter pub get
-      
 
-      - run: pod repo update
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      # 🔥 ВАЖНО: Полная очистка iOS перед сборкой
+      - name: Clean iOS build artifacts
+        run: |
+          flutter clean
+          cd ios
+          rm -rf Pods Podfile.lock
+          pod install
+          cd ..
+
+      # (опционально) обновление репо CocoaPods
+      - name: Update pod repo
+        run: pod repo update
         working-directory: ios
 
-      - run: flutter build ios --release --no-codesign
+      # 🔥 Сборка iOS без подписи
+      - name: Build iOS release
+        run: flutter build ios --release --no-codesign
 
-      - run: mkdir Payload
+      # Создание Payload
+      - name: Create Payload folder
+        run: mkdir Payload
         working-directory: build/ios/iphoneos
 
-      - run: mv Runner.app/ Payload
+      - name: Move Runner.app into Payload
+        run: mv Runner.app/ Payload
         working-directory: build/ios/iphoneos
 
+      # Архивация в IPA
       - name: Zip output
         run: zip -qq -r -9 FlutterIpaExport.ipa Payload
         working-directory: build/ios/iphoneos
 
+      # Загрузка IPA в релиз
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
