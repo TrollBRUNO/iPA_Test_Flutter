@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    /* return MaterialApp.router(
       routerConfig: router,
 
       debugShowCheckedModeBanner: false,
@@ -78,6 +78,9 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
+    ); */
+    return MaterialApp(
+      home: Scaffold(body: Center(child: Text('iOS test OK'))),
     );
   }
 }
