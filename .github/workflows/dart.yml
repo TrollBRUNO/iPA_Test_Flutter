@@ -6,7 +6,7 @@ on:
 jobs:
   build-ios:
     name: 🎉 iOS Build
-    runs-on: macos-13   # ВАЖНО: Intel раннер, не ARM
+    runs-on: macos-15-intel   # ВАЖНО: новый Intel раннер
 
     steps:
       - name: Checkout
@@ -47,4 +47,4 @@ jobs:
           file: build/ios/iphoneos/MagicCity.ipa
           tag: v1.0
           overwrite: true
-          body: "Automated iOS IPA build (no codesign)"
+          body: "Automated iOS IPA build (Intel runner)"
