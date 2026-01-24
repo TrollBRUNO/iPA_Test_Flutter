@@ -5,74 +5,72 @@ on:
 
 jobs:
   build-ios:
-    name: 🎉 iOS Build
-    runs-on: macos-15 # ARM раннер
+    runs-on: macos-15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Move GoogleService-Info.plist
-        run: mv ios/GoogleService-Info.plist ios/Runner/GoogleService-Info.plist
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          # ВАЖНО: НЕ указываем architecture: x64 — Flutter будет ARM
 
-      - name: Flutter doctor (debug info)
-        run: flutter doctor -v
-
-      - name: Clean Flutter
-        run: flutter clean
-
-      - name: Get Flutter packages
+      - name: Flutter pub get
         run: flutter pub get
 
-      # Опционально: кеш Pods, чтобы не ждать каждый раз по 5–10 минут
-      - name: Cache CocoaPods
-        uses: actions/cache@v4
-        with:
-          path: |
-            ios/Pods
-            ios/Podfile.lock
-          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-
-      - name: Install CocoaPods (latest stable)
+      - name: Install CocoaPods
         run: |
-          sudo gem uninstall cocoapods -a -q || true
           sudo gem install cocoapods
 
-      - name: Reinstall Pods for ARM
+      - name: Pod install
         run: |
           cd ios
-          rm -rf Pods Podfile.lock
-          pod repo update
           pod install
 
-      - name: Build iOS release (no codesign)
-        run: flutter build ios --release --no-codesign
+      - name: Build Xcode archive
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath build/Runner.xcarchive \
+            archive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_IDENTITY="" \
+            DEVELOPMENT_TEAM=""
 
-      - name: Create Payload folder
-        run: mkdir Payload
-        working-directory: build/ios/iphoneos
+      - name: Create exportOptions.plist
+        run: |
+          cat <<EOF > exportOptions.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>development</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>compileBitcode</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
 
-      - name: Move Runner.app into Payload
-        run: mv Runner.app Payload
-        working-directory: build/ios/iphoneos
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/Runner.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist exportOptions.plist \
+            CODE_SIGNING_ALLOWED=NO
 
-      - name: Zip output to IPA
-        run: zip -qq -r -9 FlutterIpaExport.ipa Payload
-        working-directory: build/ios/iphoneos
-
-      - name: Upload IPA to release
+      - name: Upload IPA
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/ios/iphoneos/FlutterIpaExport.ipa
+          file: build/export/Runner.ipa
           tag: v1.0
           overwrite: true
-          body: "Automated iOS IPA build (ARM runner)"
