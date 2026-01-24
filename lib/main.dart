@@ -1,4 +1,4 @@
-//import 'package:first_app_flutter/config/notification_config.dart';
+/* //import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/router/router.dart';
 import 'package:first_app_flutter/interceptor/auth_interceptor.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
@@ -81,6 +81,32 @@ class MyApp extends StatelessWidget {
     ); */
     return MaterialApp(
       home: Scaffold(body: Center(child: Text('iOS test OK'))),
+    );
+  }
+}
+ */
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.green,
+        body: const Center(
+          child: Text(
+            'iOS test OK',
+            style: TextStyle(fontSize: 24, color: Colors.white),
+          ),
+        ),
+      ),
     );
   }
 }
