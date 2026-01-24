@@ -5,6 +5,7 @@ on:
 
 jobs:
   build-ios:
+    name: 🎉 iOS Build
     runs-on: macos-15
 
     steps:
@@ -19,58 +20,30 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      - name: Install CocoaPods
-        run: |
-          sudo gem install cocoapods
+      - name: Move GoogleService-Info.plist
+        run: mv ios/GoogleService-Info.plist ios/Runner/GoogleService-Info.plist
 
       - name: Pod install
         run: |
           cd ios
+          pod repo update
           pod install
 
-      - name: Build Xcode archive
-        run: |
-          xcodebuild -workspace ios/Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -archivePath build/Runner.xcarchive \
-            archive \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_IDENTITY="" \
-            DEVELOPMENT_TEAM=""
+      - name: Build iOS release (no codesign)
+        run: flutter build ios --release --no-codesign
 
-      - name: Create exportOptions.plist
+      - name: Create IPA
         run: |
-          cat <<EOF > exportOptions.plist
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>development</string>
-            <key>signingStyle</key>
-            <string>manual</string>
-            <key>stripSwiftSymbols</key>
-            <true/>
-            <key>compileBitcode</key>
-            <false/>
-          </dict>
-          </plist>
-          EOF
+          cd build/ios/iphoneos
+          mkdir Payload
+          mv Runner.app Payload/
+          zip -qq -r -9 MagicCity.ipa Payload
 
-      - name: Export IPA
-        run: |
-          xcodebuild -exportArchive \
-            -archivePath build/Runner.xcarchive \
-            -exportPath build/export \
-            -exportOptionsPlist exportOptions.plist \
-            CODE_SIGNING_ALLOWED=NO
-
-      - name: Upload IPA
+      - name: Upload IPA to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/export/Runner.ipa
+          file: build/ios/iphoneos/MagicCity.ipa
           tag: v1.0
           overwrite: true
+          body: "Automated iOS IPA build (no codesign)"
