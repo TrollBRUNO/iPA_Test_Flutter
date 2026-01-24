@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Move GoogleService-Info.plist
+        run: mv ios/GoogleService-Info.plist ios/Runner/GoogleService-Info.plist
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
