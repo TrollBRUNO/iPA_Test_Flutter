@@ -6,7 +6,7 @@ on:
 jobs:
   build-ios:
     name: 🎉 iOS Build
-    runs-on: macos-15
+    runs-on: macos-13   # ВАЖНО: Intel раннер, не ARM
 
     steps:
       - name: Checkout
@@ -16,6 +16,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          architecture: x64   # ВАЖНО: Intel Flutter
 
       - name: Flutter pub get
         run: flutter pub get
