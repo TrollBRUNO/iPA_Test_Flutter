@@ -22,6 +22,7 @@ jobs:
           rm -rf ios/Podfile.lock
           rm -rf ios/.symlinks
           rm -rf ios/Flutter
+          rm -rf ios/Flutter/Flutter.podspec
           rm -rf ios/Runner.xcworkspace
 
       - name: Flutter pub get
