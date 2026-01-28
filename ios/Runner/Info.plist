@@ -55,6 +55,17 @@
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
 
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <true/>
+
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
+
+    <key>NSAllowsArbitraryLoadsInWebContent</key>
+    <true/>
+
     <key>NSCameraUsageDescription</key>
     <string>Камера нужна для видеотрансляции</string>
 

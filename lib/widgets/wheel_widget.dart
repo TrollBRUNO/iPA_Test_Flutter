@@ -3,6 +3,7 @@ import 'dart:convert';
 //import 'dart:ffi';
 //import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:first_app_flutter/class/prize.dart';
 import 'package:first_app_flutter/class/user_session.dart';
 import 'package:first_app_flutter/config/notification_config.dart';
@@ -40,6 +41,9 @@ class _WheelState extends State<WheelWidget> {
   bool isSpinning = false;
 
   bool isDialogOpen = false;
+
+  final AudioPlayer spinPlayer = AudioPlayer();
+  final AudioPlayer winPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -93,6 +97,9 @@ class _WheelState extends State<WheelWidget> {
       return;
     }
     startSpin();
+
+    spinPlayer.setReleaseMode(ReleaseMode.loop);
+    spinPlayer.play(AssetSource('sounds/spin.mp3'));
   }
   // --------- УБРАЛ РЕАЛИЗАЦИЮ ИЗ-ЗА ТОГО ЧТОБЫ БЫЛО ПРОЩЕ ----------------
   /* void openTeleslotAutoLogin(BuildContext context) async {
@@ -119,6 +126,8 @@ class _WheelState extends State<WheelWidget> {
   @override
   void dispose() {
     selected.close();
+    spinPlayer.dispose();
+    winPlayer.dispose();
     super.dispose();
   }
 
@@ -376,7 +385,11 @@ class _WheelState extends State<WheelWidget> {
       backgroundColor: Colors.transparent,
       extendBody: true,
       body: GestureDetector(
-        onTap: () => trySpin(),
+        onTap: () => {
+          trySpin() /* 
+          spinPlayer.setReleaseMode(ReleaseMode.loop),
+          spinPlayer.play(AssetSource('sounds/spin.mp3')), */,
+        },
         child: Column(
           children: [
             Expanded(
@@ -505,6 +518,8 @@ class _WheelState extends State<WheelWidget> {
                 onFling: () => trySpin(),
 
                 onAnimationEnd: () async {
+                  await spinPlayer.stop();
+                  await winPlayer.play(AssetSource('sounds/win.mp3'));
                   final prize = prizeList[lastSelectedIndex ?? 0];
                   showPrizeDialog(prize.formatted);
                   //showPrizeDialog('100 EUR');

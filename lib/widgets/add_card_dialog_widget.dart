@@ -51,7 +51,8 @@ class _AddCardDialogWidgetState extends State<AddCardDialogWidget> {
   }
 
   bool _isValidLocal(String value) {
-    return RegExp(r'^[A-Z]{2}-\d{6}$').hasMatch(value);
+    final normalized = value.toUpperCase();
+    return RegExp(r'^[A-Z]{2}-\d{6}$').hasMatch(normalized);
   }
 
   Future<void> _submit() async {
