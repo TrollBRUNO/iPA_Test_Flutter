@@ -24,6 +24,11 @@ jobs:
       - name: Move GoogleService-Info.plist
         run: mv ios/GoogleService-Info.plist ios/Runner/GoogleService-Info.plist
 
+      - name: Clean Pods
+        run: |
+          cd ios
+          rm -rf Pods Podfile.lock
+
       - name: Pod install
         run: |
           cd ios
