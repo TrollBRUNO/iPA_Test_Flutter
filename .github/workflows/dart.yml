@@ -16,21 +16,21 @@ jobs:
           channel: stable
           architecture: x64
 
-      - name: Reset iOS folder
+      - name: Clean iOS
         run: |
-          rm -rf ios/Flutter
           rm -rf ios/Pods
           rm -rf ios/Podfile.lock
           rm -rf ios/.symlinks
+          rm -rf ios/Flutter
           rm -rf ios/Runner.xcworkspace
 
       - name: Flutter pub get
         run: flutter pub get
 
-      - name: Regenerate Flutter iOS configs
+      - name: Precache iOS artifacts
         run: flutter precache --ios
 
-      - name: First iOS build (generate xcconfig)
+      - name: Generate xcconfig (first build)
         run: flutter build ios --no-codesign
 
       - name: Pod install
