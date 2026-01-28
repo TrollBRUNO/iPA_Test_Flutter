@@ -173,6 +173,48 @@ class _SupportState extends State<SupportPage> {
                               if (val == null || val.trim().isEmpty) {
                                 return 'warning_describe_problem'.tr();
                               }
+
+                              final text = val.trim();
+
+                              //Запрет HTML/JS тегов
+                              final htmlTag = RegExp(r'<[^>]*>');
+                              if (htmlTag.hasMatch(text)) {
+                                return 'HTML/JS теги запрещены';
+                              }
+
+                              //Запрет SQL-инъекций
+                              final sqlPattern = RegExp(
+                                r"\b(SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|EXEC|UNION|TRUNCATE|MERGE)\b\s+\b",
+                                caseSensitive: false,
+                              );
+
+                              if (sqlPattern.hasMatch(text)) {
+                                return 'SQL-команды запрещены';
+                              }
+
+                              //Запрет SQL-инъекций
+                              final createDangerous = RegExp(
+                                r"\bCREATE\s+(TABLE|DATABASE|VIEW|FUNCTION|TRIGGER|INDEX)\b",
+                                caseSensitive: false,
+                              );
+                              if (createDangerous.hasMatch(text)) {
+                                return 'SQL-команды запрещены';
+                              }
+
+                              //Запрет опасных символов
+                              final dangerousSymbols = RegExp(r"[<>`]");
+                              if (dangerousSymbols.hasMatch(text)) {
+                                return 'Некорректные символы';
+                              }
+
+                              //Запрет JSON-структур
+                              if (RegExp(
+                                r'^\s*[\{\[].*[\}\]]\s*$',
+                                dotAll: true,
+                              ).hasMatch(text)) {
+                                return 'Некорректный формат текста';
+                              }
+
                               return null;
                             },
                           ),

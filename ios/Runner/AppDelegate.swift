@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import FirebaseCore
 import flutter_local_notifications
 
 @main
@@ -9,12 +10,12 @@ import flutter_local_notifications
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
-    // Регистрация плагинов для локальных уведомлений
+    FirebaseApp.configure()
+
     FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { registry in
         GeneratedPluginRegistrant.register(with: registry)
     }
 
-    // Делегат уведомлений
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self
     }

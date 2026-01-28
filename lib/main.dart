@@ -1,4 +1,4 @@
-/* //import 'package:first_app_flutter/config/notification_config.dart';
+//import 'package:first_app_flutter/config/notification_config.dart';
 import 'package:first_app_flutter/router/router.dart';
 import 'package:first_app_flutter/interceptor/auth_interceptor.dart';
 import 'package:first_app_flutter/services/notification_service.dart';
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /* return MaterialApp.router(
+    return MaterialApp.router(
       routerConfig: router,
 
       debugShowCheckedModeBanner: false,
@@ -78,15 +78,14 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-    ); */
-    return MaterialApp(
-      home: Scaffold(body: Center(child: Text('iOS test OK'))),
     );
+    /* return MaterialApp(
+      home: Scaffold(body: Center(child: Text('iOS test OK'))),
+    ); */
   }
 }
- */
 
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
@@ -109,4 +108,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
+} */
