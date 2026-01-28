@@ -18,6 +18,13 @@ jobs:
           channel: stable
           architecture: x64   # ВАЖНО: Intel Flutter
 
+      - name: Clean Flutter iOS
+        run: |
+          rm -rf ios/Flutter/Flutter.podspec
+          rm -rf ios/Flutter/Generated.xcconfig
+          rm -rf ios/Flutter/Debug.xcconfig
+          rm -rf ios/Flutter/Release.xcconfig
+
       - name: Flutter pub get
         run: flutter pub get
 
