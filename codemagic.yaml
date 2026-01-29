@@ -21,7 +21,7 @@ workflows:
         script: |
           flutter build ios --release \
             --flavor ios-production \
-            -t lib/main_prod.dart
+            -t lib/main.dart
 
     artifacts:
       - build/ios/iphoneos/*.app
