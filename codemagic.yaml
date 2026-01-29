@@ -20,7 +20,6 @@ workflows:
       - name: Build iOS
         script: |
           flutter build ios --release \
-            --flavor ios-production \
             -t lib/main.dart
 
     artifacts:
