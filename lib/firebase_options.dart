@@ -66,10 +66,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCZ05qTXcS5NMkjTA61ZL_MAYd75jOWJ-I',
-    appId: '1:5704494639:ios:ed8f3cc34f32ee688b60da',
+    appId: '1:5704494639:ios:33ceaca5931166ba8b60da', // ✅ НОВЫЙ
     messagingSenderId: '5704494639',
     projectId: 'magiccity-6e868',
     storageBucket: 'magiccity-6e868.firebasestorage.app',
-    iosBundleId: 'com.example.firstAppFlutter',
+    iosBundleId: 'com.example.firstAppFlutter.77CV7YPFJ8', // ✅
   );
 }
