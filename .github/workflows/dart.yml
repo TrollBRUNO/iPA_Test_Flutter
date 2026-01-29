@@ -18,6 +18,11 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Copy GoogleService-Info.plist into iOS bundle
+        run: |
+          mkdir -p ios/Runner/Resources
+          cp ios/Runner/GoogleService-Info.plist ios/Runner/Resources/GoogleService-Info.plist
+          
       - name: Precache iOS
         run: flutter precache --ios
 
