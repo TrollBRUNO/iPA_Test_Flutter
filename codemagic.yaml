@@ -1,0 +1,28 @@
+workflows:
+  ios-workflow:
+    name: iOS IPA build
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+    scripts:
+      - name: Create GoogleService-Info.plist
+        script: |
+          echo "Creating GoogleService-Info.plist"
+          cat <<EOF > ios/Runner/GoogleService-Info.plist
+          $GOOGLE_SERVICE_INFO_PLIST
+          EOF
+          ls -la ios/Runner | grep Google
+
+      - name: Flutter pub get
+        script: flutter pub get
+
+      - name: Build iOS
+        script: |
+          flutter build ios --release \
+            --flavor ios-production \
+            -t lib/main_prod.dart
+
+    artifacts:
+      - build/ios/iphoneos/*.app
+      - build/ios/ipa/*.ipa
